@@ -22,10 +22,10 @@ Usage as a manual package manager
 
 This package manager can be used as a (not feature complete) drop-in replacement for Shopware's console plugin commands:
 
-    bin/sd-plugin-manager.php sd:plugins:install
-    bin/sd-plugin-manager.php sd:plugins:activate
-    bin/sd-plugin-manager.php sd:plugins:deactivate
-    bin/sd-plugin-manager.php sd:plugins:uninstall
+    bin/sd-plugin-manager sd:plugins:install
+    bin/sd-plugin-manager sd:plugins:activate
+    bin/sd-plugin-manager sd:plugins:deactivate
+    bin/sd-plugin-manager sd:plugins:uninstall
 
 
 Usage as an automatic package manager
@@ -37,7 +37,7 @@ Then this package manager will ensure that the shop contains **exactly** the spe
 
 You can see an example for such a configuration in ```etc/examples/example_config.yml```.
 
-    bin/sd-plugin-manager.php sd:plugins:deploy:auto --statefile=etc/examples/example_config.yml
+    bin/sd-plugin-manager sd:plugins:deploy:auto --statefile=etc/examples/example_config.yml
 
 
 License

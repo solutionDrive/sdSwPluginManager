@@ -13,7 +13,7 @@
         }
     },
     "bin": [
-        "bin/sd-plugin-manager.php"
+        "bin/sd-plugin-manager"
     ],
     "require-dev": {
         "solutiondrive/standalone-build-tools": "^1.0.0"
