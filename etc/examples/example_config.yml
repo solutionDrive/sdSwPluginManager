@@ -1,0 +1,47 @@
+plugins:
+  sdGoogleTagManager:
+    provider: http
+    version: 1.0.0
+    activated: false
+    installed: true
+    providerParameters:
+      src: https://code.solutiondrive.de/sw-modules/sdGoogleTagManager-v1.0.0.zip
+  sdAnotherFancyPlugin:
+    provider: http
+    version: 2.3.4
+    activated: false
+    installed: false
+    providerParameters:
+      src: solutiondrive/sd-another-fancy-module
+      header:
+        X-AUTH-TOKEN: abcdef0123456789ABCDEF01234567890
+  thirdPartyPlugin:
+    provider: filesystem
+    version: 4.3.4
+    providerParameters:
+      src: etc/plugins/thirdPartyPlugin-4.3.4.zip
+
+  FroshProfiler:
+    provider: http
+    version: 1.3.1
+    providerParameters:
+      src: https://github.com/FriendsOfShopware/FroshProfiler/releases/download/1.3.1/FroshProfiler-1.3.1.zip
+    env:
+      - dev
+
+  # You can list Shopware's integrated plugins like this.
+  # An error is thrown if it does not exist, but it won't be installed if it isn't there.
+  # By providing 'null' ( ~ character ) as version the version check can be skipped.
+  SwagLicense:
+    version: ~
+
+  sdInfoSystem:
+    provider: http
+    version: 1.3.1
+    providerParameters:
+      src: https://private-code.solutiondrive.de/sw-modules/sdInfoSystem-v1.3.1.zip
+      username: HTTP-auth-username
+      password: HTTP-auth-password
+    env:
+      - production
+      - staging
