@@ -25,8 +25,7 @@ class InstallCommand extends Command
                 'activate',
                 'a',
                 InputOption::VALUE_NONE,
-                '',
-                true
+                ''
             )
             ->addArgument('pluginName', InputArgument::REQUIRED, 'The plugin\'s identifier')
             ->setHelp(
