@@ -1,0 +1,18 @@
+{
+  "chmod": "0755",
+  "directories": [],
+  "files": [
+    "LICENSE"
+  ],
+  "finder": [
+    {
+      "name": ["sd-plugin-manager", "*.php", "*.xsd", "*.yml", "*.xml", "*.dist", "LICENSE", "LICENSE.md"],
+      "exclude": ["build", "etc", "spec", "box.json", "composer.json", "Tests", "tests", "*.feature", "*.dat", "*.exe", "*.bin"],
+      "in": "."
+    }
+  ],
+  "compactors": "Herrera\\Box\\Compactor\\Php",
+  "main": "bin/sd-plugin-manager",
+  "output": "build/sd-sw-plugin-manager.phar",
+  "stub": true
+}

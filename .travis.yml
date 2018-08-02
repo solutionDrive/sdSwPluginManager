@@ -1,0 +1,47 @@
+language: php
+dist: trusty
+sudo: false
+
+php:
+  - '5.6'
+  - '7.0'
+  - '7.1'
+  - '7.2'
+
+env:
+  global:
+    - S3_BUCKET="build-tools.cloud.solutiondrive.de"
+    - secure: "B5P5TLTUi4oUBCGNpHUY258NFV5/4WjxHrM/27TiV0J4uuYcqcme5J9O5NTU6OGxxweM1XA5mkApvf8lMmI5uelQfnR6fPRzx+a4LTLOGFwoJJ+/ZZcw3bjAlV5RUeJocMUG1F0ohNMoJkV0Du8+YOSoSicFfRkh6nOuv4pzMgUSPIqHqGCvLBoQ1Z1WxZIlRSlwmgyPMYBquRp5uS2td5xf4Yg/VQ0XKdt31oiOLyuh5jPJeK4fBYEvbLIHidAR+geQLscj4OS9xfTHphTonFU7G7czC+7Drb3XdRQxod86GFUAiADRzbclmhzqBDps934VjmLStV/pD6GBxqciUU3oT7GxXGf0rpq3bAnRdeo4/f8Mk7mwa20HgZPKqw1k44LpUva2hFLPvDjazOkHPAPwp9oXw1q7xKDnDszRRbUANkjBzVIj7oosxXs9Aqat1wN4nzLUAlQdEZ+7Go323gTq7K4ID5qHsWnzvQGP2QSi0NbvKRfAhANIsP46YiAlbSvvit3ZItdQjCpfevAtDHbuMretl9hwW8SGYxGcLzrc2HnBYi0uIYAgmBzYiedfxNx2M8rVhhcaq51jh6VmGM0kDZaHKkPofxXTCmZdUIqXIM9B+hwTIPX4Y7tV2gSV6MPWQ36yflUkc/6FyxqXKrX9g1GV3z028uQcekn3wtY="
+    - secure: "BqKu9oGWPbT50MttdoQAg5GbvCaz4Lan5fK+czB7SzWUoQX4sW6PeTd3KmhzO1f4Kc3ivxIx/193t0kZAfHx90htmdNL5RSGN5acAthSgWbGjPP1+N8KcVhp3ms5LmyZDbUORbVzvuXzT0uVFuH//x90vwROkunXPFqNpO0/NUnIfAwPSel5vCDyfihRfypU3GhFRWF5vaQPkVdT/naOyzAeTbIhFPNCQkl4UooZ4OXOPnCQkT8HlEn7hma/fvgWafuen+Y5W8qEXTq/KLJVsK6LhnW4voKOiNpTNF8oPx7J4n1+EHh9wFxCQQImzs0fx4SDQCrFkS2hu9wcFpTYssmqILAcWihGLlu3TNUPyW/fUp5Q3u35CqjuHMqN7yR4DPHTd5kH7+69Hqo+Pecwb8DOgiVkdrvjIsJdbLxlCmjTlIoAXEKMLEfwI0TEbN6klYnn/f7317eUkuT/x0oQMXu1Ub3lYR73h9K0K+H1R3BVabPdZu6bm8Vsk9qXmVLPK6pVYfaDC/KXgy2Jxol4A4l44cTfrbJsyezqaKGcqQvz/wYf4wx/Jlnh9dsevG5065FHg6rULeNHh8B44KSMnusN/B3QOr4eXc1ygg/0pbFSwPeUdHdxNP4el+iB4wPVFHbMGTi0VI3AeZ9+DqT9ds27pDPBcic6//OpkiYMxv4="
+
+before_install:
+  - phpenv config-add .php.travis.ini
+  - export PATH=$PATH:$HOME/.composer/vendor/bin
+
+install:
+  - composer global require kherge/box
+  - composer install --optimize-autoloader -n
+
+before_script:
+  - printf '%s\n' ",s/__TAG__/${TRAVIS_BRANCH}/g" w q | ed -s "./src/Command/InfoCommand.php"
+  - printf '%s\n' ",s/__COMMIT__/${TRAVIS_COMMIT}/g" w q | ed -s "./src/Command/InfoCommand.php"
+
+script:
+  - box build
+  - echo "Built following version:" && php ./build/sd-sw-plugin-manager.phar sd:plugins:info -v
+
+before_deploy:
+  - mv ./build/sd-sw-plugin-manager.phar ./build/sd-sw-plugin-manager.php${TRAVIS_PHP_VERSION}.phar
+
+deploy:
+  provider: s3
+  access_key_id: "${S3_ACCESS_KEY}"
+  secret_access_key: "${S3_SECRET_KEY}"
+  bucket: "${S3_BUCKET}"
+  skip_cleanup: true
+  region: "eu-central-1"
+  local_dir: "build"
+  upload-dir: "phar"
+  acl: "public-read"
+  on:
+    branch: master

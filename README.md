@@ -43,4 +43,4 @@ You can see an example for such a configuration in ```etc/examples/example_confi
 License
 -------
 
-For solutionDrive's internal use only. All rights reserved.
+MIT. See file /LICENSE .
