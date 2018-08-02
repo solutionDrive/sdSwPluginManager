@@ -25,7 +25,10 @@
         "sort-packages": true,
         "standalone-build-tools": {
             "behat-standalone.phar": "http://build-tools.cloud.solutiondrive.de/phar/behat-standalone.php7.2.phar",
+            "phpspec-standalone.php5.6.phar": "http://build-tools.cloud.solutiondrive.de/phar/phpspec-standalone.php5.6.phar",
             "phpspec-standalone.php7.0.phar": "http://build-tools.cloud.solutiondrive.de/phar/phpspec-standalone.php7.0.phar",
+            "phpspec-standalone.php7.1.phar": "http://build-tools.cloud.solutiondrive.de/phar/phpspec-standalone.php7.1.phar",
+            "phpspec-standalone.php7.2.phar": "http://build-tools.cloud.solutiondrive.de/phar/phpspec-standalone.php7.2.phar",
             "ecs-standalone.phar": "http://build-tools.cloud.solutiondrive.de/phar/coding-standard-standalone.ecs.php7.2.phar",
             "easy-coding-standard-php5.6.yml": "http://build-tools.cloud.solutiondrive.de/phar/easy-coding-standard-php5.6.yml"
         }
