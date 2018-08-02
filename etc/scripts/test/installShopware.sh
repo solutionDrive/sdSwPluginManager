@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
-SHOPWARE_VERSION=5.4.5
-SHOPWARE_URL=http://releases.s3.shopware.com.s3.amazonaws.com/install_5.4.5_6847c0845f0f97230aa05c7294fa726a96dda3ff.zip
+SHOPWARE_VERSION=5.4.6
+SHOPWARE_URL=http://releases.s3.shopware.com.s3.amazonaws.com/install_5.4.6_f667f6471a77bb5af0c115f3e243594e6353747e.zip
 
 if [ -z "${PROJECT_HOME}" ]; then
     echo "$$PROJECT_HOME must be set!"
