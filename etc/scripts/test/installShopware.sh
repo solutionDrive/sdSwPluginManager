@@ -11,7 +11,7 @@ DB_DATABASE="getenv('MYSQL_DATABASE')"
 CONFIG_FILE=${PROJECT_HOME}/config.php
 
 cd ${PROJECT_HOME}
-wget -O install.zip http://releases.s3.shopware.com.s3.amazonaws.com/install_5.4.5_6847c0845f0f97230aa05c7294fa726a96dda3ff.zip
+wget -O install.zip "${SHOPWARE_URL}"
 
 unzip install.zip
 
