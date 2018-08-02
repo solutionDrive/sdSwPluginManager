@@ -22,8 +22,14 @@ install:
   - composer global require kherge/box
   - composer install --optimize-autoloader -n
 
+before_script:
+  - printf '%s\n' ",s/__TAG__/${TRAVIS_BRANCH}/g" w q | ed -s "./src/Command/InfoCommand.php"
+  - printf '%s\n' ",s/__COMMIT__/${TRAVIS_COMMIT}/g" w q | ed -s "./src/Command/InfoCommand.php"
+
 script:
   - box build
+  - php ./build/sd-plugin-manager.phar sd:plugins:info
+  - php ./build/sd-plugin-manager.phar sd:plugins:info -v
 
 before_deploy:
   - mv ./build/sd-plugin-manager.phar ./build/sd-plugin-manager.php${TRAVIS_PHP_VERSION}.phar
