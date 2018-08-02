@@ -1,0 +1,42 @@
+language: php
+dist: trusty
+sudo: false
+
+php:
+  - '5.6'
+  - '7.0'
+  - '7.1'
+  - '7.2'
+
+env:
+  global:
+    - S3_BUCKET="build-tools.cloud.solutiondrive.de"
+#    - secure: TjqFbQD+TnRnldx0EjwT8mLx+APVyQ22Grp7fz0l40KrTpHI2dkd1GChUJQWvoOEKH7geAlC8zo5fw5U6C5H519wrRtE65+KpJGnx1v3RuSZAvfOQwema6OT1bAiwAZURUjapNAsIFwxa37Iic/pWVbRPGvCj26vxgGk2s5uXDCF3BAnkFT3Qsq4Ej0ETj6Z6hLcbMmqXV9dcytrNOremsqtNU9td9zEZc0y1ZMtZLTaeTn9wpefjGW2TNzDMwgVO+CAAGroUdvuAmNdiyHL/vNNtilWmwexxSzQdHOIC23hazte2q2AcqGJp+n42p/0gfCcxHVR6D6tmp4qdy5phEVvZj0/FHzliil1uLhopfu0ZD0OcO7wLvd6ZX4KTTnRPMXJYFSr47+/j1VCDVXvZX9NqaaiVrtSvRTQfdnMQMCOOW8QJQ3VbDW5CzvI7RjhPmVnZ50LOKcBN5jZtP0gztNLlRrPERMLGr9ZepRmt0bK0ckhNS6P9yoOuOORznfr1DC8pbFQ6+foi6DDd5dSofbHkTVjAKRqOSMTRLLCEvOpw1vFULF3uT2bnZaF68J3Y+hodpBFwu0c9dBAPSrZBz/+XVyRGND7+wtqRa9luKT+io/GpG6Z92Mm3ne3wP8+B6Iyt2dpbJCgm+rpPvKk3nLxxFDrcEH+NRCLOc3/Puo=
+#    - secure: oWE1QrWAspe1iFiddKfLzpCSJZCdxoRqF2HsRiHsH8oZiqg2o8z5/E2u5IigyELcvdNQ30qIyssGtCybpYi1jRdNtA3xOtjOgmr/8UNavVqLRMoONIInGLZmUBe6Fjr00HOnON7fMyMIR9w/VCAFpqR7vjNdruP2IMv/lvAtEJv//XI87yGjRPmSG+ydco8s3dZ88eoY22LzF4Bm0OWSTAdvD49cw0xeJHqprzmIS3sIf8buu99gqQegm12gWKat0A20/TpWCEv1saBnGc8YaJZ3/oCp8RU37DmyNzMDvNTjR5ZDWyIBHnzLDSwoJhxeV7nXT2ZH6MAF+9dX9ff7aWcOzTsVrU332Ei5vCKd1DB8p55329VyOA1KDs9C4lRz0oCo6e016cg129o9ig/UVcUXV9ohi7mLhme0ZodW4MJ50w3o4PnuW+lBCGvT+upShoX420aLNJOV6BTaCsylAEK1gXK0moAkbJlmScAkiMSQR217y2He96zDYVp3vJ87aB6YDM4D6nz1Q/hPwdV5oJEAbJdSVpMmXcWuWQVmuzgViRP/zvqt7zGXnfoUJpvaI4Xu9DL7kz/HSu96UHh/FzPFI8oGux5aMxqS5Esj+ewFV3gxD1RdJjyaDjZrbFb1EavW4Wleofu2kRmgXaGBbrHXblRUP9+24W3qOLjCsqQ=
+
+before_install:
+  - phpenv config-add .php.travis.ini
+  - export PATH=$PATH:$HOME/.composer/vendor/bin
+
+install:
+  - composer global require kherge/box
+  - composer install --optimize-autoloader -n
+
+script:
+  - box build
+
+before_deploy:
+  - mv ./build/sd-plugin-manager.phar ./build/sd-plugin-manager.php${TRAVIS_PHP_VERSION}.phar
+
+#deploy:
+#  provider: s3
+#  access_key_id: "${S3_ACCESS_KEY}"
+#  secret_access_key: "${S3_SECRET_KEY}"
+#  bucket: "${S3_BUCKET}"
+#  skip_cleanup: true
+#  region: "eu-central-1"
+#  local_dir: "build"
+#  upload-dir: "phar"
+#  acl: "public-read"
+#  on:
+#    branch: master
