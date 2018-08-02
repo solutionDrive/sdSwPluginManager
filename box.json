@@ -13,6 +13,6 @@
   ],
   "compactors": "Herrera\\Box\\Compactor\\Php",
   "main": "bin/sd-plugin-manager",
-  "output": "build/sd-plugin-manager.phar",
+  "output": "build/sd-sw-plugin-manager.phar",
   "stub": true
 }
