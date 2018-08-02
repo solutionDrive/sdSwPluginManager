@@ -3,6 +3,11 @@
 SHOPWARE_VERSION=5.4.5
 SHOPWARE_URL=http://releases.s3.shopware.com.s3.amazonaws.com/install_5.4.5_6847c0845f0f97230aa05c7294fa726a96dda3ff.zip
 
+if [ -z "${PROJECT_HOME}" ]; then
+    echo "$$PROJECT_HOME must be set!"
+    exit 1
+fi
+
 DB_HOST=mysql
 DB_PORT=3306
 DB_USERNAME=root
