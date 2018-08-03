@@ -31,7 +31,7 @@ class RefreshCommand extends Command
         $shopwareConsole = new ShopwareConsoleCaller();
         $callSuccess = $shopwareConsole->call('sw:plugin:refresh');
 
-        if (true !== $callSuccess) {
+        if (false === $callSuccess) {
             $output->writeln('<error>Plugin list could not be refreshed by Shopware.</error>');
             if ($shopwareConsole->hasOutput()) {
                 $output->writeln('Output (stdout) from Shopware CLI: ' . PHP_EOL . $shopwareConsole->getOutput());
