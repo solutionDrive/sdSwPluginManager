@@ -9,7 +9,9 @@
 namespace sd\SwPluginManager\Command;
 
 use sd\SwPluginManager\Worker\PluginDeployer;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -47,6 +49,12 @@ class DeployZipCommand extends Command
                 'Path to the plugin folder under the shop directory',
                 'custom/plugins'
             )
+            ->addOption(
+                'no-refresh',
+                null,
+                InputOption::VALUE_NONE,
+                'Skip the plugin refresh step'
+            )
             ->setDescription('Deploys the given plugin.')
             ->setHelp(
                 'Deploys the given plugin (packed) in a zip file. Optionally installs and activates the plugin.'
@@ -65,6 +73,7 @@ class DeployZipCommand extends Command
         $shouldActivate = (bool) $input->getOption('activate');
         $shopRoot = (string) $input->getOption('root');
         $pluginFolder = (string) $input->getOption('pluginfolder');
+        $skipRefresh = (bool) $input->getOption('no-refresh');
 
         $pluginDeployer = new PluginDeployer($shopRoot, $pluginFolder);
 
@@ -77,18 +86,42 @@ class DeployZipCommand extends Command
             throw new \RuntimeException('No file could be found by the given file name: ' . $sourceFile);
         }
 
-        $pluginDeployer->deploy($sourceFile);
+        $pluginId = $pluginDeployer->deploy($sourceFile);
 
         $output->writeln('<info>Plugin extracted successfully.</info>');
 
+        // Install the plugin if requested
         if (true === $shouldInstall) {
-            $output->writeln('<error>Installation not yet implemented.</error>');
-            // @TODO Install plugin
+            /** @var Application $app */
+            $app = $this->getApplication();
+            $app->setAutoExit(false);
+
+            // First refresh plugin list
+            if (false === $skipRefresh) {
+                $input = new ArrayInput([
+                    'command' => 'sd:plugins:refresh',
+                ]);
+                $app->run($input, $output);
+            }
+
+            // Then install the plugin
+            $input = new ArrayInput([
+                'command' => 'sd:plugins:install',
+                'pluginId' => $pluginId,
+            ]);
+            $app->run($input, $output);
         }
 
+        // Activate the plugin if requested
         if (true === $shouldActivate) {
-            $output->writeln('<error>Activation not yet implemented.</error>');
-            // @TODO Install plugin
+            /** @var Application $app */
+            $app = $this->getApplication();
+            $app->setAutoExit(false);
+            $input = new ArrayInput([
+                'command' => 'sd:plugins:activate',
+                'pluginId' => $pluginId,
+            ]);
+            $app->run($input, $output);
         }
 
         return 0;
