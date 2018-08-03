@@ -9,6 +9,7 @@
 namespace sd\SwPluginManager\Factory;
 
 use sd\SwPluginManager\Entity\DeployedPluginState;
+use sd\SwPluginManager\Service\BoolParser;
 
 class DeployedPluginStateFactory implements DeployedPluginStateFactoryInterface
 {
@@ -17,26 +18,14 @@ class DeployedPluginStateFactory implements DeployedPluginStateFactoryInterface
      */
     public function createFromShopwareCLIInfoOutput($parsedPluginAsArray)
     {
+        $boolParser = new BoolParser();
         return new DeployedPluginState(
             $parsedPluginAsArray[0],
             $parsedPluginAsArray[1],
             $parsedPluginAsArray[2],
             $parsedPluginAsArray[3],
-            $this->parseBoolean($parsedPluginAsArray[4]),
-            $this->parseBoolean($parsedPluginAsArray[5])
+            $boolParser->parse($parsedPluginAsArray[4]),
+            $boolParser->parse($parsedPluginAsArray[5])
         );
-    }
-
-    /**
-     * @param string $stringValue
-     *
-     * @return bool
-     *
-     * @TODO Move to own service/class!
-     */
-    private function parseBoolean($stringValue)
-    {
-        $normalizedValue = trim(strtolower($stringValue));
-        return in_array($normalizedValue, ['yes', 'on', 'true', '1']);
     }
 }
