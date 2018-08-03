@@ -41,10 +41,10 @@ class InstallCommand extends Command
 
         // Try to install using the Shopware CLI. If this works, everything is fine.
         $shopwareConsole = new ShopwareConsoleCaller();
-        $statusCode = $shopwareConsole->call('sw:plugin:install', [$pluginId => null]);
+        $callSuccess = $shopwareConsole->call('sw:plugin:install', [$pluginId => null]);
 
         // @TODO If it did not work, install the plugin by setting the flag in the database and inform the user.
-        if (0 !== $statusCode) {
+        if (false === $callSuccess) {
             $output->writeln(
                 '<error>Plugin `' . $pluginId . '` could not be installed by Shopware. ' .
                 'Fallback not yet implemented.</error>'
@@ -60,6 +60,7 @@ class InstallCommand extends Command
             return 1;
         }
 
+        $output->writeln('<info>Plugin `' . $pluginId . '` installed successfully.</info>');
         return 0;
     }
 }
