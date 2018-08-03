@@ -8,6 +8,7 @@
 
 namespace sd\SwPluginManager\Command;
 
+use sd\SwPluginManager\Worker\ShopwareConsoleCaller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -36,10 +37,29 @@ class InstallCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // @TODO Try to install using the Shopware CLI. If this works, everything is fine.
+        $pluginId = (string) $input->getArgument('pluginId');
+
+        // Try to install using the Shopware CLI. If this works, everything is fine.
+        $shopwareConsole = new ShopwareConsoleCaller();
+        $statusCode = $shopwareConsole->call('sw:plugin:install', [$pluginId => null]);
 
         // @TODO If it did not work, install the plugin by setting the flag in the database and inform the user.
+        if (0 !== $statusCode) {
+            $output->writeln(
+                '<error>Plugin `' . $pluginId . '` could not be installed by Shopware. ' .
+                'Fallback not yet implemented.</error>'
+            );
+            if ($shopwareConsole->hasOutput()) {
+                $output->writeln('Output (stdout) from Shopware CLI: ' . PHP_EOL . $shopwareConsole->getOutput());
+            }
 
-        return 1;
+            if ($shopwareConsole->hasError()) {
+                $output->writeln('Output (stderr) from Shopware CLI: ' . PHP_EOL . $shopwareConsole->getError());
+            }
+
+            return 1;
+        }
+
+        return 0;
     }
 }
