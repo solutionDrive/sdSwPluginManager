@@ -28,7 +28,7 @@ before_script:
 
 script:
   - if [ "${TRAVIS_PHP_VERSION}" == "7.2" ]; then ./etc/scripts/checkCodingStandards.sh ; fi
-  - php ./vendor/bin/phpspec-standalone.php${TRAVIS_PHP_VERSION}.phar run --no-code-generation --format=dot
+  - ./etc/scripts/runSpecs.sh
 
 before_deploy:
   - box build
