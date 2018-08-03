@@ -27,7 +27,7 @@ class InstallCommand extends Command
                 InputOption::VALUE_NONE,
                 ''
             )
-            ->addArgument('pluginName', InputArgument::REQUIRED, 'The plugin\'s identifier')
+            ->addArgument('pluginId', InputArgument::REQUIRED, 'The plugin\'s identifier')
             ->setHelp(
                 'Installs the given plugin. First it is tried to use the Shopware CLI. ' .
                 'If this does not work, a more error tolerant approach is taken.'

@@ -20,7 +20,7 @@ class ActivateCommand extends Command
         $this
             ->setName('sd:plugins:activate')
             ->setDescription('Activates the given plugin.')
-            ->addArgument('pluginName', InputArgument::REQUIRED, 'The plugin\'s identifier')
+            ->addArgument('pluginId', InputArgument::REQUIRED, 'The plugin\'s identifier')
             ->setHelp(
                 'Activates the given plugin. First it is tried to use the Shopware CLI. ' .
                 'If this does not work, a more error tolerant approach is taken.'
