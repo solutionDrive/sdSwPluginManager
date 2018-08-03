@@ -1,0 +1,6 @@
+suites:
+  default:
+    namespace: sd\SwPluginManager
+    psr4_prefix: sd\SwPluginManager
+    spec_path: ./
+    src_path: ./
