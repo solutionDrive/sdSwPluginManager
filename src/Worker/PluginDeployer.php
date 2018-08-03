@@ -41,11 +41,17 @@ class PluginDeployer implements PluginDeployerInterface
             throw new ZipFileCouldNotBeOpenedException($sourceFile);
         }
 
+        // Get plugins key to return
+        // @TODO Verify that this works with lots of plugins (but it should...)
+        $stat = $zipArchive->statIndex(0);
+        $folderName = trim($stat['name'], '/');
+
         $extractResult = $zipArchive->extractTo($this->targetShopwareRoot . DIRECTORY_SEPARATOR . $this->pluginFolder);
         if (false === $extractResult) {
             throw new ZipFileCouldNotBeExtractedException($sourceFile);
         }
 
         $zipArchive->close();
+        return $folderName;
     }
 }
