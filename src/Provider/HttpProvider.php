@@ -8,14 +8,24 @@
 
 namespace sd\SwPluginManager\Provider;
 
+use GuzzleHttp\Client;
+
 class HttpProvider implements ProviderInterface
 {
+    /** @var Client */
+    private $guzzleClient;
+
+    public function __construct(Client $guzzleClient)
+    {
+        $this->guzzleClient = $guzzleClient;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function loadFile($parameters)
     {
-        if (false === empty($parameters['src'])) {
+        if (true === empty($parameters['src'])) {
             throw new \RuntimeException('src must not be empty for FilesystemProvider.');
         }
 
@@ -51,8 +61,7 @@ class HttpProvider implements ProviderInterface
      */
     private function downloadFile($url, $targetFilename, $auth = null, $headers = [])
     {
-        $client = new \GuzzleHttp\Client();
-        $response = $client->get(
+        $response = $this->guzzleClient->get(
             $url,
             [
                 'allow_redirects' => true,
