@@ -33,9 +33,21 @@ class DeployedPluginRepository implements DeployedPluginRepositoryInterface
     public function readFromCLIOutputArray($stateAsArray)
     {
         foreach ($stateAsArray as $pluginConfig) {
-            $this->plugins[] =
-                $this->deployedPluginStateFactory->createFromShopwareCLIInfoOutput($pluginConfig);
+            $state = $this->deployedPluginStateFactory->createFromShopwareCLIInfoOutput($pluginConfig);
+            $this->plugins[$state->getId()] = $state;
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPlugin($pluginId)
+    {
+        if (false === isset($this->plugins[$pluginId])) {
+            return null;
+        }
+
+        return $this->plugins[$pluginId];
     }
 
     /**

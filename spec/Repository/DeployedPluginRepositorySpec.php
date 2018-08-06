@@ -17,8 +17,18 @@ use sd\SwPluginManager\Repository\DeployedPluginRepositoryInterface;
 
 class DeployedPluginRepositorySpec extends ObjectBehavior
 {
-    public function let(DeployedPluginStateFactoryInterface $deployedPluginStateFactory)
-    {
+    public function let(
+        DeployedPluginStateFactoryInterface $deployedPluginStateFactory,
+        DeployedPluginState $state1,
+        DeployedPluginState $state2
+    ) {
+        $state1
+            ->getId()
+            ->willReturn('testPlugin1');
+        $state2
+            ->getId()
+            ->willReturn('testPlugin2');
+
         $this->beConstructedWith($deployedPluginStateFactory);
     }
 
@@ -71,7 +81,30 @@ class DeployedPluginRepositorySpec extends ObjectBehavior
         $this->readFromCLIOutputArray($source);
         $this
             ->getPlugins()
-            ->shouldReturn([$state1, $state2]);
+            ->shouldReturn(['testPlugin1' => $state1, 'testPlugin2' => $state2]);
+    }
+
+    public function it_can_return_plugin_by_key(
+        DeployedPluginStateFactoryInterface $deployedPluginStateFactory,
+        DeployedPluginState $state1,
+        DeployedPluginState $state2
+    ) {
+        $source = [
+            'testPlugin1' => [/* not important, mocked! */],
+            'testPlugin2' => [/* not important, mocked! */],
+        ];
+
+        $deployedPluginStateFactory
+            ->createFromShopwareCLIInfoOutput(Argument::any())
+            ->willReturn($state1, $state2);
+
+        $this->readFromCLIOutputArray($source);
+        $this
+            ->getPlugin('testPlugin1')
+            ->shouldReturn($state1);
+        $this
+            ->getPlugin('testPlugin2')
+            ->shouldReturn($state2);
     }
 
     // [1] See:  https://sylius.com/  or  https://github.com/sylius/sylius

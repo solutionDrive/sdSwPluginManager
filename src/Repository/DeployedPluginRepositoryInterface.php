@@ -20,6 +20,15 @@ interface DeployedPluginRepositoryInterface
     public function readFromCLIOutputArray($stateAsArray);
 
     /**
+     * Returns the DeployedPluginState if the plugin exists, or null if it is missing in shop.
+     *
+     * @param string $pluginId
+     *
+     * @return DeployedPluginState|null
+     */
+    public function getPlugin($pluginId);
+
+    /**
      * @return array|DeployedPluginState[]
      */
     public function getPlugins();
