@@ -27,6 +27,7 @@ before_script:
   - printf '%s\n' ",s/__COMMIT__/${TRAVIS_COMMIT}/g" w q | ed -s "./src/Command/InfoCommand.php"
 
 script:
+  - ./etc/scripts/lintFiles.sh
   - if [ "${TRAVIS_PHP_VERSION}" == "7.2" ]; then ./etc/scripts/checkCodingStandards.sh ; fi
   - ./etc/scripts/runSpecs.sh
 
