@@ -1,0 +1,18 @@
+services:
+  sd.repository.provider:
+    class: sd\SwPluginManager\Repository\ProviderRepository
+
+  sd.provider.filesystem:
+    class: sd\SwPluginManager\Provider\FilesystemProvider
+    tags: ['sd.plugin.provider']
+  sd.provider.none:
+    class: sd\SwPluginManager\Provider\NoneProvider
+    tags: ['sd.plugin.provider']
+  sd.provider.http:
+    class: sd\SwPluginManager\Provider\HttpProvider
+    tags: ['sd.plugin.provider']
+    arguments:
+      - '@sd.external.guzzle'
+
+  sd.external.guzzle:
+    class: GuzzleHttp\Client

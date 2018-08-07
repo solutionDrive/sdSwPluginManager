@@ -1,10 +1,25 @@
 #!/usr/bin/env php
 <?php
 
+use sd\SwPluginManager\DependencyInjection\PluginProviderPass;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Application;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+// Create container and register compiler pass
+$containerBuilder = new ContainerBuilder();
+$containerBuilder->addCompilerPass(new PluginProviderPass());
+
+// Load services
+$yamlConfigLoader = new YamlFileLoader($containerBuilder, new FileLocator(__DIR__ . '/../src'));
+$yamlConfigLoader->load('Resources/config/services.yml');
+
+$containerBuilder->compile();
+
+// Initilize CLI apllication
 $application = new Application();
 $commandsClassBase = 'sd\\SwPluginManager\\Command\\';
 
