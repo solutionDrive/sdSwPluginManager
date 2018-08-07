@@ -12,6 +12,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+// @TODO change to ContainerAwareCommand and remove constructors here
 class ListCommand extends Command
 {
     protected function configure()
