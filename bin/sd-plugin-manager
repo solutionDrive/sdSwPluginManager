@@ -20,7 +20,7 @@ $yamlConfigLoader->load('Resources/config/services.yml');
 
 $containerBuilder->compile();
 
-// Initilize CLI apllication
+// Initialize CLI application
 $application = new Application();
 $commandsClassBase = 'sd\\SwPluginManager\\Command\\';
 
