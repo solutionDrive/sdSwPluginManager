@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 
+use sd\SwPluginManager\Command\ContainerAwareCommandInterface;
 use sd\SwPluginManager\DependencyInjection\PluginProviderPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Application;
@@ -23,19 +24,15 @@ $containerBuilder->compile();
 $application = new Application();
 $commandsClassBase = 'sd\\SwPluginManager\\Command\\';
 
-// iterate through commands
-$fileIterator = new DirectoryIterator(__DIR__ . '/../src/Command');
-foreach ($fileIterator as $file) {
-    if (false === $file->isFile()) {
-        continue;
-    }
-
-    try {
-        $commandName = $commandsClassBase . $file->getBasename('.' . $file->getExtension());
-        $application->add(new $commandName());
-    } catch (RuntimeException $exception) {
-        echo 'Could not load command "' . $commandName . '". Is there a class in src/ that does not belong there?' .
-            PHP_EOL;
+// Add all commands
+$searchFor = 'sd.command.';
+foreach ($containerBuilder->getServiceIds() as $id) {
+    if (substr($id, 0, strlen($searchFor)) === $searchFor) {
+        $command = $containerBuilder->get($id);
+        if (is_a($command, ContainerAwareCommandInterface::class)) {
+            $command->setContainer($containerBuilder);
+        }
+        $application->add($command);
     }
 }
 
