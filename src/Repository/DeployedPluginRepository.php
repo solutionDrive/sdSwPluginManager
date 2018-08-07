@@ -22,8 +22,9 @@ class DeployedPluginRepository implements DeployedPluginRepositoryInterface
     /**
      * @param DeployedPluginStateFactoryInterface $deployedPluginStateFactory
      */
-    public function __construct(DeployedPluginStateFactoryInterface $deployedPluginStateFactory)
-    {
+    public function __construct(
+        DeployedPluginStateFactoryInterface $deployedPluginStateFactory
+    ) {
         $this->deployedPluginStateFactory = $deployedPluginStateFactory;
     }
 
