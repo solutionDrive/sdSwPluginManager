@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+// @TODO change to ContainerAwareCommand and remove constructors here
 class ActivateCommand extends Command
 {
     protected function configure()

@@ -1,0 +1,33 @@
+services:
+  sd.command.activate:
+    class: sd\SwPluginManager\Command\ActivateCommand
+  sd.command.deactivate:
+    class: sd\SwPluginManager\Command\DeactivateCommand
+  sd.command.install:
+    class: sd\SwPluginManager\Command\InstallCommand
+  sd.command.info:
+    class: sd\SwPluginManager\Command\InfoCommand
+  sd.command.list:
+    class: sd\SwPluginManager\Command\ListCommand
+  sd.command.refresh:
+    class: sd\SwPluginManager\Command\RefreshCommand
+  sd.command.deploy_zip:
+    class: sd\SwPluginManager\Command\DeployZipCommand
+
+  sd.repository.provider:
+    class: sd\SwPluginManager\Repository\ProviderRepository
+
+  sd.provider.filesystem:
+    class: sd\SwPluginManager\Provider\FilesystemProvider
+    tags: ['sd.plugin.provider']
+  sd.provider.none:
+    class: sd\SwPluginManager\Provider\NoneProvider
+    tags: ['sd.plugin.provider']
+  sd.provider.http:
+    class: sd\SwPluginManager\Provider\HttpProvider
+    tags: ['sd.plugin.provider']
+    arguments:
+      - '@sd.external.guzzle'
+
+  sd.external.guzzle:
+    class: GuzzleHttp\Client
