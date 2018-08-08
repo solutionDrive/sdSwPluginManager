@@ -48,9 +48,22 @@ class StateFile implements StateFileInterface
         $configuration = new ConfiguredPluginConfiguration();
         $globalState = $processor->processConfiguration($configuration, $stateAsArray);
         foreach ($globalState as $pluginId => $pluginConfig) {
-            $this->plugins[] =
+            $configuredPluginState =
                 $this->configuredPluginStateFactory->createFromConfigurationArray($pluginId, $pluginConfig);
+            $this->plugins[$configuredPluginState->getId()] = $configuredPluginState;
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPlugin($pluginId)
+    {
+        if (false === isset($this->plugins[$pluginId])) {
+            return null;
+        }
+
+        return $this->plugins[$pluginId];
     }
 
     /**

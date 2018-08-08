@@ -17,8 +17,18 @@ use sd\SwPluginManager\Repository\StateFileInterface;
 
 class StateFileSpec extends ObjectBehavior
 {
-    public function let(ConfiguredPluginStateFactoryInterface $configuredPluginStateFactory)
-    {
+    public function let(
+        ConfiguredPluginStateFactoryInterface $configuredPluginStateFactory,
+        ConfiguredPluginState $state1,
+        ConfiguredPluginState $state2
+    ) {
+        $state1
+            ->getId()
+            ->willReturn('testPlugin1');
+        $state2
+            ->getId()
+            ->willReturn('testPlugin2');
+
         $this->beConstructedWith($configuredPluginStateFactory);
     }
 
@@ -81,7 +91,38 @@ class StateFileSpec extends ObjectBehavior
         $this->readArray($source);
         $this
             ->getPlugins()
-            ->shouldReturn([$state1, $state2]);
+            ->shouldReturn(['testPlugin1' => $state1, 'testPlugin2' => $state2]);
+    }
+
+    public function it_can_return_plugin_by_key(
+        ConfiguredPluginStateFactoryInterface $configuredPluginStateFactory,
+        ConfiguredPluginState $state1,
+        ConfiguredPluginState $state2
+    ) {
+        $source = [
+            'plugins' => [
+                'testPlugin1' => [
+                    'provider' => 'none',
+                    'version' => '~',
+                ],
+                'testPlugin2' => [
+                    'provider' => 'http',
+                    'version' => '1',
+                ],
+            ],
+        ];
+
+        $configuredPluginStateFactory
+            ->createFromConfigurationArray(Argument::any(), Argument::any())
+            ->willReturn($state1, $state2);
+
+        $this->readArray($source);
+        $this
+            ->getPlugin('testPlugin1')
+            ->shouldReturn($state1);
+        $this
+            ->getPlugin('testPlugin2')
+            ->shouldReturn($state2);
     }
 
     // Unfortunately we cannot test readYamlStateFile() as it uses \file_get_contents() to read a real file.
