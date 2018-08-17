@@ -41,9 +41,11 @@ class PluginFetcherSpec extends ObjectBehavior
         ConfiguredPluginState $configuredPluginState
     ) {
         $providerParameters = [];
+
         $configuredPluginState
             ->getProviderParameters()
             ->willReturn($providerParameters);
+
         $configuredPluginState
             ->getProvider()
             ->willReturn('testType');
@@ -65,9 +67,11 @@ class PluginFetcherSpec extends ObjectBehavior
         ConfiguredPluginState $configuredPluginState
     ) {
         $providerParameters = [];
+
         $configuredPluginState
             ->getProviderParameters()
             ->willReturn($providerParameters);
+
         $configuredPluginState
             ->getProvider()
             ->willReturn('otherType');
