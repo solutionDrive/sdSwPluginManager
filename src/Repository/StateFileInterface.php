@@ -23,6 +23,13 @@ interface StateFileInterface
     public function readArray($stateAsArray);
 
     /**
+     * @param string $pluginId
+     *
+     * @return ConfiguredPluginState|null
+     */
+    public function getPlugin($pluginId);
+
+    /**
      * @return array|ConfiguredPluginState[]
      */
     public function getPlugins();

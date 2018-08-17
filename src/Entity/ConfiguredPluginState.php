@@ -19,7 +19,7 @@ class ConfiguredPluginState
     /** @var string */
     private $version;
 
-    /** @var array */
+    /** @var array|mixed[] */
     private $providerParameters;
 
     /** @var bool */
@@ -74,7 +74,7 @@ class ConfiguredPluginState
     }
 
     /**
-     * @return string
+     * @return array|mixed[]
      */
     public function getProviderParameters()
     {

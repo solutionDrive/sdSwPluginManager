@@ -13,9 +13,27 @@ services:
     class: sd\SwPluginManager\Command\RefreshCommand
   sd.command.deploy_zip:
     class: sd\SwPluginManager\Command\DeployZipCommand
+  sd.command.fetch_plugin:
+    class: sd\SwPluginManager\Command\FetchPluginCommand
+    arguments:
+      - '@sd.repository.statefile'
+      - '@sd.worker.pluginfetcher'
 
+  sd.factory.configuredpluginstate:
+    class: sd\SwPluginManager\Factory\ConfiguredPluginStateFactory
+  sd.factory.deployedpluginstate:
+    class: sd\SwPluginManager\Factory\DeployedPluginStateFactory
+
+  sd.repository.deployedplugin:
+    class: sd\SwPluginManager\Repository\DeployedPluginRepository
+    arguments:
+      - '@sd.factory.deployedpluginstate'
   sd.repository.provider:
     class: sd\SwPluginManager\Repository\ProviderRepository
+  sd.repository.statefile:
+    class: sd\SwPluginManager\Repository\StateFile
+    arguments:
+      - '@sd.factory.configuredpluginstate'
 
   sd.provider.filesystem:
     class: sd\SwPluginManager\Provider\FilesystemProvider
@@ -28,6 +46,11 @@ services:
     tags: ['sd.plugin.provider']
     arguments:
       - '@sd.external.guzzle'
+
+  sd.worker.pluginfetcher:
+    class: sd\SwPluginManager\Worker\PluginFetcher
+    arguments:
+      - '@sd.repository.provider'
 
   sd.external.guzzle:
     class: GuzzleHttp\Client
