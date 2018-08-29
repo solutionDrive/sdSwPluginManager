@@ -18,14 +18,18 @@ class PluginDeployer implements PluginDeployerInterface
     private $targetShopwareRoot = '';
 
     /** @var string */
-    private $pluginFolder;
+    private $pluginFolder = '';
 
     /**
      * @param string $targetShopwareRoot root path to shopware installation where the plugin should be installed
      * @param string $pluginFolder       path to plugins inside the shop directory
      */
-    public function __construct($targetShopwareRoot, $pluginFolder = 'custom/plugins')
+    public function __construct($targetShopwareRoot = '.', $pluginFolder = 'custom/plugins')
     {
+        if ('.' === $targetShopwareRoot) {
+            $targetShopwareRoot = getcwd();
+        }
+
         $this->targetShopwareRoot = $targetShopwareRoot;
         $this->pluginFolder = $pluginFolder;
     }
