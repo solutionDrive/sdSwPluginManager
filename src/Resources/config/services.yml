@@ -18,7 +18,7 @@ services:
     arguments:
       - '@sd.repository.statefile'
       - '@sd.worker.pluginfetcher'
-      - '@sd.worker.plugindeployer'
+      - '@sd.worker.pluginextractor'
   sd.command.fetch_plugin:
     class: sd\SwPluginManager\Command\FetchPluginCommand
     arguments:
@@ -58,8 +58,8 @@ services:
     arguments:
       - '@sd.repository.provider'
 
-  sd.worker.plugindeployer:
-    class: sd\SwPluginManager\Worker\PluginDeployer
+  sd.worker.pluginextractor:
+    class: sd\SwPluginManager\Worker\PluginExtractor
 
   sd.external.guzzle:
     class: GuzzleHttp\Client

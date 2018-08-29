@@ -8,7 +8,7 @@
 
 namespace sd\SwPluginManager\Command;
 
-use sd\SwPluginManager\Worker\PluginDeployer;
+use sd\SwPluginManager\Worker\PluginExtractor;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -78,7 +78,7 @@ class DeployZipCommand extends Command
         $pluginFolder = (string) $input->getOption('pluginfolder');
         $skipRefresh = (bool) $input->getOption('no-refresh');
 
-        $pluginDeployer = new PluginDeployer($shopRoot, $pluginFolder);
+        $pluginExtractor = new PluginExtractor($shopRoot, $pluginFolder);
 
         if (false === $shouldInstall && true === $shouldActivate) {
             throw new \RuntimeException('A plugin cannot be activated without being installed.');
@@ -89,7 +89,7 @@ class DeployZipCommand extends Command
             throw new \RuntimeException('No file could be found by the given file name: ' . $sourceFile);
         }
 
-        $pluginId = $pluginDeployer->deploy($sourceFile);
+        $pluginId = $pluginExtractor->extract($sourceFile);
 
         $output->writeln('<info>Plugin extracted successfully.</info>');
 

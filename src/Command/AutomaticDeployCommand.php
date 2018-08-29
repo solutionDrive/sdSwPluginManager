@@ -9,7 +9,7 @@
 namespace sd\SwPluginManager\Command;
 
 use sd\SwPluginManager\Repository\StateFileInterface;
-use sd\SwPluginManager\Worker\PluginDeployerInterface;
+use sd\SwPluginManager\Worker\PluginExtractorInterface;
 use sd\SwPluginManager\Worker\PluginFetcherInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -26,8 +26,8 @@ class AutomaticDeployCommand extends Command
     /** @var PluginFetcherInterface */
     private $pluginFetcher;
 
-    /** @var PluginDeployerInterface */
-    private $pluginDeployer;
+    /** @var PluginExtractorInterface */
+    private $pluginExtractor;
 
     /**
      * @param null|string $name
@@ -35,13 +35,13 @@ class AutomaticDeployCommand extends Command
     public function __construct(
         StateFileInterface $stateFile,
         PluginFetcherInterface $pluginFetcher,
-        PluginDeployerInterface $pluginDeployer,
+        PluginExtractorInterface $pluginExtractor,
         $name = null
     ) {
         parent::__construct($name);
         $this->stateFile = $stateFile;
         $this->pluginFetcher = $pluginFetcher;
-        $this->pluginDeployer = $pluginDeployer;
+        $this->pluginExtractor = $pluginExtractor;
     }
 
     // @TODO Add a --force -f flag to force download and deployment of configured plugins
@@ -82,7 +82,7 @@ class AutomaticDeployCommand extends Command
             // If no path was returned, it is assumed that the plugin is already in its destination path
             if (false === empty($downloadPath)) {
                 // @TODO Replace by own extract command
-                $this->pluginDeployer->deploy($downloadPath);
+                $this->pluginExtractor->extract($downloadPath);
             }
         }
 
