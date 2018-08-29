@@ -13,6 +13,12 @@ services:
     class: sd\SwPluginManager\Command\RefreshCommand
   sd.command.deploy_zip:
     class: sd\SwPluginManager\Command\DeployZipCommand
+  sd.command.automatic_deploy:
+    class: sd\SwPluginManager\Command\AutomaticDeployCommand
+    arguments:
+      - '@sd.repository.statefile'
+      - '@sd.worker.pluginfetcher'
+      - '@sd.worker.plugindeployer'
   sd.command.fetch_plugin:
     class: sd\SwPluginManager\Command\FetchPluginCommand
     arguments:
@@ -51,6 +57,9 @@ services:
     class: sd\SwPluginManager\Worker\PluginFetcher
     arguments:
       - '@sd.repository.provider'
+
+  sd.worker.plugindeployer:
+    class: sd\SwPluginManager\Worker\PluginDeployer
 
   sd.external.guzzle:
     class: GuzzleHttp\Client

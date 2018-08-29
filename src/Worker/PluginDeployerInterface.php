@@ -8,6 +8,7 @@
 
 namespace sd\SwPluginManager\Worker;
 
+// @TODO Rename to PluginExtractor as it does not deploy but only extract a plugin
 interface PluginDeployerInterface
 {
     /**
