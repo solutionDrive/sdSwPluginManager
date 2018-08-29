@@ -27,7 +27,7 @@ class AutomaticDeployCommand extends Command
     private $pluginFetcher;
 
     /** @var PluginExtractorInterface */
-    private $pluginDeployer;
+    private $pluginExtractor;
 
     /**
      * @param null|string $name
@@ -35,13 +35,13 @@ class AutomaticDeployCommand extends Command
     public function __construct(
         StateFileInterface $stateFile,
         PluginFetcherInterface $pluginFetcher,
-        PluginExtractorInterface $pluginDeployer,
+        PluginExtractorInterface $pluginExtractor,
         $name = null
     ) {
         parent::__construct($name);
         $this->stateFile = $stateFile;
         $this->pluginFetcher = $pluginFetcher;
-        $this->pluginDeployer = $pluginDeployer;
+        $this->pluginExtractor = $pluginExtractor;
     }
 
     // @TODO Add a --force -f flag to force download and deployment of configured plugins
@@ -82,7 +82,7 @@ class AutomaticDeployCommand extends Command
             // If no path was returned, it is assumed that the plugin is already in its destination path
             if (false === empty($downloadPath)) {
                 // @TODO Replace by own extract command
-                $this->pluginDeployer->extract($downloadPath);
+                $this->pluginExtractor->extract($downloadPath);
             }
         }
 

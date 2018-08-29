@@ -78,7 +78,7 @@ class DeployZipCommand extends Command
         $pluginFolder = (string) $input->getOption('pluginfolder');
         $skipRefresh = (bool) $input->getOption('no-refresh');
 
-        $pluginDeployer = new PluginExtractor($shopRoot, $pluginFolder);
+        $pluginExtractor = new PluginExtractor($shopRoot, $pluginFolder);
 
         if (false === $shouldInstall && true === $shouldActivate) {
             throw new \RuntimeException('A plugin cannot be activated without being installed.');
@@ -89,7 +89,7 @@ class DeployZipCommand extends Command
             throw new \RuntimeException('No file could be found by the given file name: ' . $sourceFile);
         }
 
-        $pluginId = $pluginDeployer->extract($sourceFile);
+        $pluginId = $pluginExtractor->extract($sourceFile);
 
         $output->writeln('<info>Plugin extracted successfully.</info>');
 
