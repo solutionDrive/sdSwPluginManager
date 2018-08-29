@@ -12,7 +12,7 @@ use sd\SwPluginManager\Exception\ZipFileCouldNotBeExtractedException;
 use sd\SwPluginManager\Exception\ZipFileCouldNotBeOpenedException;
 use ZipArchive;
 
-class PluginDeployer implements PluginDeployerInterface
+class PluginExtractor implements PluginExtractorInterface
 {
     /** @var string */
     private $targetShopwareRoot = '';
@@ -37,7 +37,7 @@ class PluginDeployer implements PluginDeployerInterface
     /**
      * {@inheritdoc}
      */
-    public function deploy($sourceFile)
+    public function extract($sourceFile)
     {
         $zipArchive = new ZipArchive();
         $openResult = $zipArchive->open($sourceFile);

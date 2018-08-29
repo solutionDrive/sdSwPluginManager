@@ -9,7 +9,7 @@
 namespace sd\SwPluginManager\Command;
 
 use sd\SwPluginManager\Repository\StateFileInterface;
-use sd\SwPluginManager\Worker\PluginDeployerInterface;
+use sd\SwPluginManager\Worker\PluginExtractorInterface;
 use sd\SwPluginManager\Worker\PluginFetcherInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -26,7 +26,7 @@ class AutomaticDeployCommand extends Command
     /** @var PluginFetcherInterface */
     private $pluginFetcher;
 
-    /** @var PluginDeployerInterface */
+    /** @var PluginExtractorInterface */
     private $pluginDeployer;
 
     /**
@@ -35,7 +35,7 @@ class AutomaticDeployCommand extends Command
     public function __construct(
         StateFileInterface $stateFile,
         PluginFetcherInterface $pluginFetcher,
-        PluginDeployerInterface $pluginDeployer,
+        PluginExtractorInterface $pluginDeployer,
         $name = null
     ) {
         parent::__construct($name);
@@ -82,7 +82,7 @@ class AutomaticDeployCommand extends Command
             // If no path was returned, it is assumed that the plugin is already in its destination path
             if (false === empty($downloadPath)) {
                 // @TODO Replace by own extract command
-                $this->pluginDeployer->deploy($downloadPath);
+                $this->pluginDeployer->extract($downloadPath);
             }
         }
 

@@ -9,10 +9,10 @@
 namespace spec\sd\SwPluginManager\Worker;
 
 use PhpSpec\ObjectBehavior;
-use sd\SwPluginManager\Worker\PluginDeployer;
-use sd\SwPluginManager\Worker\PluginDeployerInterface;
+use sd\SwPluginManager\Worker\PluginExtractor;
+use sd\SwPluginManager\Worker\PluginExtractorInterface;
 
-class PluginDeployerSpec extends ObjectBehavior
+class PluginExtractorSpec extends ObjectBehavior
 {
     public function let()
     {
@@ -21,12 +21,12 @@ class PluginDeployerSpec extends ObjectBehavior
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType(PluginDeployer::class);
+        $this->shouldHaveType(PluginExtractor::class);
     }
 
     public function it_implements_interface()
     {
-        $this->shouldImplement(PluginDeployerInterface::class);
+        $this->shouldImplement(PluginExtractorInterface::class);
     }
 
     // This won't be tested further as system calls like the zip operations cannot be mocked well.
