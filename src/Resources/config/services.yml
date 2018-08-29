@@ -13,7 +13,7 @@ services:
     class: sd\SwPluginManager\Command\RefreshCommand
   sd.command.deploy_zip:
     class: sd\SwPluginManager\Command\DeployZipCommand
-  sd.command.deploy.auto:
+  sd.command.automatic_deploy:
     class: sd\SwPluginManager\Command\AutomaticDeployCommand
     arguments:
       - '@sd.repository.statefile'
