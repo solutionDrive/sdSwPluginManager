@@ -24,8 +24,11 @@ class FetchPluginCommand extends Command
     /** @var StateFileInterface */
     private $stateFile;
 
-    public function __construct(StateFileInterface $stateFile, PluginFetcherInterface $pluginFetcher, $name = null)
-    {
+    public function __construct(
+        StateFileInterface $stateFile,
+        PluginFetcherInterface $pluginFetcher,
+        $name = null
+    ) {
         parent::__construct($name);
         $this->pluginFetcher = $pluginFetcher;
         $this->stateFile = $stateFile;
