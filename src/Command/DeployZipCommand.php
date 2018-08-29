@@ -17,6 +17,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+// @TODO Add command to only extract plugin zip
+
 // @TODO change to ContainerAwareCommand and remove constructors here
 class DeployZipCommand extends Command
 {
