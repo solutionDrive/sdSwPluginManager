@@ -51,6 +51,13 @@ class AutomaticDeployCommand extends Command
     {
         $this
             ->setName('sd:plugins:deploy:auto')
+            ->addOption(
+                'env',
+                'e',
+                InputOption::VALUE_REQUIRED,
+                'The current environment to use for plugin filtering',
+                'production'
+            )
             ->addArgument(
                 'statefile',
                 InputArgument::REQUIRED,
@@ -76,6 +83,8 @@ class AutomaticDeployCommand extends Command
 
         // Extract plugins
         foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
+            // @TODO Check for environment
+
             // Download the plugin and get the path
             $downloadPath = $this->pluginFetcher->fetch($configuredPluginState);
 
