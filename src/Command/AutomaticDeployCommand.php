@@ -69,6 +69,7 @@ class AutomaticDeployCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $environment = $input->getOption('env');
         $yamlStateFilePath = $input->getArgument('statefile');
         if (false === is_readable($yamlStateFilePath)) {
             throw new \RuntimeException(
@@ -83,7 +84,10 @@ class AutomaticDeployCommand extends Command
 
         // Extract plugins
         foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
-            // @TODO Check for environment
+            // Skip if plugin should not be installed in the current environment
+            if ($this->skipPluginByEnviroment($environment, $configuredPluginState->getEnvironments())) {
+                continue;
+            }
 
             // Download the plugin and get the path
             $downloadPath = $this->pluginFetcher->fetch($configuredPluginState);
@@ -107,6 +111,11 @@ class AutomaticDeployCommand extends Command
 
         // And now install and activate all plugins (if configured)
         foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
+            // Skip if plugin should not be installed in the current environment
+            if ($this->skipPluginByEnviroment($environment, $configuredPluginState->getEnvironments())) {
+                continue;
+            }
+
             if ($configuredPluginState->isInstalled()) {
                 $input = new ArrayInput([
                     'command' => 'sd:plugins:install',
@@ -133,5 +142,12 @@ class AutomaticDeployCommand extends Command
 
         $output->writeln('<info>Done. Now you should clear all caches.</info>');
         return 0;
+    }
+
+    private function skipPluginByEnviroment($currentEnvironment, array $targetEnvironments)
+    {
+        return
+            false === empty($targetEnvironments) &&
+            false === in_array($currentEnvironment, $targetEnvironments);
     }
 }
