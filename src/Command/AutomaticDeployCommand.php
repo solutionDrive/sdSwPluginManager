@@ -14,6 +14,7 @@ use sd\SwPluginManager\Worker\PluginFetcherInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,9 +52,15 @@ class AutomaticDeployCommand extends Command
         $this
             ->setName('sd:plugins:deploy:auto')
             ->addOption(
-                'statefile',
-                's',
+                'env',
+                'e',
                 InputOption::VALUE_REQUIRED,
+                'The current environment to use for plugin filtering',
+                'production'
+            )
+            ->addArgument(
+                'statefile',
+                InputArgument::REQUIRED,
                 'Path to the statefile where the plugins are listed.'
             )
             ->setDescription('Deploys all configured plugins into their given state.')
@@ -62,7 +69,8 @@ class AutomaticDeployCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $yamlStateFilePath = $input->getOption('statefile');
+        $environment = $input->getOption('env');
+        $yamlStateFilePath = $input->getArgument('statefile');
         if (false === is_readable($yamlStateFilePath)) {
             throw new \RuntimeException(
                 "The given statefile  $yamlStateFilePath  was not found or is not readable."
@@ -76,6 +84,11 @@ class AutomaticDeployCommand extends Command
 
         // Extract plugins
         foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
+            // Skip if plugin should not be installed in the current environment
+            if ($this->skipPluginByEnviroment($environment, $configuredPluginState->getEnvironments())) {
+                continue;
+            }
+
             // Download the plugin and get the path
             $downloadPath = $this->pluginFetcher->fetch($configuredPluginState);
 
@@ -98,6 +111,11 @@ class AutomaticDeployCommand extends Command
 
         // And now install and activate all plugins (if configured)
         foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
+            // Skip if plugin should not be installed in the current environment
+            if ($this->skipPluginByEnviroment($environment, $configuredPluginState->getEnvironments())) {
+                continue;
+            }
+
             if ($configuredPluginState->isInstalled()) {
                 $input = new ArrayInput([
                     'command' => 'sd:plugins:install',
@@ -124,5 +142,12 @@ class AutomaticDeployCommand extends Command
 
         $output->writeln('<info>Done. Now you should clear all caches.</info>');
         return 0;
+    }
+
+    private function skipPluginByEnviroment($currentEnvironment, array $targetEnvironments)
+    {
+        return
+            false === empty($targetEnvironments) &&
+            false === in_array($currentEnvironment, $targetEnvironments);
     }
 }
