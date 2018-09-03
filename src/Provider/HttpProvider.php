@@ -26,7 +26,7 @@ class HttpProvider implements ProviderInterface
     public function loadFile($parameters)
     {
         if (true === empty($parameters['src'])) {
-            throw new \RuntimeException('src must not be empty for FilesystemProvider.');
+            throw new \RuntimeException('src must not be empty for HttpProvider.');
         }
 
         $auth = null;
