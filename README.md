@@ -37,7 +37,7 @@ Then this package manager will ensure that the shop contains **exactly** the spe
 
 You can see an example for such a configuration in ```etc/examples/example_config.yml```.
 
-    bin/sd-plugin-manager sd:plugins:deploy:auto --statefile=etc/examples/example_config.yml
+    bin/sd-plugin-manager sd:plugins:deploy:auto --env=dev etc/examples/example_config.yml
 
 
 License
