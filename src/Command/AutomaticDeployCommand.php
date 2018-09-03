@@ -137,8 +137,10 @@ class AutomaticDeployCommand extends Command
         //  * Get all plugins from Shopware console
         //  * Compare with statefile
         //  * Load and extract only plugins that are missing
+        //    + provide a "clean mode": plugin files(!) will first be deleted and then newly extracted
         //  * Activate and Install the plugins as configured
         //  * Warn/Fail if there are too much plugins in shop (i.e. other than in statefile)
+        //  * If an older version of plugin was already installed, do a 'local update' (only from frontend up to now)
 
         $output->writeln('<info>Done. Now you should clear all caches.</info>');
         return 0;
