@@ -18,7 +18,7 @@ $containerBuilder->addCompilerPass(new PluginProviderPass());
 $yamlConfigLoader = new YamlFileLoader($containerBuilder, new FileLocator(__DIR__ . '/../src'));
 $yamlConfigLoader->load('Resources/config/services.yml');
 
-$containerBuilder->compile();
+$containerBuilder->compile(true);
 
 // Initialize CLI application
 $application = new Application();

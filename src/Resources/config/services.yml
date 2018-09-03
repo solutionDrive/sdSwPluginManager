@@ -1,3 +1,8 @@
+parameters:
+  env(PLUGIN_AWS_DEFAULT_REGION): 'eu-central-1'
+  env(PLUGIN_RELEASES_BUCKET): 'sd-applications-releases'
+  env(PLUGIN_RELEASES_BUCKET_BASEPATH): 'releases'
+
 services:
   sd.command.activate:
     class: sd\SwPluginManager\Command\ActivateCommand
@@ -29,6 +34,10 @@ services:
     class: sd\SwPluginManager\Factory\ConfiguredPluginStateFactory
   sd.factory.deployedpluginstate:
     class: sd\SwPluginManager\Factory\DeployedPluginStateFactory
+  sd.factory.s3client:
+    class: sd\SwPluginManager\Factory\S3ClientFactory
+    arguments:
+      - '%env(PLUGIN_AWS_DEFAULT_REGION)%'
 
   sd.repository.deployedplugin:
     class: sd\SwPluginManager\Repository\DeployedPluginRepository
@@ -52,6 +61,13 @@ services:
     tags: ['sd.plugin.provider']
     arguments:
       - '@sd.external.guzzle'
+  sd.provider.s3:
+    class: sd\SwPluginManager\Provider\S3Provider
+    tags: ['sd.plugin.provider']
+    arguments:
+      - '@sd.factory.s3client'
+      - '%env(PLUGIN_RELEASES_BUCKET)%'
+      - '%env(PLUGIN_RELEASES_BUCKET_BASEPATH)%'
 
   sd.worker.pluginfetcher:
     class: sd\SwPluginManager\Worker\PluginFetcher

@@ -29,6 +29,20 @@ plugins:
     env:
       - dev
 
+  # This will download the release zip from s3://some-s3-bucket-identifier/releases/public/DevTools-master.zip .
+  # For providing credentials see:
+  #  https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials.html#default-credential-chain
+  DevTools:
+    provider: s3
+    version: 1.1.1
+    providerParameters:
+      src: DevTools-master.zip          # Filename inside bucket relative to basePath
+      bucket: some-s3-bucket-identifier # The AWS S3 bucket to use (global identifier)
+      basePath: releases/public         # Base path inside bucket
+      profile: appProfile1              # Choose credentials profile from ~/.aws/credentials
+    env:
+      - dev
+
   # You can list Shopware's integrated plugins like this.
   # An error is thrown if it does not exist, but it won't be installed if it isn't there.
   # By providing 'null' ( ~ character ) as version the version check can be skipped.
