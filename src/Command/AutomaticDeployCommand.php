@@ -126,7 +126,7 @@ class AutomaticDeployCommand extends Command
                 // Try to uninstall
                 $input = new ArrayInput([
                     'command' => 'sd:plugins:uninstall',
-                    '--secure' => null,
+                    '--secure' => true,
                     'pluginId' => $configuredPluginState->getId(),
                 ]);
                 $app->run($input, $output);
@@ -142,7 +142,7 @@ class AutomaticDeployCommand extends Command
                 // Try to unactivate
                 $input = new ArrayInput([
                     'command' => 'sd:plugins:deactivate',
-                    '--secure' => null,
+                    '--secure' => true,
                     'pluginId' => $configuredPluginState->getId(),
                 ]);
                 $app->run($input, $output);
