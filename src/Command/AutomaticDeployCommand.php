@@ -122,6 +122,14 @@ class AutomaticDeployCommand extends Command
                     'pluginId' => $configuredPluginState->getId(),
                 ]);
                 $app->run($input, $output);
+            } else {
+                // Try to uninstall
+                $input = new ArrayInput([
+                    'command' => 'sd:plugins:uninstall',
+                    '--secure' => null,
+                    'pluginId' => $configuredPluginState->getId(),
+                ]);
+                $app->run($input, $output);
             }
 
             if ($configuredPluginState->isActivated()) {
@@ -130,15 +138,22 @@ class AutomaticDeployCommand extends Command
                     'pluginId' => $configuredPluginState->getId(),
                 ]);
                 $app->run($input, $output);
+            } else {
+                // Try to unactivate
+                $input = new ArrayInput([
+                    'command' => 'sd:plugins:deactivate',
+                    '--secure' => null,
+                    'pluginId' => $configuredPluginState->getId(),
+                ]);
+                $app->run($input, $output);
             }
         }
 
         // @TODO For later versions:
         //  * Get all plugins from Shopware console
-        //  * Compare with statefile
+        //  * Compare with statefile (AND REMOVE uninstall AND deactivate STEPS HERE AS THEY ARE CRAP!)
         //  * Load and extract only plugins that are missing
         //    + provide a "clean mode": plugin files(!) will first be deleted and then newly extracted
-        //  * Activate and Install the plugins as configured
         //  * Warn/Fail if there are too much plugins in shop (i.e. other than in statefile)
         //  * If an older version of plugin was already installed, do a 'local update' (only from frontend up to now)
 
