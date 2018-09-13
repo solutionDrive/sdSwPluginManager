@@ -142,7 +142,6 @@ class AutomaticDeployCommand extends Command
                 // Try to unactivate
                 $input = new ArrayInput([
                     'command' => 'sd:plugins:deactivate',
-                    '--secure' => true,
                     'pluginId' => $configuredPluginState->getId(),
                 ]);
                 $app->run($input, $output);
