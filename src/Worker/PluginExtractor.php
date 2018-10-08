@@ -89,6 +89,8 @@ class PluginExtractor implements PluginExtractorInterface
 
     /**
      * @param string $folderName Name of the folder to decide if the should extract to legacy path
+     *
+     * @return bool
      */
     private function isLegacyPlugin($folderName)
     {
