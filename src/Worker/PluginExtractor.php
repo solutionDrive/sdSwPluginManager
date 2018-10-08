@@ -27,7 +27,7 @@ class PluginExtractor implements PluginExtractorInterface
     private $legacyPluginRootFolders = [
         'Backend',
         'Core',
-        'Frontend'
+        'Frontend',
     ];
 
     /**
@@ -84,6 +84,7 @@ class PluginExtractor implements PluginExtractorInterface
         if (true === $this->isLegacyPlugin($folderName)) {
             return $this->targetShopwareRoot . DIRECTORY_SEPARATOR . $this->legacyPluginFolder;
         }
+
         return $this->targetShopwareRoot . DIRECTORY_SEPARATOR . $this->pluginFolder;
     }
 
