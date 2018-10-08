@@ -23,6 +23,13 @@ class PluginExtractor implements PluginExtractorInterface
     /** @var string */
     private $legacyPluginFolder = '';
 
+    /** @var string[] Folders which will be used to decide if it is a legacy plugin */
+    private $legacyPluginRootFolders = [
+        'Backend',
+        'Core',
+        'Frontend'
+    ];
+
     /**
      * @param string $targetShopwareRoot root path to shopware installation where the plugin should be installed
      * @param string $pluginFolder       path to plugins inside the shop directory
@@ -56,7 +63,7 @@ class PluginExtractor implements PluginExtractorInterface
         // @TODO Verify that this works with lots of plugins (but it should...)
         $stat = $zipArchive->statIndex(0);
         $folderName = trim($stat['name'], '/');
-        $extractToPath = $this->getExtractToPath();
+        $extractToPath = $this->getExtractToPath($folderName);
 
         $extractResult = $zipArchive->extractTo($extractToPath);
         if (false === $extractResult) {
@@ -68,10 +75,23 @@ class PluginExtractor implements PluginExtractorInterface
     }
 
     /**
+     * @param string $folderName Name of the folder to decide if the should extract to legacy path
+     *
      * @return string
      */
-    private function getExtractToPath()
+    private function getExtractToPath($folderName)
     {
+        if (true === $this->isLegacyPlugin($folderName)) {
+            return $this->targetShopwareRoot . DIRECTORY_SEPARATOR . $this->legacyPluginFolder;
+        }
         return $this->targetShopwareRoot . DIRECTORY_SEPARATOR . $this->pluginFolder;
+    }
+
+    /**
+     * @param string $folderName Name of the folder to decide if the should extract to legacy path
+     */
+    private function isLegacyPlugin($folderName)
+    {
+        return in_array($folderName, $this->legacyPluginRootFolders, false);
     }
 }
