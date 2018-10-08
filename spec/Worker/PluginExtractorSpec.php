@@ -16,7 +16,13 @@ class PluginExtractorSpec extends ObjectBehavior
 {
     public function let()
     {
-        $this->beConstructedWith('/tmp/test/path', 'custom/plugins');
+        $targetShopwareRoot = '/tmp/test/path';
+        $pluginFolder = 'custom/plugins';
+
+        $this->beConstructedWith(
+            $targetShopwareRoot,
+            $pluginFolder
+        );
     }
 
     public function it_is_initializable()
