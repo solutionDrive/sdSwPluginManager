@@ -56,13 +56,22 @@ class PluginExtractor implements PluginExtractorInterface
         // @TODO Verify that this works with lots of plugins (but it should...)
         $stat = $zipArchive->statIndex(0);
         $folderName = trim($stat['name'], '/');
+        $extractToPath = $this->getExtractToPath();
 
-        $extractResult = $zipArchive->extractTo($this->targetShopwareRoot . DIRECTORY_SEPARATOR . $this->pluginFolder);
+        $extractResult = $zipArchive->extractTo($extractToPath);
         if (false === $extractResult) {
             throw new ZipFileCouldNotBeExtractedException($sourceFile);
         }
 
         $zipArchive->close();
         return $folderName;
+    }
+
+    /**
+     * @return string
+     */
+    private function getExtractToPath()
+    {
+        return $this->targetShopwareRoot . DIRECTORY_SEPARATOR . $this->pluginFolder;
     }
 }
