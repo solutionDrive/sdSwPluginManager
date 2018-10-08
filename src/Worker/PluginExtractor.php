@@ -33,6 +33,7 @@ class PluginExtractor implements PluginExtractorInterface
     /**
      * @param string $targetShopwareRoot root path to shopware installation where the plugin should be installed
      * @param string $pluginFolder       path to plugins inside the shop directory
+     * @param string $legacyPluginFolder path to legacy plugins inside the shop directory
      */
     public function __construct(
         $targetShopwareRoot = '.',
