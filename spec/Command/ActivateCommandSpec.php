@@ -1,10 +1,15 @@
 <?php
 
+/*
+ * Created by solutionDrive GmbH
+ *
+ * @copyright 2018 solutionDrive GmbH
+ */
+
 namespace spec\sd\SwPluginManager\Command;
 
-use sd\SwPluginManager\Command\ActivateCommand;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
+use sd\SwPluginManager\Command\ActivateCommand;
 
 class ActivateCommandSpec extends ObjectBehavior
 {

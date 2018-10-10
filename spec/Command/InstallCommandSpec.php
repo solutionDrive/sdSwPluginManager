@@ -1,10 +1,15 @@
 <?php
 
+/*
+ * Created by solutionDrive GmbH
+ *
+ * @copyright 2018 solutionDrive GmbH
+ */
+
 namespace spec\sd\SwPluginManager\Command;
 
-use sd\SwPluginManager\Command\InstallCommand;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
+use sd\SwPluginManager\Command\InstallCommand;
 
 class InstallCommandSpec extends ObjectBehavior
 {
