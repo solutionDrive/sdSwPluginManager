@@ -39,6 +39,30 @@ You can see an example for such a configuration in ```etc/examples/example_confi
 
     bin/sd-plugin-manager sd:plugins:deploy:auto --env=dev etc/examples/example_config.yml
 
+Develop
+-------
+
+To create the phar, you need to install ```kherge/box``` globally:
+(The global composer bin path needs to be available in $PATH)
+
+    composer global require kherge/box
+
+Install the dependencies
+
+    composer install --optimize-autoloader -n
+
+Create the phar file
+
+    box build -c box.json
+    
+Perhaps it is necessary to allow php to create a phar
+
+    php -d phar.readonly=0 ~/.composer/vendor/bin/box build -c box.json
+
+The newly created phar file can be used just like this:
+
+    build/sd-sw-plugin-manager.phar --help
+
 
 License
 -------
