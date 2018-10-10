@@ -8,7 +8,7 @@ use Prophecy\Argument;
 
 class DeployZipCommandSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(DeployZipCommand::class);
     }
