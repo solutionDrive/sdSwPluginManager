@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace sd\SwPluginManager\Provider;
 
+/**
+ * This provider is heavily inspired by https://github.com/shyim/store-plugin-installer
+ */
 class StoreApiProvider implements ProviderInterface
 {
     public function loadFile($parameters)
