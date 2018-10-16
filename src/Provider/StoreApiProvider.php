@@ -16,7 +16,14 @@ class StoreApiProvider implements ProviderInterface
 {
     public function loadFile($parameters)
     {
-        throw new \RuntimeException('Not yet implemented');
+        $user = getenv('SHOPWARE_ACCOUNT_USER');
+        if (false === $user || '' === trim($user)) {
+            throw new \RuntimeException('Environment variable "SHOPWARE_ACCOUNT_USER" should be available');
+        }
+        $password = getenv('SHOPWARE_ACCOUNT_PASSWORD');
+        if (false === $password || '' === trim($password)) {
+            throw new \RuntimeException('Environment variable "SHOPWARE_ACCOUNT_PASSWORD" should be available');
+        }
     }
 
     public function supports($providerName)

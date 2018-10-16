@@ -15,6 +15,9 @@ use sd\SwPluginManager\Provider\StoreApiProvider;
 
 class StoreApiProviderSpec extends ObjectBehavior
 {
+    const SHOPWARE_ACCOUNT_USER = 'NotExistingShopwareAccount';
+    const SHOPWARE_ACCOUNT_PASSWORD = 'SuperSecurePassword';
+
     public function it_is_initializable()
     {
         $this->shouldHaveType(StoreApiProvider::class);
@@ -23,6 +26,21 @@ class StoreApiProviderSpec extends ObjectBehavior
     public function it_is_a_provider()
     {
         $this->shouldImplement(ProviderInterface::class);
+    }
+
+    public function let()
+    {
+        // Resets environment variables on every run
+        putenv('SHOPWARE_ACCOUNT_USER=');
+        putenv('SHOPWARE_ACCOUNT_PASSWORD=');
+    }
+
+    public function it_can_load_a_plugin_with_correct_credentials()
+    {
+        putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
+        putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
+
+        $this->shouldNotThrow(\RuntimeException::class)->during('loadFile', [[]]);
     }
 
     public function it_cannot_connect_to_store_api_without_credentials()
