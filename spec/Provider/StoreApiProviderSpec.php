@@ -25,6 +25,11 @@ class StoreApiProviderSpec extends ObjectBehavior
         $this->shouldImplement(ProviderInterface::class);
     }
 
+    public function it_cannot_connect_to_store_api_without_credentials()
+    {
+        $this->shouldThrow(\RuntimeException::class)->during('loadFile', [[]]);
+    }
+
     public function it_supports()
     {
         $this->supports('http')->shouldReturn(false);

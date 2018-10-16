@@ -16,7 +16,7 @@ class StoreApiProvider implements ProviderInterface
 {
     public function loadFile($parameters)
     {
-        // TODO: Implement loadFile() method.
+        throw new \RuntimeException('Not yet implemented');
     }
 
     public function supports($providerName)
