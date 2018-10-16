@@ -8,6 +8,7 @@
 
 namespace spec\sd\SwPluginManager\Provider;
 
+use GuzzleHttp\Client;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use sd\SwPluginManager\Provider\ProviderInterface;
@@ -28,8 +29,13 @@ class StoreApiProviderSpec extends ObjectBehavior
         $this->shouldImplement(ProviderInterface::class);
     }
 
-    public function let()
-    {
+    public function let(
+        Client $guzzleClient
+    ) {
+        $this->beConstructedWith(
+            $guzzleClient
+        );
+
         // Resets environment variables on every run
         putenv('SHOPWARE_ACCOUNT_USER=');
         putenv('SHOPWARE_ACCOUNT_PASSWORD=');

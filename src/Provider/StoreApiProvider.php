@@ -9,11 +9,21 @@ declare(strict_types=1);
 
 namespace sd\SwPluginManager\Provider;
 
+use GuzzleHttp\Client;
+
 /**
  * This provider is heavily inspired by https://github.com/shyim/store-plugin-installer
  */
 class StoreApiProvider implements ProviderInterface
 {
+    /** @var Client */
+    private $guzzleClient;
+
+    public function __construct(Client $guzzleClient)
+    {
+        $this->guzzleClient = $guzzleClient;
+    }
+
     public function loadFile($parameters)
     {
         $user = getenv('SHOPWARE_ACCOUNT_USER');
