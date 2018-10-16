@@ -9,6 +9,8 @@
 namespace spec\sd\SwPluginManager\Provider;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\RequestOptions;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use sd\SwPluginManager\Provider\ProviderInterface;
@@ -16,6 +18,8 @@ use sd\SwPluginManager\Provider\StoreApiProvider;
 
 class StoreApiProviderSpec extends ObjectBehavior
 {
+    const BASE_URL = 'https://api.shopware.com';
+
     const SHOPWARE_ACCOUNT_USER = 'NotExistingShopwareAccount';
     const SHOPWARE_ACCOUNT_PASSWORD = 'SuperSecurePassword';
 
@@ -41,10 +45,27 @@ class StoreApiProviderSpec extends ObjectBehavior
         putenv('SHOPWARE_ACCOUNT_PASSWORD=');
     }
 
-    public function it_can_load_a_plugin_with_correct_credentials()
-    {
+    public function it_can_load_a_plugin_with_correct_credentials(
+        Client $guzzleClient,
+        Response $accessTokenResponse
+    ) {
         putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
         putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
+
+        $guzzleClient->post(
+            self::BASE_URL . '/accesstokens',
+            [
+                RequestOptions::JSON => [
+                    'shopwareId'    => self::SHOPWARE_ACCOUNT_USER,
+                    'password'      => self::SHOPWARE_ACCOUNT_PASSWORD
+                ]
+            ]
+        )
+        ->shouldBeCalled()
+        ->willReturn($accessTokenResponse);
+
+        $accessTokenResponse->getStatusCode()
+            ->willReturn(200);
 
         $this->shouldNotThrow(\RuntimeException::class)->during('loadFile', [[]]);
     }

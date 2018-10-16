@@ -10,12 +10,15 @@ declare(strict_types=1);
 namespace sd\SwPluginManager\Provider;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 
 /**
  * This provider is heavily inspired by https://github.com/shyim/store-plugin-installer
  */
 class StoreApiProvider implements ProviderInterface
 {
+    const BASE_URL = 'https://api.shopware.com';
+
     /** @var Client */
     private $guzzleClient;
 
@@ -34,6 +37,16 @@ class StoreApiProvider implements ProviderInterface
         if (false === $password || '' === trim($password)) {
             throw new \RuntimeException('Environment variable "SHOPWARE_ACCOUNT_PASSWORD" should be available');
         }
+
+        $accessTokenResponse = $this->guzzleClient->post(
+            self::BASE_URL . '/accesstokens',
+            [
+                RequestOptions::JSON => [
+                    'shopwareId'    => $user,
+                    'password'      => $password
+                ],
+            ]
+        );
     }
 
     public function supports($providerName)
