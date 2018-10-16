@@ -24,4 +24,16 @@ class StoreApiProviderSpec extends ObjectBehavior
     {
         $this->shouldImplement(ProviderInterface::class);
     }
+
+    public function it_supports()
+    {
+        $this->supports('http')->shouldReturn(false);
+        $this->supports('none')->shouldReturn(false);
+        $this->supports('other')->shouldReturn(false);
+        $this->supports('file')->shouldReturn(false);
+        $this->supports('tmp')->shouldReturn(false);
+        $this->supports('s3')->shouldReturn(false);
+
+        $this->supports('store_api')->shouldReturn(true);
+    }
 }

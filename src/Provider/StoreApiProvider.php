@@ -21,6 +21,6 @@ class StoreApiProvider implements ProviderInterface
 
     public function supports($providerName)
     {
-        // TODO: Implement supports() method.
+        return 'store_api' === $providerName;
     }
 }
