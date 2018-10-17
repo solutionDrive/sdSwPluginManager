@@ -24,6 +24,7 @@ class StoreApiProviderSpec extends ObjectBehavior
 
     const SHOPWARE_ACCOUNT_USER = 'NotExistingShopwareAccount';
     const SHOPWARE_ACCOUNT_PASSWORD = 'SuperSecurePassword';
+    const SHOPWARE_SHOP_DOMAIN = 'example.org';
 
     public function it_is_initializable()
     {
@@ -47,6 +48,7 @@ class StoreApiProviderSpec extends ObjectBehavior
         // Resets environment variables on every run
         putenv('SHOPWARE_ACCOUNT_USER=');
         putenv('SHOPWARE_ACCOUNT_PASSWORD=');
+        putenv('SHOPWARE_SHOP_DOMAIN=');
     }
 
     public function it_can_load_a_plugin_with_correct_credentials(
@@ -59,10 +61,13 @@ class StoreApiProviderSpec extends ObjectBehavior
         Response $clientshopsResponse,
         StreamInterface $clientshopsStream,
         Response $shopsResponse,
-        StreamInterface $shopsStream
+        StreamInterface $shopsStream,
+        Response $licenseResponse,
+        StreamInterface $licenseStream
     ) {
         putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
         putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
+        putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
 
         // ACCESS TOKEN
         $guzzleClient->post(
@@ -172,7 +177,45 @@ class StoreApiProviderSpec extends ObjectBehavior
         $streamTranslator->translateToArray($shopsStream)
             ->willReturn($shopsData);
 
+        // GET ALL LICENSES
+        $guzzleClient->get(
+            self::BASE_URL . '/licenses?shopId=5&partnerId=12345',
+            [
+                RequestOptions::HEADERS => [
+                    'X-Shopware-Token'  => 'ABCDEF',
+                ]
+            ]
+        )
+        ->shouldBeCalled()
+        ->willReturn($licenseResponse);
+
+        $licenseResponse->getStatusCode()
+            ->willReturn(200);
+
+        $licenseResponse->getBody()
+            ->willReturn($licenseStream);
+
+        $licenseData = [
+            [
+                'plugin' => [
+                    'name' => 'awesomePlugin',
+                    'binaries' => [
+                        [
+                            'version' => '0.0.1'
+                        ],
+                        [
+                            'version' => '0.0.2'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $streamTranslator->translateToArray($licenseStream)
+            ->willReturn($licenseData);
+
         $this->shouldNotThrow(\RuntimeException::class)->during('loadFile', [[]]);
+        //$this->loadFile([]);
     }
 
     public function it_cannot_connect_to_store_api_without_credentials()

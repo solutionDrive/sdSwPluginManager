@@ -43,6 +43,10 @@ class StoreApiProvider implements ProviderInterface
         if (false === $password || '' === trim($password)) {
             throw new \RuntimeException('Environment variable "SHOPWARE_ACCOUNT_PASSWORD" should be available');
         }
+        $shopDomain = getenv('SHOPWARE_SHOP_DOMAIN');
+        if (false === $shopDomain || '' === trim($shopDomain)) {
+            throw new \RuntimeException('Environment variable "SHOPWARE_SHOP_DOMAIN" should be available');
+        }
 
         $accessTokenResponse = $this->guzzleClient->post(
             self::BASE_URL . '/accesstokens',
@@ -55,6 +59,7 @@ class StoreApiProvider implements ProviderInterface
         );
         if (200 === $accessTokenResponse->getStatusCode()) {
             $accessTokenData = $this->streamTranslator->translateToArray($accessTokenResponse->getBody());
+            $shops = [];
 
             $partnerResponse = $this->guzzleClient->get(
                 self::BASE_URL . '/partners/' . $accessTokenData['userId'],
@@ -77,6 +82,8 @@ class StoreApiProvider implements ProviderInterface
                             ],
                         ]
                     );
+
+                    $shops = array_merge($shops, $this->streamTranslator->translateToArray($clientshopsResponse->getBody()));
                 }
             }
 
@@ -90,7 +97,30 @@ class StoreApiProvider implements ProviderInterface
             );
 
             if (200 === $shopsResponse->getStatusCode()) {
-                $shopsData = $this->streamTranslator->translateToArray($shopsResponse->getBody());
+                $shops = array_merge($shops, $this->streamTranslator->translateToArray($shopsResponse->getBody()));
+            }
+
+            $shops = array_filter($shops, function($shop) use($shopDomain) {
+                return $shop['domain'] === $shopDomain || (substr($shop['domain'], 0, 1) === '.' && strpos($shop['domain'], $shopDomain) !== false);
+            });
+
+            if (count($shops) === 0) {
+                throw new \RuntimeException(sprintf('Shop with given domain "%s" does not exist!', $shopDomain));
+            }
+
+            $shop = array_values($shops)[0];
+
+            $licenseResponse = $this->guzzleClient->get(
+                self::BASE_URL . '/licenses?shopId=' . $shop['id'] . '&partnerId=' . $accessTokenData['userId'],
+                [
+                    RequestOptions::HEADERS => [
+                        'X-Shopware-Token'  => $accessTokenData['token'],
+                    ],
+                ]
+            );
+
+            if (200 === $licenseResponse->getStatusCode()) {
+                $licenses = $this->streamTranslator->translateToArray($licenseResponse->getBody());
             }
         }
     }
