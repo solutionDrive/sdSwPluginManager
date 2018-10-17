@@ -68,4 +68,19 @@ class ConfiguredPluginStateSpec extends ObjectBehavior
         $this->isInstalled()->shouldReturn(false);
         $this->getEnvironments()->shouldReturn([]);
     }
+
+    public function it_cannot_be_constructed_with_pluginId_as_parameter()
+    {
+        $this->shouldThrow(\RuntimeException::class)
+            ->during('__construct', [
+                'pluginId3',
+                'dummy3',
+                '1.33.7',
+                ['pluginId' => 'something'],
+                [],
+                true,
+                true
+            ]
+        );
+    }
 }
