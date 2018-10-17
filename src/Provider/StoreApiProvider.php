@@ -53,6 +53,16 @@ class StoreApiProvider implements ProviderInterface
                 ],
             ]
         );
+        if (200 === $accessTokenResponse->getStatusCode()) {
+            $accessTokenData = $this->streamTranslator->translateToArray($accessTokenResponse->getBody());
+
+            $partnerResponse = $this->guzzleClient->get(
+                self::BASE_URL . '/partners/' . $accessTokenData['userId'],
+                [
+                    'X-Shopware-Token'  => $accessTokenData['token'],
+                ]
+            );
+        }
     }
 
     public function supports($providerName)

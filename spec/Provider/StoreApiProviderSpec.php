@@ -13,6 +13,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Psr\Http\Message\StreamInterface;
 use sd\SwPluginManager\Provider\ProviderInterface;
 use sd\SwPluginManager\Provider\StoreApiProvider;
 use sd\SwPluginManager\Service\StreamTranslatorInterface;
@@ -50,7 +51,10 @@ class StoreApiProviderSpec extends ObjectBehavior
 
     public function it_can_load_a_plugin_with_correct_credentials(
         Client $guzzleClient,
-        Response $accessTokenResponse
+        StreamTranslatorInterface $streamTranslator,
+        Response $accessTokenResponse,
+        StreamInterface $stream,
+        Response $partnerResponse
     ) {
         putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
         putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
@@ -68,6 +72,29 @@ class StoreApiProviderSpec extends ObjectBehavior
         ->willReturn($accessTokenResponse);
 
         $accessTokenResponse->getStatusCode()
+            ->willReturn(200);
+
+        $accessTokenResponse->getBody()
+            ->willReturn($stream);
+
+        $data = [
+            'token'     => 'ABCDEF',
+            'userId'    => '12345'
+        ];
+
+        $streamTranslator->translateToArray($stream)
+            ->willReturn($data);
+
+        $guzzleClient->get(
+            self::BASE_URL . '/partners/12345',
+            [
+                'X-Shopware-Token'  => 'ABCDEF',
+            ]
+        )
+        ->shouldBeCalled()
+        ->willReturn($partnerResponse);
+
+        $partnerResponse->getStatusCode()
             ->willReturn(200);
 
         $this->shouldNotThrow(\RuntimeException::class)->during('loadFile', [[]]);
