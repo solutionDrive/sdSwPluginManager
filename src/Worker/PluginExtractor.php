@@ -31,8 +31,8 @@ class PluginExtractor implements PluginExtractorInterface
     ];
 
     /**
-     * @param string $targetShopwareRoot root path to shopware installation where the plugin should be installed
-     * @param string $pluginFolder       path to plugins inside the shop directory
+     * @param string   $targetShopwareRoot  root path to shopware installation where the plugin should be installed
+     * @param string   $pluginFolder        path to plugins inside the shop directory
      * @param string[] $legacyPluginFolders paths to legacy plugins inside the shop directory
      */
     public function __construct(
@@ -94,6 +94,7 @@ class PluginExtractor implements PluginExtractorInterface
                     return $baseShopwarePath . $legacyPluginFolder;
                 }
             }
+
             throw new \RuntimeException('Found a plugin with legacy structure, but no directory was available for installation. Checked directories: ' . implode(', ', $this->legacyPluginFolders));
         }
 
