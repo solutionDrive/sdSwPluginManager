@@ -40,6 +40,8 @@ class ConfiguredPluginState
         $activated = false,
         $installed = false
     ) {
+        $providerParameters['pluginId'] = $id;
+
         $this->id = $id;
         $this->provider = $provider;
         $this->version = $version;

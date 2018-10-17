@@ -33,7 +33,12 @@ class ConfiguredPluginStateSpec extends ObjectBehavior
         $this->getId()->shouldReturn('pluginId');
         $this->getProvider()->shouldReturn('dummy');
         $this->getVersion()->shouldReturn('1.2.3');
-        $this->getProviderParameters()->shouldReturn(['p1' => 'v1']);
+        $this->getProviderParameters()->shouldReturn(
+            [
+                'p1' => 'v1',
+                'pluginId' => 'pluginId'
+            ]
+        );
         $this->isActivated()->shouldReturn(true);
         $this->isInstalled()->shouldReturn(true);
         $this->getEnvironments()->shouldReturn(['dev', 'prod', 'crude']);
@@ -54,7 +59,11 @@ class ConfiguredPluginStateSpec extends ObjectBehavior
         $this->getId()->shouldReturn('pluginId2');
         $this->getProvider()->shouldReturn('dummy2');
         $this->getVersion()->shouldReturn('4');
-        $this->getProviderParameters()->shouldReturn([]);
+        $this->getProviderParameters()->shouldReturn(
+            [
+                'pluginId' => 'pluginId2'
+            ]
+        );
         $this->isActivated()->shouldReturn(false);
         $this->isInstalled()->shouldReturn(false);
         $this->getEnvironments()->shouldReturn([]);
