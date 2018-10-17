@@ -10,6 +10,7 @@ namespace sd\SwPluginManager\Provider;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use sd\SwPluginManager\Service\StreamTranslatorInterface;
 
 /**
  * This provider is heavily inspired by https://github.com/shyim/store-plugin-installer
@@ -21,9 +22,15 @@ class StoreApiProvider implements ProviderInterface
     /** @var Client */
     private $guzzleClient;
 
-    public function __construct(Client $guzzleClient)
-    {
+    /** @var StreamTranslatorInterface */
+    private $streamTranslator;
+
+    public function __construct(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator
+    ) {
         $this->guzzleClient = $guzzleClient;
+        $this->streamTranslator = $streamTranslator;
     }
 
     public function loadFile($parameters)

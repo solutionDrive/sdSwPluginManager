@@ -15,6 +15,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use sd\SwPluginManager\Provider\ProviderInterface;
 use sd\SwPluginManager\Provider\StoreApiProvider;
+use sd\SwPluginManager\Service\StreamTranslatorInterface;
 
 class StoreApiProviderSpec extends ObjectBehavior
 {
@@ -34,10 +35,12 @@ class StoreApiProviderSpec extends ObjectBehavior
     }
 
     public function let(
-        Client $guzzleClient
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator
     ) {
         $this->beConstructedWith(
-            $guzzleClient
+            $guzzleClient,
+            $streamTranslator
         );
 
         // Resets environment variables on every run
