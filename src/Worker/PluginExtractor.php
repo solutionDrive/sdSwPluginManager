@@ -20,8 +20,8 @@ class PluginExtractor implements PluginExtractorInterface
     /** @var string */
     private $pluginFolder = '';
 
-    /** @var string */
-    private $legacyPluginFolder = '';
+    /** @var string[] */
+    private $legacyPluginFolders = [];
 
     /** @var string[] Folders which will be used to decide if it is a legacy plugin */
     private $legacyPluginRootFolders = [
@@ -33,12 +33,15 @@ class PluginExtractor implements PluginExtractorInterface
     /**
      * @param string $targetShopwareRoot root path to shopware installation where the plugin should be installed
      * @param string $pluginFolder       path to plugins inside the shop directory
-     * @param string $legacyPluginFolder path to legacy plugins inside the shop directory
+     * @param string[] $legacyPluginFolders paths to legacy plugins inside the shop directory
      */
     public function __construct(
         $targetShopwareRoot = '.',
         $pluginFolder = 'custom/plugins',
-        $legacyPluginFolder = 'engine/Shopware/Plugins/Community'
+        $legacyPluginFolders = [
+            'engine/Shopware/Plugins/Community',
+            'custom/project',
+        ]
     ) {
         if ('.' === $targetShopwareRoot) {
             $targetShopwareRoot = getcwd();
@@ -46,7 +49,7 @@ class PluginExtractor implements PluginExtractorInterface
 
         $this->targetShopwareRoot = $targetShopwareRoot;
         $this->pluginFolder = $pluginFolder;
-        $this->legacyPluginFolder = $legacyPluginFolder;
+        $this->legacyPluginFolders = $legacyPluginFolders;
     }
 
     /**
@@ -76,21 +79,29 @@ class PluginExtractor implements PluginExtractorInterface
     }
 
     /**
-     * @param string $folderName Name of the folder to decide if the should extract to legacy path
+     * @param string $folderName Name of the folder to decide if it should be extracted to a legacy path
      *
      * @return string
+     *
+     * @throws \RuntimeException if there is no legacy path available
      */
     private function getExtractToPath($folderName)
     {
         if (true === $this->isLegacyPlugin($folderName)) {
-            return $this->targetShopwareRoot . DIRECTORY_SEPARATOR . $this->legacyPluginFolder;
+            $baseShopwarePath = $this->targetShopwareRoot . DIRECTORY_SEPARATOR;
+            foreach ($this->legacyPluginFolders as $legacyPluginFolder) {
+                if (is_dir($baseShopwarePath . $legacyPluginFolder)) {
+                    return $baseShopwarePath . $legacyPluginFolder;
+                }
+            }
+            throw new \RuntimeException('Found a plugin with legacy structure, but no directory was available for installation. Checked directories: ' . implode(', ', $this->legacyPluginFolders));
         }
 
         return $this->targetShopwareRoot . DIRECTORY_SEPARATOR . $this->pluginFolder;
     }
 
     /**
-     * @param string $folderName Name of the folder to decide if the should extract to legacy path
+     * @param string $folderName Name of the folder to decide if it should be extracted to a legacy path
      *
      * @return bool
      */
