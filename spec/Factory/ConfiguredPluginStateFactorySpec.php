@@ -52,7 +52,7 @@ class ConfiguredPluginStateFactorySpec extends ObjectBehavior
             'header' => [
                 'X-AUTH' => 'sudo you know me',
             ],
-            'pluginId' => $key
+            'pluginId' => $key,
         ]);
         $plugin->isActivated()->shouldReturn(false);
         $plugin->isInstalled()->shouldReturn(true);

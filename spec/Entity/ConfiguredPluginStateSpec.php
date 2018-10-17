@@ -36,7 +36,7 @@ class ConfiguredPluginStateSpec extends ObjectBehavior
         $this->getProviderParameters()->shouldReturn(
             [
                 'p1' => 'v1',
-                'pluginId' => 'pluginId'
+                'pluginId' => 'pluginId',
             ]
         );
         $this->isActivated()->shouldReturn(true);
@@ -61,7 +61,7 @@ class ConfiguredPluginStateSpec extends ObjectBehavior
         $this->getVersion()->shouldReturn('4');
         $this->getProviderParameters()->shouldReturn(
             [
-                'pluginId' => 'pluginId2'
+                'pluginId' => 'pluginId2',
             ]
         );
         $this->isActivated()->shouldReturn(false);
@@ -72,15 +72,17 @@ class ConfiguredPluginStateSpec extends ObjectBehavior
     public function it_cannot_be_constructed_with_pluginId_as_parameter()
     {
         $this->shouldThrow(\RuntimeException::class)
-            ->during('__construct', [
-                'pluginId3',
-                'dummy3',
-                '1.33.7',
-                ['pluginId' => 'something'],
-                [],
-                true,
-                true
-            ]
-        );
+            ->during(
+                '__construct',
+                [
+                    'pluginId3',
+                    'dummy3',
+                    '1.33.7',
+                    ['pluginId' => 'something'],
+                    [],
+                    true,
+                    true,
+                ]
+            );
     }
 }
