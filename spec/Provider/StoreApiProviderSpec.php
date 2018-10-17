@@ -57,11 +57,14 @@ class StoreApiProviderSpec extends ObjectBehavior
         Response $partnerResponse,
         StreamInterface $partnerStream,
         Response $clientshopsResponse,
-        StreamInterface $clientshopsStream
+        StreamInterface $clientshopsStream,
+        Response $shopsResponse,
+        StreamInterface $shopsStream
     ) {
         putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
         putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
 
+        // ACCESS TOKEN
         $guzzleClient->post(
             self::BASE_URL . '/accesstokens',
             [
@@ -88,6 +91,7 @@ class StoreApiProviderSpec extends ObjectBehavior
         $streamTranslator->translateToArray($accessCodeStream)
             ->willReturn($accessCodeData);
 
+        // CHECK FOR PARTNER ACCOUNT
         $guzzleClient->get(
             self::BASE_URL . '/partners/12345',
             [
@@ -112,6 +116,7 @@ class StoreApiProviderSpec extends ObjectBehavior
         $streamTranslator->translateToArray($partnerStream)
             ->willReturn($partnerData);
 
+        // GET ALL AVAILABLE PARTNER CLIENTSHOPS
         $guzzleClient->get(
             self::BASE_URL . '/partners/12345/clientshops',
             [
@@ -132,12 +137,40 @@ class StoreApiProviderSpec extends ObjectBehavior
         $clientshopData = [
             [
                 'id' => 1,
-                'domain' => 'example.com'
+                'domain' => 'example.com',
             ]
         ];
 
         $streamTranslator->translateToArray($clientshopsStream)
             ->willReturn($clientshopData);
+
+        // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
+        $guzzleClient->get(
+            self::BASE_URL . '/shops?userId=12345',
+            [
+                RequestOptions::HEADERS => [
+                    'X-Shopware-Token'  => 'ABCDEF',
+                ]
+            ]
+        )
+        ->shouldBeCalled()
+        ->willReturn($shopsResponse);
+
+        $shopsResponse->getStatusCode()
+            ->willReturn(200);
+
+        $shopsResponse->getBody()
+            ->willReturn($shopsStream);
+
+        $shopsData = [
+            [
+                'id' => 5,
+                'domain' => 'example.org',
+            ],
+        ];
+
+        $streamTranslator->translateToArray($shopsStream)
+            ->willReturn($shopsData);
 
         $this->shouldNotThrow(\RuntimeException::class)->during('loadFile', [[]]);
     }

@@ -79,6 +79,19 @@ class StoreApiProvider implements ProviderInterface
                     );
                 }
             }
+
+            $shopsResponse = $this->guzzleClient->get(
+                self::BASE_URL . '/shops?userId=' . $accessTokenData['userId'],
+                [
+                    RequestOptions::HEADERS => [
+                        'X-Shopware-Token'  => $accessTokenData['token'],
+                    ],
+                ]
+            );
+
+            if (200 === $shopsResponse->getStatusCode()) {
+                $shopsData = $this->streamTranslator->translateToArray($shopsResponse->getBody());
+            }
         }
     }
 
