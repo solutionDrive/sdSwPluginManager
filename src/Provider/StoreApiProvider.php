@@ -59,7 +59,9 @@ class StoreApiProvider implements ProviderInterface
             $partnerResponse = $this->guzzleClient->get(
                 self::BASE_URL . '/partners/' . $accessTokenData['userId'],
                 [
-                    'X-Shopware-Token'  => $accessTokenData['token'],
+                    RequestOptions::HEADERS => [
+                        'X-Shopware-Token'  => $accessTokenData['token'],
+                    ],
                 ]
             );
         }

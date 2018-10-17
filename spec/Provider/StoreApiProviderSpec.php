@@ -88,7 +88,9 @@ class StoreApiProviderSpec extends ObjectBehavior
         $guzzleClient->get(
             self::BASE_URL . '/partners/12345',
             [
-                'X-Shopware-Token'  => 'ABCDEF',
+                RequestOptions::HEADERS => [
+                    'X-Shopware-Token'  => 'ABCDEF',
+                ]
             ]
         )
         ->shouldBeCalled()
