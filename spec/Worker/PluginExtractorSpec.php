@@ -18,12 +18,15 @@ class PluginExtractorSpec extends ObjectBehavior
     {
         $targetShopwareRoot = '/tmp/test/path';
         $pluginFolder = 'custom/plugins';
-        $legacyPluginFolder = 'engine/Shopware/Plugins/Community';
+        $legacyPluginFolders = [
+            'engine/Shopware/Plugins/Community',
+            'custom/project',
+        ];
 
         $this->beConstructedWith(
             $targetShopwareRoot,
             $pluginFolder,
-            $legacyPluginFolder
+            $legacyPluginFolders
         );
     }
 
