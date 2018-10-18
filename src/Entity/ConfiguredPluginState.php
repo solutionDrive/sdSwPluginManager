@@ -40,6 +40,12 @@ class ConfiguredPluginState
         $activated = false,
         $installed = false
     ) {
+        if (true === isset($providerParameters['pluginId'])) {
+            throw new \RuntimeException('The parameter "pluginId" is reserved and cannot be used. It will be filled automatically with the pluginId');
+        }
+
+        $providerParameters['pluginId'] = $id;
+
         $this->id = $id;
         $this->provider = $provider;
         $this->version = $version;
