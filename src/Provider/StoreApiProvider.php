@@ -157,6 +157,8 @@ class StoreApiProvider implements ProviderInterface
                         RequestOptions::SINK => $tmpName
                     ]
                 );
+
+                return $tmpName;
             }
         }
     }
