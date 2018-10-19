@@ -12,7 +12,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 use Psr\Http\Message\StreamInterface;
 use sd\SwPluginManager\Provider\ProviderInterface;
 use sd\SwPluginManager\Provider\StoreApiProvider;
@@ -76,8 +75,8 @@ class StoreApiProviderSpec extends ObjectBehavior
             [
                 RequestOptions::JSON => [
                     'shopwareId'    => self::SHOPWARE_ACCOUNT_USER,
-                    'password'      => self::SHOPWARE_ACCOUNT_PASSWORD
-                ]
+                    'password'      => self::SHOPWARE_ACCOUNT_PASSWORD,
+                ],
             ]
         )
         ->shouldBeCalled()
@@ -91,7 +90,7 @@ class StoreApiProviderSpec extends ObjectBehavior
 
         $accessCodeData = [
             'token'     => 'ABCDEF',
-            'userId'    => '12345'
+            'userId'    => '12345',
         ];
 
         $streamTranslator->translateToArray($accessCodeStream)
@@ -103,7 +102,7 @@ class StoreApiProviderSpec extends ObjectBehavior
             [
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token'  => 'ABCDEF',
-                ]
+                ],
             ]
         )
         ->shouldBeCalled()
@@ -128,7 +127,7 @@ class StoreApiProviderSpec extends ObjectBehavior
             [
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token'  => 'ABCDEF',
-                ]
+                ],
             ]
         )
         ->shouldBeCalled()
@@ -144,7 +143,7 @@ class StoreApiProviderSpec extends ObjectBehavior
             [
                 'id' => 1,
                 'domain' => 'example.com',
-            ]
+            ],
         ];
 
         $streamTranslator->translateToArray($clientshopsStream)
@@ -156,7 +155,7 @@ class StoreApiProviderSpec extends ObjectBehavior
             [
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token'  => 'ABCDEF',
-                ]
+                ],
             ]
         )
         ->shouldBeCalled()
@@ -184,7 +183,7 @@ class StoreApiProviderSpec extends ObjectBehavior
             [
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token'  => 'ABCDEF',
-                ]
+                ],
             ]
         )
         ->shouldBeCalled()
@@ -208,10 +207,10 @@ class StoreApiProviderSpec extends ObjectBehavior
                         [
                             'version' => '0.0.2',
                             'filePath' => '/plugin0.0.2',
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $streamTranslator->translateToArray($licenseStream)
@@ -223,7 +222,7 @@ class StoreApiProviderSpec extends ObjectBehavior
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token'  => 'ABCDEF',
                 ],
-                RequestOptions::SINK => '/tmp/sw-plugin-awesomePlugin0.0.2'
+                RequestOptions::SINK => '/tmp/sw-plugin-awesomePlugin0.0.2',
             ]
         )
         ->shouldBeCalled()
@@ -232,7 +231,7 @@ class StoreApiProviderSpec extends ObjectBehavior
         $this->loadFile(
             [
                 'pluginId' => 'awesomePlugin',
-                'version'  => '0.0.2'
+                'version'  => '0.0.2',
             ]
         );
     }

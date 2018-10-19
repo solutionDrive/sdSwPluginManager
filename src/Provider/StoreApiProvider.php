@@ -40,14 +40,17 @@ class StoreApiProvider implements ProviderInterface
         if (false === $user || '' === trim($user)) {
             throw new \RuntimeException('Environment variable "SHOPWARE_ACCOUNT_USER" should be available');
         }
+
         $password = getenv('SHOPWARE_ACCOUNT_PASSWORD');
         if (false === $password || '' === trim($password)) {
             throw new \RuntimeException('Environment variable "SHOPWARE_ACCOUNT_PASSWORD" should be available');
         }
+
         $shopDomain = getenv('SHOPWARE_SHOP_DOMAIN');
         if (false === $shopDomain || '' === trim($shopDomain)) {
             throw new \RuntimeException('Environment variable "SHOPWARE_SHOP_DOMAIN" should be available');
         }
+
         $name = $parameters['pluginId'];
         $version = $parameters['version'];
 
@@ -56,7 +59,7 @@ class StoreApiProvider implements ProviderInterface
             [
                 RequestOptions::JSON => [
                     'shopwareId'    => $user,
-                    'password'      => $password
+                    'password'      => $password,
                 ],
             ]
         );
@@ -103,11 +106,11 @@ class StoreApiProvider implements ProviderInterface
                 $shops = array_merge($shops, $this->streamTranslator->translateToArray($shopsResponse->getBody()));
             }
 
-            $shops = array_filter($shops, function($shop) use($shopDomain) {
-                return $shop['domain'] === $shopDomain || (substr($shop['domain'], 0, 1) === '.' && strpos($shop['domain'], $shopDomain) !== false);
+            $shops = array_filter($shops, function ($shop) use ($shopDomain) {
+                return $shop['domain'] === $shopDomain || ('.' === substr($shop['domain'], 0, 1) && false !== strpos($shop['domain'], $shopDomain));
             });
 
-            if (count($shops) === 0) {
+            if (0 === count($shops)) {
                 throw new \RuntimeException(sprintf('Shop with given domain "%s" does not exist!', $shopDomain));
             }
 
@@ -125,17 +128,19 @@ class StoreApiProvider implements ProviderInterface
             if (200 === $licenseResponse->getStatusCode()) {
                 $licenses = $this->streamTranslator->translateToArray($licenseResponse->getBody());
 
-                $plugin = array_filter($licenses, function ($license) use($name) {
+                $plugin = array_filter($licenses, function ($license) use ($name) {
                     // Basic Plugins like SwagCore
                     if (!isset($license['plugin'])) {
                         return false;
                     }
+
                     return $license['plugin']['name'] === $name || $license['plugin']['code'] === $name;
                 });
 
                 if (empty($plugin)) {
                     throw new \RuntimeException(sprintf('Plugin with name "%s" is not available in your Account. Please buy the plugin first', $name));
                 }
+
                 $plugin = array_values($plugin)[0];
                 // Fix plugin name
                 $name = $plugin['plugin']['name'];
@@ -144,7 +149,7 @@ class StoreApiProvider implements ProviderInterface
                     throw new \RuntimeException(sprintf('Plugin with name "%s" doesnt have the version "%s", Available versions are %s', $name, $version, implode(', ', array_reverse($versions))));
                 }
 
-                $binaryVersion = array_values(array_filter($plugin['plugin']['binaries'], function ($binary) use($version) {
+                $binaryVersion = array_values(array_filter($plugin['plugin']['binaries'], function ($binary) use ($version) {
                     return $binary['version'] === $version;
                 }))[0];
 
@@ -155,7 +160,7 @@ class StoreApiProvider implements ProviderInterface
                         RequestOptions::HEADERS => [
                             'X-Shopware-Token'  => $accessTokenData['token'],
                         ],
-                        RequestOptions::SINK => $tmpName
+                        RequestOptions::SINK => $tmpName,
                     ]
                 );
 

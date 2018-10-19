@@ -8,9 +8,7 @@
 
 namespace spec\sd\SwPluginManager\Service;
 
-use GuzzleHttp\Psr7\Response;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 use Psr\Http\Message\StreamInterface;
 use sd\SwPluginManager\Service\StreamTranslator;
 use sd\SwPluginManager\Service\StreamTranslatorInterface;

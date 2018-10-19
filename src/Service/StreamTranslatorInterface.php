@@ -13,7 +13,7 @@ use Psr\Http\Message\StreamInterface;
 interface StreamTranslatorInterface
 {
     /**
-     * @return  object|mixed
+     * @return object|mixed
      */
     public function translateToArray(StreamInterface $stream);
 }
