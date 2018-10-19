@@ -47,6 +47,8 @@ class StoreApiProvider implements ProviderInterface
         if (false === $shopDomain || '' === trim($shopDomain)) {
             throw new \RuntimeException('Environment variable "SHOPWARE_SHOP_DOMAIN" should be available');
         }
+        $name = $parameters['pluginId'];
+        $version = $parameters['version'];
 
         $accessTokenResponse = $this->guzzleClient->post(
             self::BASE_URL . '/accesstokens',
@@ -121,6 +123,40 @@ class StoreApiProvider implements ProviderInterface
 
             if (200 === $licenseResponse->getStatusCode()) {
                 $licenses = $this->streamTranslator->translateToArray($licenseResponse->getBody());
+
+                $plugin = array_filter($licenses, function ($license) use($name) {
+                    // Basic Plugins like SwagCore
+                    if (!isset($license['plugin'])) {
+                        return false;
+                    }
+                    return $license['plugin']['name'] === $name || $license['plugin']['code'] === $name;
+                });
+
+                if (empty($plugin)) {
+                    throw new \RuntimeException(sprintf('Plugin with name "%s" is not available in your Account. Please buy the plugin first', $name));
+                }
+                $plugin = array_values($plugin)[0];
+                // Fix plugin name
+                $name = $plugin['plugin']['name'];
+                $versions = array_column($plugin['plugin']['binaries'], 'version');
+                if (!in_array($version, $versions)) {
+                    throw new \RuntimeException(sprintf('Plugin with name "%s" doesnt have the version "%s", Available versions are %s', $name, $version, implode(', ', array_reverse($versions))));
+                }
+
+                $binaryVersion = array_values(array_filter($plugin['plugin']['binaries'], function ($binary) use($version) {
+                    return $binary['version'] === $version;
+                }))[0];
+
+                $tmpName = '/tmp/sw-plugin-' . $name . $version;
+                $this->guzzleClient->get(
+                    self::BASE_URL . $binaryVersion['filePath'] . '?shopId=' . $shop['id'],
+                    [
+                        RequestOptions::HEADERS => [
+                            'X-Shopware-Token'  => $accessTokenData['token'],
+                        ],
+                        RequestOptions::SINK => $tmpName
+                    ]
+                );
             }
         }
     }

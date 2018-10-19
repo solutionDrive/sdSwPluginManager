@@ -63,7 +63,8 @@ class StoreApiProviderSpec extends ObjectBehavior
         Response $shopsResponse,
         StreamInterface $shopsStream,
         Response $licenseResponse,
-        StreamInterface $licenseStream
+        StreamInterface $licenseStream,
+        Response $pluginResponse
     ) {
         putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
         putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
@@ -201,10 +202,12 @@ class StoreApiProviderSpec extends ObjectBehavior
                     'name' => 'awesomePlugin',
                     'binaries' => [
                         [
-                            'version' => '0.0.1'
+                            'version' => '0.0.1',
+                            'filePath' => '/plugin0.0.1',
                         ],
                         [
-                            'version' => '0.0.2'
+                            'version' => '0.0.2',
+                            'filePath' => '/plugin0.0.2',
                         ]
                     ]
                 ]
@@ -214,8 +217,34 @@ class StoreApiProviderSpec extends ObjectBehavior
         $streamTranslator->translateToArray($licenseStream)
             ->willReturn($licenseData);
 
-        $this->shouldNotThrow(\RuntimeException::class)->during('loadFile', [[]]);
-        //$this->loadFile([]);
+        $guzzleClient->get(
+            self::BASE_URL . '/plugin0.0.2?shopId=5',
+            [
+                RequestOptions::HEADERS => [
+                    'X-Shopware-Token'  => 'ABCDEF',
+                ],
+                RequestOptions::SINK => '/tmp/sw-plugin-awesomePlugin0.0.2'
+            ]
+        )
+        ->shouldBeCalled()
+        ->willReturn($pluginResponse);
+
+        $this->shouldNotThrow(\RuntimeException::class)
+            ->during(
+                'loadFile',
+                [
+                    [
+                        'pluginId' => 'awesomePlugin',
+                        'version'  => '0.0.2'
+                    ]
+                ]
+            );
+//        $this->loadFile(
+//            [
+//                'pluginId' => 'awesomePlugin',
+//                'version'  => '0.0.2'
+//            ]
+//        );
     }
 
     public function it_cannot_connect_to_store_api_without_credentials()
