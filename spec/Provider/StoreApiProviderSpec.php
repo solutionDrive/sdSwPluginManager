@@ -229,22 +229,12 @@ class StoreApiProviderSpec extends ObjectBehavior
         ->shouldBeCalled()
         ->willReturn($pluginResponse);
 
-        $this->shouldNotThrow(\RuntimeException::class)
-            ->during(
-                'loadFile',
-                [
-                    [
-                        'pluginId' => 'awesomePlugin',
-                        'version'  => '0.0.2'
-                    ]
-                ]
-            );
-//        $this->loadFile(
-//            [
-//                'pluginId' => 'awesomePlugin',
-//                'version'  => '0.0.2'
-//            ]
-//        );
+        $this->loadFile(
+            [
+                'pluginId' => 'awesomePlugin',
+                'version'  => '0.0.2'
+            ]
+        );
     }
 
     public function it_cannot_connect_to_store_api_without_credentials()
