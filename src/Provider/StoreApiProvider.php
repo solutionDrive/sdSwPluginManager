@@ -35,6 +35,7 @@ class StoreApiProvider implements ProviderInterface
 
     public function loadFile($parameters)
     {
+        // TODO: Clean up this messy code (Refactor it to own classes etc.)
         $user = getenv('SHOPWARE_ACCOUNT_USER');
         if (false === $user || '' === trim($user)) {
             throw new \RuntimeException('Environment variable "SHOPWARE_ACCOUNT_USER" should be available');
