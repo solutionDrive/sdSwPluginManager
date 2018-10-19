@@ -57,6 +57,9 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
         ];
 
         $process = \proc_open($fullCommand, $stdDescriptors, $pipes, $this->workingDirectory, null);
+        if (false === $process || false === is_resource($process)) {
+            throw new \RuntimeException(printf('Could not start command "%s" correctly. No valid process resource was returned', $command));
+        }
 
         $this->output = \stream_get_contents($pipes[1]);
         fclose($pipes[1]);
