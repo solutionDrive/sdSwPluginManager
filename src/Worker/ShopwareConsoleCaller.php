@@ -66,12 +66,18 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
         $this->error = \stream_get_contents($pipes[2]);
         fclose($pipes[2]);
 
-        $processStatus = \proc_get_status($process);
-        if (false === $processStatus) {
-            throw new \RuntimeException('Process of Shopware CLI exited abnormally.');
-        } else {
-            $this->returnCode = $processStatus['exitcode'];
-        }
+        do {
+            $processStatus = \proc_get_status($process);
+            if (false === $processStatus) {
+                throw new \RuntimeException('Process of Shopware CLI exited abnormally.');
+            }
+
+            if (false === $processStatus['running']) {
+                $this->returnCode = $processStatus['exitcode'];
+            } else {
+                usleep(100);
+            }
+        } while (true === $processStatus['running']);
 
         proc_close($process);
         return 0 === $this->returnCode;
