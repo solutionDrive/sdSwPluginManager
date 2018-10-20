@@ -62,7 +62,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
             return false;
         }
 
-        stream_set_blocking($pipes[0], 0);
+        stream_set_blocking($pipes[0], false);
 
         $this->output = \stream_get_contents($pipes[1]);
         fclose($pipes[1]);
