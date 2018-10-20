@@ -160,7 +160,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
      * @param resource $process     process which should be checked for exit code
      * @param int      $maxWaitTime max time to wait for a running process (in microseconds)
      */
-    private function waitForExitCode($process, $maxWaitTime = 5000)
+    private function waitForExitCode($process, $maxWaitTime = 30000000)
     {
         $waitTime = 0;
         do {
