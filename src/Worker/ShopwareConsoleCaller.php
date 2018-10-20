@@ -68,18 +68,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
         $this->error = \stream_get_contents($pipes[2]);
         fclose($pipes[2]);
 
-        do {
-            $processStatus = \proc_get_status($process);
-            if (false === $processStatus) {
-                throw new \RuntimeException('Process of Shopware CLI exited abnormally.');
-            }
-
-            if (false === $processStatus['running']) {
-                $this->returnCode = $processStatus['exitcode'];
-            } else {
-                usleep(100);
-            }
-        } while (true === $processStatus['running']);
+        $this->waitForExitCode($process);
 
         proc_close($process);
         return 0 === $this->returnCode;
@@ -164,5 +153,31 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
         $this->output = '';
         $this->returnCode = '';
         return $this;
+    }
+
+    /**
+     * @param resource $process     process which should be checked for exit code
+     * @param int      $maxWaitTime max time to wait for a running process (in microseconds)
+     */
+    private function waitForExitCode($process, $maxWaitTime = 5000)
+    {
+        $waitTime = 0;
+        do {
+            $processStatus = \proc_get_status($process);
+            if (false === $processStatus) {
+                throw new \RuntimeException('Process of Shopware CLI exited abnormally.');
+            }
+
+            if (false === $processStatus['running']) {
+                $this->returnCode = $processStatus['exitcode'];
+            } else {
+                usleep(100);
+                $waitTime += 100;
+            }
+
+            if ($waitTime >= $maxWaitTime) {
+                throw new \RuntimeException(printf('Process did not exit properly within %d micro seconds', $maxWaitTime));
+            }
+        } while (true === $processStatus['running']);
     }
 }
