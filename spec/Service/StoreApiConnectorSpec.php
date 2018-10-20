@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -9,10 +8,11 @@ declare(strict_types=1);
 
 namespace spec\sd\SwPluginManager\Service;
 
+use GuzzleHttp\Client;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 use sd\SwPluginManager\Service\StoreApiConnector;
 use sd\SwPluginManager\Service\StoreApiConnectorInterface;
+use sd\SwPluginManager\Service\StreamTranslatorInterface;
 
 class StoreApiConnectorSpec extends ObjectBehavior
 {
@@ -24,5 +24,20 @@ class StoreApiConnectorSpec extends ObjectBehavior
     public function it_implements_StoreApiConnector_interface()
     {
         $this->shouldImplement(StoreApiConnectorInterface::class);
+    }
+
+    public function let(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator
+    ) {
+        $this->beConstructedWith(
+            $guzzleClient,
+            $streamTranslator
+        );
+
+        // Resets environment variables on every run
+        putenv('SHOPWARE_ACCOUNT_USER=');
+        putenv('SHOPWARE_ACCOUNT_PASSWORD=');
+        putenv('SHOPWARE_SHOP_DOMAIN=');
     }
 }
