@@ -152,7 +152,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
     public function resetOutput()
     {
         $this->output = '';
-        $this->returnCode = '';
+        $this->returnCode = -1;
         return $this;
     }
 
