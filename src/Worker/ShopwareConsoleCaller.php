@@ -58,7 +58,8 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
 
         $process = \proc_open($fullCommand, $stdDescriptors, $pipes, $this->workingDirectory, null);
         if (false === $process || false === is_resource($process)) {
-            throw new \RuntimeException(printf('Could not start command "%s" correctly. No valid process resource was returned', $command));
+            $this->error = printf('Could not start command "%s" correctly. No valid process resource was returned', $command);
+            return false;
         }
 
         stream_set_blocking($pipes[0], 0);
@@ -176,8 +177,9 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
             }
 
             if ($waitTime >= $maxWaitTime) {
-                throw new \RuntimeException(printf('Process did not exit properly within %d micro seconds', $maxWaitTime));
+                $this->error = printf('Process did not exit properly within %d micro seconds', $maxWaitTime);
+                $this->returnCode = 1;
             }
-        } while (true === $processStatus['running']);
+        } while (true === $processStatus['running'] && false === $this->hasError());
     }
 }
