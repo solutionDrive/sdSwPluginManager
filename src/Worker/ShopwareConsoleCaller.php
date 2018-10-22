@@ -57,18 +57,19 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
         ];
 
         $process = \proc_open($fullCommand, $stdDescriptors, $pipes, $this->workingDirectory, null);
+        if (false === $process || false === is_resource($process)) {
+            $this->error = printf('Could not start command "%s" correctly. No valid process resource was returned', $command);
+            return false;
+        }
+
+        stream_set_blocking($pipes[0], false);
 
         $this->output = \stream_get_contents($pipes[1]);
         fclose($pipes[1]);
         $this->error = \stream_get_contents($pipes[2]);
         fclose($pipes[2]);
 
-        $processStatus = \proc_get_status($process);
-        if (false === $processStatus) {
-            throw new \RuntimeException('Process of Shopware CLI exited abnormally.');
-        } else {
-            $this->returnCode = $processStatus['exitcode'];
-        }
+        $this->waitForExitCode($process);
 
         proc_close($process);
         return 0 === $this->returnCode;
@@ -151,7 +152,34 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
     public function resetOutput()
     {
         $this->output = '';
-        $this->returnCode = '';
+        $this->returnCode = -1;
         return $this;
+    }
+
+    /**
+     * @param resource $process     process which should be checked for exit code
+     * @param int      $maxWaitTime max time to wait for a running process (in microseconds)
+     */
+    private function waitForExitCode($process, $maxWaitTime = 30000000)
+    {
+        $waitTime = 0;
+        do {
+            $processStatus = \proc_get_status($process);
+            if (false === $processStatus) {
+                throw new \RuntimeException('Process of Shopware CLI exited abnormally.');
+            }
+
+            if (false === $processStatus['running']) {
+                $this->returnCode = $processStatus['exitcode'];
+            } else {
+                usleep(100);
+                $waitTime += 100;
+            }
+
+            if ($waitTime >= $maxWaitTime) {
+                $this->error = printf('Process did not exit properly within %d micro seconds', $maxWaitTime);
+                $this->returnCode = 1;
+            }
+        } while (true === $processStatus['running'] && false === $this->hasError());
     }
 }
