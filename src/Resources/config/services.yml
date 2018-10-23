@@ -68,6 +68,15 @@ services:
       - '@sd.factory.s3client'
       - '%env(PLUGIN_RELEASES_BUCKET)%'
       - '%env(PLUGIN_RELEASES_BUCKET_BASEPATH)%'
+  sd.provider.store_api:
+    class: sd\SwPluginManager\Provider\StoreApiProvider
+    tags: ['sd.plugin.provider']
+    arguments:
+      - '@sd.external.guzzle'
+      - '@sd.service.stream_translator'
+
+  sd.service.stream_translator:
+    class: sd\SwPluginManager\Service\StreamTranslator
 
   sd.worker.pluginfetcher:
     class: sd\SwPluginManager\Worker\PluginFetcher
