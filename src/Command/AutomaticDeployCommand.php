@@ -59,13 +59,13 @@ class AutomaticDeployCommand extends Command
                 'production'
             )
             ->addOption(
-                'without-download',
+                'skip-download',
                 '',
                 InputOption::VALUE_NONE,
                 'Flag for skipping Download-Process'
             )
             ->addOption(
-                'without-install',
+                'skip-install',
                 '',
                 InputOption::VALUE_NONE,
                 'Flag for skipping Install-Process'
@@ -81,8 +81,8 @@ class AutomaticDeployCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $skipDownload = $input->getOption('without-download');
-        $skipInstall = $input->getOption('without-install');
+        $skipDownload = $input->getOption('skip-download');
+        $skipInstall = $input->getOption('skip-install');
 
         $environment = $input->getOption('env');
         $yamlStateFilePath = $input->getArgument('statefile');
