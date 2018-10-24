@@ -68,7 +68,7 @@ class AutomaticDeployCommand extends Command
                 'skip-install',
                 '',
                 InputOption::VALUE_NONE,
-                'If set, skip download and extraction installation'
+                'If set, skip installation'
             )
             ->addArgument(
                 'statefile',
