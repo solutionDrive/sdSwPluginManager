@@ -115,7 +115,7 @@ class AutomaticDeployCommand extends Command
                 }
             }
         } else {
-            $output->writeln('Skipped download and extraction because the flag --without-download is set.');
+            $output->writeln('Skipped download and extraction because the flag --skip-download is set.');
         }
 
         // Now refresh plugin list
@@ -168,7 +168,7 @@ class AutomaticDeployCommand extends Command
                 }
             }
         } else {
-            $output->writeln('Skipped installation because the flag --without-install is set.');
+            $output->writeln('Skipped installation because the flag --skip-install is set.');
         }
 
         // @TODO For later versions:
