@@ -128,7 +128,7 @@ class AutomaticDeployCommand extends Command
         ]);
         $app->run($input, $output);
 
-        if (false !== $skipInstall) {
+        if (false === $skipInstall) {
             // And now install and activate all plugins (if configured)
             foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
                 // Skip if plugin should not be installed in the current environment
