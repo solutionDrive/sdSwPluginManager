@@ -81,8 +81,8 @@ class AutomaticDeployCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $skipDownload = $input->getOption('skip-download');
-        $skipInstall = $input->getOption('skip-install');
+        $skipDownload = (bool) $input->getOption('skip-download');
+        $skipInstall = (bool) $input->getOption('skip-install');
 
         $environment = $input->getOption('env');
         $yamlStateFilePath = $input->getArgument('statefile');
@@ -115,7 +115,7 @@ class AutomaticDeployCommand extends Command
                 }
             }
         } else {
-            $output->writeln('Skipped Download/Extraction because of flag');
+            $output->writeln('Skipped download and extraction because the flag --without-download is set.');
         }
 
         // Now refresh plugin list
@@ -168,7 +168,7 @@ class AutomaticDeployCommand extends Command
                 }
             }
         } else {
-            $output->writeln('Skipped Installation because of flag');
+            $output->writeln('Skipped installation because the flag --without-install is set.');
         }
 
         // @TODO For later versions:
