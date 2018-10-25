@@ -58,6 +58,18 @@ class AutomaticDeployCommand extends Command
                 'The current environment to use for plugin filtering',
                 'production'
             )
+            ->addOption(
+                'skip-download',
+                '',
+                InputOption::VALUE_NONE,
+                'If set, skip download and extraction'
+            )
+            ->addOption(
+                'skip-install',
+                '',
+                InputOption::VALUE_NONE,
+                'If set, skip installation'
+            )
             ->addArgument(
                 'statefile',
                 InputArgument::REQUIRED,
@@ -69,6 +81,9 @@ class AutomaticDeployCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $skipDownload = (bool) $input->getOption('skip-download');
+        $skipInstall = (bool) $input->getOption('skip-install');
+
         $environment = $input->getOption('env');
         $yamlStateFilePath = $input->getArgument('statefile');
         if (false === is_readable($yamlStateFilePath)) {
@@ -83,20 +98,24 @@ class AutomaticDeployCommand extends Command
         // VERY FIRST very simple version: Extract each and install activate accordingly afterwards
 
         // Extract plugins
-        foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
-            // Skip if plugin should not be installed in the current environment
-            if ($this->skipPluginByEnviroment($environment, $configuredPluginState->getEnvironments())) {
-                continue;
-            }
+        if (false === $skipDownload) {
+            foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
+                // Skip if plugin should not be installed in the current environment
+                if ($this->skipPluginByEnviroment($environment, $configuredPluginState->getEnvironments())) {
+                    continue;
+                }
 
-            // Download the plugin and get the path
-            $downloadPath = $this->pluginFetcher->fetch($configuredPluginState);
+                // Download the plugin and get the path
+                $downloadPath = $this->pluginFetcher->fetch($configuredPluginState);
 
-            // If no path was returned, it is assumed that the plugin is already in its destination path
-            if (false === empty($downloadPath)) {
-                // @TODO Replace by own extract command
-                $this->pluginExtractor->extract($downloadPath);
+                // If no path was returned, it is assumed that the plugin is already in its destination path
+                if (false === empty($downloadPath)) {
+                    // @TODO Replace by own extract command
+                    $this->pluginExtractor->extract($downloadPath);
+                }
             }
+        } else {
+            $output->writeln('Skipped download and extraction because the flag --skip-download is set.');
         }
 
         // Now refresh plugin list
@@ -109,43 +128,47 @@ class AutomaticDeployCommand extends Command
         ]);
         $app->run($input, $output);
 
-        // And now install and activate all plugins (if configured)
-        foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
-            // Skip if plugin should not be installed in the current environment
-            if ($this->skipPluginByEnviroment($environment, $configuredPluginState->getEnvironments())) {
-                continue;
-            }
+        if (false === $skipInstall) {
+            // And now install and activate all plugins (if configured)
+            foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
+                // Skip if plugin should not be installed in the current environment
+                if ($this->skipPluginByEnviroment($environment, $configuredPluginState->getEnvironments())) {
+                    continue;
+                }
 
-            if ($configuredPluginState->isInstalled()) {
-                $input = new ArrayInput([
-                    'command' => 'sd:plugins:install',
-                    'pluginId' => $configuredPluginState->getId(),
-                ]);
-                $app->run($input, $output);
-            } else {
-                // Try to uninstall
-                $input = new ArrayInput([
-                    'command' => 'sd:plugins:uninstall',
-                    '--secure' => true,
-                    'pluginId' => $configuredPluginState->getId(),
-                ]);
-                $app->run($input, $output);
-            }
+                if ($configuredPluginState->isInstalled()) {
+                    $input = new ArrayInput([
+                        'command' => 'sd:plugins:install',
+                        'pluginId' => $configuredPluginState->getId(),
+                    ]);
+                    $app->run($input, $output);
+                } else {
+                    // Try to uninstall
+                    $input = new ArrayInput([
+                        'command' => 'sd:plugins:uninstall',
+                        '--secure' => true,
+                        'pluginId' => $configuredPluginState->getId(),
+                    ]);
+                    $app->run($input, $output);
+                }
 
-            if ($configuredPluginState->isActivated()) {
-                $input = new ArrayInput([
-                    'command' => 'sd:plugins:activate',
-                    'pluginId' => $configuredPluginState->getId(),
-                ]);
-                $app->run($input, $output);
-            } else {
-                // Try to unactivate
-                $input = new ArrayInput([
-                    'command' => 'sd:plugins:deactivate',
-                    'pluginId' => $configuredPluginState->getId(),
-                ]);
-                $app->run($input, $output);
+                if ($configuredPluginState->isActivated()) {
+                    $input = new ArrayInput([
+                        'command' => 'sd:plugins:activate',
+                        'pluginId' => $configuredPluginState->getId(),
+                    ]);
+                    $app->run($input, $output);
+                } else {
+                    // Try to unactivate
+                    $input = new ArrayInput([
+                        'command' => 'sd:plugins:deactivate',
+                        'pluginId' => $configuredPluginState->getId(),
+                    ]);
+                    $app->run($input, $output);
+                }
             }
+        } else {
+            $output->writeln('Skipped installation because the flag --skip-install is set.');
         }
 
         // @TODO For later versions:
