@@ -123,12 +123,12 @@ class AutomaticDeployCommand extends Command
         $app = $this->getApplication();
         $app->setAutoExit(false);
 
-        $input = new ArrayInput([
-            'command' => 'sd:plugins:refresh',
-        ]);
-        $app->run($input, $output);
-
         if (false === $skipInstall) {
+            $input = new ArrayInput([
+                'command' => 'sd:plugins:refresh',
+            ]);
+            $app->run($input, $output);
+
             // And now install and activate all plugins (if configured)
             foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
                 // Skip if plugin should not be installed in the current environment
