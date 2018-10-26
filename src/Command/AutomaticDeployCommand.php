@@ -106,12 +106,16 @@ class AutomaticDeployCommand extends Command
                 }
 
                 // Download the plugin and get the path
+                $output->write('Downloading plugin `' . $configuredPluginState->getId() . '`...');
                 $downloadPath = $this->pluginFetcher->fetch($configuredPluginState);
+                $output->writeln(' <info>done.</info>');
 
                 // If no path was returned, it is assumed that the plugin is already in its destination path
                 if (false === empty($downloadPath)) {
                     // @TODO Replace by own extract command
+                    $output->write('Extracting plugin `' . $configuredPluginState->getId() . '`...');
                     $this->pluginExtractor->extract($downloadPath);
+                    $output->writeln(' <info>done.</info>');
                 }
             }
         } else {
