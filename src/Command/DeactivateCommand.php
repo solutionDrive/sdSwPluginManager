@@ -36,7 +36,7 @@ class DeactivateCommand extends Command
         $shopwareConsole = new ShopwareConsoleCaller();
         $callSuccess = $shopwareConsole->call('sw:plugin:deactivate', [$pluginId => null]);
 
-        // @TODO If it did not work, install the plugin by setting the flag in the database and inform the user.
+        // @TODO If it did not work, deactivate the plugin by setting the flag in the database and inform the user.
         if (false === $callSuccess) {
             $alreadyNeedle = 'is already deactivated';
             if ($shopwareConsole->hasOutput() && false !== strpos($shopwareConsole->getOutput(), $alreadyNeedle)) {
