@@ -32,7 +32,7 @@ class DeactivateCommand extends Command
     {
         $pluginId = (string) $input->getArgument('pluginId');
 
-        // Try to install using the Shopware CLI. If this works, everything is fine.
+        // Try to deactivate using the Shopware CLI. If this works, everything is fine.
         $shopwareConsole = new ShopwareConsoleCaller();
         $callSuccess = $shopwareConsole->call('sw:plugin:deactivate', [$pluginId => null]);
 
