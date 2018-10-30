@@ -8,12 +8,12 @@
 
 namespace sd\SwPluginManager\Command;
 
+use sd\SwPluginManager\Worker\ShopwareConsoleCaller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-// @TODO change to ContainerAwareCommand and implement
 class DeactivateCommand extends Command
 {
     protected function configure()
@@ -30,10 +30,36 @@ class DeactivateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // @TODO Try to deactivate using the shopware CLI. If this works, everything is fine.
+        $pluginId = (string) $input->getArgument('pluginId');
 
-        // @TODO If it did not work, deactivate the plugin by setting the flag in the database and inform the user.
+        // Try to install using the Shopware CLI. If this works, everything is fine.
+        $shopwareConsole = new ShopwareConsoleCaller();
+        $callSuccess = $shopwareConsole->call('sw:plugin:deactivate', [$pluginId => null]);
 
-        return 1;
+        // @TODO If it did not work, install the plugin by setting the flag in the database and inform the user.
+        if (false === $callSuccess) {
+            $alreadyNeedle = 'is already deactivated';
+            if ($shopwareConsole->hasOutput() && false !== strpos($shopwareConsole->getOutput(), $alreadyNeedle)) {
+                $output->writeln('<info>Plugin `' . $pluginId . '` was already deactivated.</info>');
+                return 0;
+            } else {
+                $output->writeln(
+                    '<error>Plugin `' . $pluginId . '` could not be deactivated by Shopware. ' .
+                    'Fallback not yet implemented.</error>'
+                );
+                if ($shopwareConsole->hasOutput()) {
+                    $output->writeln('Output (stdout) from Shopware CLI: ' . PHP_EOL . $shopwareConsole->getOutput());
+                }
+
+                if ($shopwareConsole->hasError()) {
+                    $output->writeln('Output (stderr) from Shopware CLI: ' . PHP_EOL . $shopwareConsole->getError());
+                }
+
+                return 1;
+            }
+        }
+
+        $output->writeln('<info>Plugin `' . $pluginId . '` deactivated successfully.</info>');
+        return 0;
     }
 }
