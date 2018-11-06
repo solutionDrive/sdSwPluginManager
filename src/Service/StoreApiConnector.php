@@ -21,6 +21,9 @@ class StoreApiConnector implements StoreApiConnectorInterface
     /** @var StreamTranslatorInterface */
     private $streamTranslator;
 
+    /** @var bool */
+    private $isPartnerAccount = false;
+
     public function __construct(
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator
@@ -71,8 +74,11 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
             if (200 === $partnerResponse->getStatusCode()) {
                 $partnerData = $this->streamTranslator->translateToArray($partnerResponse->getBody());
-                $partnerId = $partnerData['partnerId'];
-                if (false === empty($partnerId)) {
+                if (false === empty($partnerData['partnerId'])) {
+                    $this->isPartnerAccount = true;
+                }
+
+                if (true === $this->isPartnerAccount) {
                     $clientshopsResponse = $this->guzzleClient->get(
                         self::BASE_URL . '/partners/' . $accessTokenData['userId'] . '/clientshops',
                         [
@@ -109,8 +115,13 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
             $shop = array_values($shops)[0];
 
+            $licenseUrl = self::BASE_URL . '/licenses?shopId=' . $shop['id'];
+            if (true === $this->isPartnerAccount) {
+                $licenseUrl .= '&partnerId=' . $accessTokenData['userId'];
+            }
+
             $licenseResponse = $this->guzzleClient->get(
-                self::BASE_URL . '/licenses?shopId=' . $shop['id'] . '&partnerId=' . $accessTokenData['userId'],
+                $licenseUrl,
                 [
                     RequestOptions::HEADERS => [
                         'X-Shopware-Token'  => $accessTokenData['token'],

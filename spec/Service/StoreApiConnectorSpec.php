@@ -72,20 +72,90 @@ class StoreApiConnectorSpec extends ObjectBehavior
         // ACCESS TOKEN
         $this->prepareAccessToken($guzzleClient, $streamTranslator, $accessTokenResponse, $accessCodeStream);
 
+        $partnerData = [
+            'partnerId' => '9876',
+        ];
+
         // CHECK FOR PARTNER ACCOUNT
-        $this->preparePartnerAccountCheck($guzzleClient, $streamTranslator, $partnerResponse, $partnerStream);
+        $this->preparePartnerAccountCheck($guzzleClient, $streamTranslator, $partnerResponse, $partnerStream, $partnerData);
 
         // GET ALL AVAILABLE PARTNER CLIENTSHOPS
         $this->preparePartnerAccount($guzzleClient, $streamTranslator, $clientshopsResponse, $clientshopsStream);
 
+        $shopsData = [
+            [
+                'id' => 5,
+                'domain' => 'example.org',
+            ],
+        ];
+
         // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
-        $this->prepareShops($guzzleClient, $streamTranslator, $shopsResponse, $shopsStream);
+        $this->prepareShops($guzzleClient, $streamTranslator, $shopsResponse, $shopsStream, $shopsData);
+
+        $licenseUrl = '/licenses?shopId=5&partnerId=12345';
 
         // GET ALL LICENSES
-        $this->prepareLicenseData($guzzleClient, $streamTranslator, $licenseResponse, $licenseStream);
+        $this->prepareLicenseData($guzzleClient, $streamTranslator, $licenseResponse, $licenseStream, $licenseUrl);
 
         $guzzleClient->get(
             self::BASE_URL . '/plugin0.0.2?shopId=5',
+            [
+                RequestOptions::HEADERS => [
+                    'X-Shopware-Token'  => 'ABCDEF',
+                ],
+                RequestOptions::SINK => '/tmp/sw-plugin-awesomePlugin0.0.2',
+            ]
+        )
+            ->shouldBeCalled()
+            ->willReturn($pluginResponse);
+
+        $this->loadPlugin('awesomePlugin', '0.0.2');
+    }
+
+    public function it_can_load_a_plugin_without_a_partner_account(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator,
+        Response $accessTokenResponse,
+        StreamInterface $accessCodeStream,
+        Response $partnerResponse,
+        StreamInterface $partnerStream,
+        Response $clientshopsResponse,
+        StreamInterface $clientshopsStream,
+        Response $shopsResponse,
+        StreamInterface $shopsStream,
+        Response $licenseResponse,
+        StreamInterface $licenseStream,
+        Response $pluginResponse
+    ) {
+        putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
+        putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
+        putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
+
+        // ACCESS TOKEN
+        $this->prepareAccessToken($guzzleClient, $streamTranslator, $accessTokenResponse, $accessCodeStream);
+
+        $partnerData = [];
+
+        // CHECK FOR PARTNER ACCOUNT
+        $this->preparePartnerAccountCheck($guzzleClient, $streamTranslator, $partnerResponse, $partnerStream, $partnerData);
+
+        $shopsData = [
+            [
+                'id' => 7,
+                'domain' => 'example.org',
+            ],
+        ];
+
+        // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
+        $this->prepareShops($guzzleClient, $streamTranslator, $shopsResponse, $shopsStream, $shopsData);
+
+        $licenseUrl = '/licenses?shopId=7';
+
+        // GET ALL LICENSES
+        $this->prepareLicenseData($guzzleClient, $streamTranslator, $licenseResponse, $licenseStream, $licenseUrl);
+
+        $guzzleClient->get(
+            self::BASE_URL . '/plugin0.0.2?shopId=7',
             [
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token'  => 'ABCDEF',
@@ -141,7 +211,8 @@ class StoreApiConnectorSpec extends ObjectBehavior
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
         Response $partnerResponse,
-        StreamInterface $partnerStream
+        StreamInterface $partnerStream,
+        array $partnerData
     ) {
         $guzzleClient->get(
             self::BASE_URL . '/partners/12345',
@@ -159,10 +230,6 @@ class StoreApiConnectorSpec extends ObjectBehavior
 
         $partnerResponse->getBody()
             ->willReturn($partnerStream);
-
-        $partnerData = [
-            'partnerId' => '9876',
-        ];
 
         $streamTranslator->translateToArray($partnerStream)
             ->willReturn($partnerData);
@@ -206,7 +273,8 @@ class StoreApiConnectorSpec extends ObjectBehavior
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
         Response $shopsResponse,
-        StreamInterface $shopsStream
+        StreamInterface $shopsStream,
+        array $shopsData
     ) {
         $guzzleClient->get(
             self::BASE_URL . '/shops?userId=12345',
@@ -225,13 +293,6 @@ class StoreApiConnectorSpec extends ObjectBehavior
         $shopsResponse->getBody()
             ->willReturn($shopsStream);
 
-        $shopsData = [
-            [
-                'id' => 5,
-                'domain' => 'example.org',
-            ],
-        ];
-
         $streamTranslator->translateToArray($shopsStream)
             ->willReturn($shopsData);
     }
@@ -240,10 +301,11 @@ class StoreApiConnectorSpec extends ObjectBehavior
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
         Response $licenseResponse,
-        StreamInterface $licenseStream
+        StreamInterface $licenseStream,
+        string $url
     ) {
         $guzzleClient->get(
-            self::BASE_URL . '/licenses?shopId=5&partnerId=12345',
+            self::BASE_URL . $url,
             [
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token' => 'ABCDEF',
