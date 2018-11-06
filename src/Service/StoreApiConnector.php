@@ -40,64 +40,10 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
     public function loadPlugin($pluginId, $version)
     {
-        $shopDomain = getenv('SHOPWARE_SHOP_DOMAIN');
-        if (false === $shopDomain || '' === trim($shopDomain)) {
-            throw new \RuntimeException('Environment variable "SHOPWARE_SHOP_DOMAIN" should be available');
-        }
+        $partnerShops = $this->getShopsFromPartnerAccount();
+        $shops = $this->getGeneralShops();
 
-        $shops = [];
-
-        $partnerResponse = $this->guzzleClient->get(
-            self::BASE_URL . '/partners/' . $this->getUserId(),
-            [
-                RequestOptions::HEADERS => [
-                    'X-Shopware-Token'  => $this->getAccessToken(),
-                ],
-            ]
-        );
-
-        if (200 === $partnerResponse->getStatusCode()) {
-            $partnerData = $this->streamTranslator->translateToArray($partnerResponse->getBody());
-            if (false === empty($partnerData['partnerId'])) {
-                $this->isPartnerAccount = true;
-            }
-
-            if (true === $this->isPartnerAccount) {
-                $clientshopsResponse = $this->guzzleClient->get(
-                    self::BASE_URL . '/partners/' . $this->getUserId() . '/clientshops',
-                    [
-                        RequestOptions::HEADERS => [
-                            'X-Shopware-Token'  => $this->getAccessToken(),
-                        ],
-                    ]
-                );
-
-                $shops = array_merge($shops, $this->streamTranslator->translateToArray($clientshopsResponse->getBody()));
-            }
-        }
-
-        $shopsResponse = $this->guzzleClient->get(
-            self::BASE_URL . '/shops?userId=' . $this->getUserId(),
-            [
-                RequestOptions::HEADERS => [
-                    'X-Shopware-Token'  => $this->getAccessToken(),
-                ],
-            ]
-        );
-
-        if (200 === $shopsResponse->getStatusCode()) {
-            $shops = array_merge($shops, $this->streamTranslator->translateToArray($shopsResponse->getBody()));
-        }
-
-        $shops = array_filter($shops, function ($shop) use ($shopDomain) {
-            return $shop['domain'] === $shopDomain || ('.' === substr($shop['domain'], 0, 1) && false !== strpos($shop['domain'], $shopDomain));
-        });
-
-        if (0 === count($shops)) {
-            throw new \RuntimeException(sprintf('Shop with given domain "%s" does not exist!', $shopDomain));
-        }
-
-        $shop = array_values($shops)[0];
+        $shop = $this->filterShopsByDomain($shops, $partnerShops);
 
         $licenseUrl = self::BASE_URL . '/licenses?shopId=' . $shop['id'];
         if (true === $this->isPartnerAccount) {
@@ -206,5 +152,99 @@ class StoreApiConnector implements StoreApiConnectorInterface
             $this->accessToken = $accessTokenData['token'];
             $this->userId = $accessTokenData['userId'];
         }
+    }
+
+    /**
+     * Returns all shops associated with a partner account
+     *
+     * First checks if it is a partner account otherwise only a empty array will be returned
+     *
+     * @return string[][]
+     */
+    private function getShopsFromPartnerAccount()
+    {
+        $shops = [];
+
+        $partnerResponse = $this->guzzleClient->get(
+            self::BASE_URL . '/partners/' . $this->getUserId(),
+            [
+                RequestOptions::HEADERS => [
+                    'X-Shopware-Token' => $this->getAccessToken(),
+                ],
+            ]
+        );
+
+        if (200 === $partnerResponse->getStatusCode()) {
+            $partnerData = $this->streamTranslator->translateToArray($partnerResponse->getBody());
+            if (false === empty($partnerData['partnerId'])) {
+                $this->isPartnerAccount = true;
+            }
+
+            if (true === $this->isPartnerAccount) {
+                $clientshopsResponse = $this->guzzleClient->get(
+                    self::BASE_URL . '/partners/' . $this->getUserId() . '/clientshops',
+                    [
+                        RequestOptions::HEADERS => [
+                            'X-Shopware-Token' => $this->getAccessToken(),
+                        ],
+                    ]
+                );
+
+                $shops = array_merge($shops, $this->streamTranslator->translateToArray($clientshopsResponse->getBody()));
+            }
+        }
+        return $shops;
+    }
+
+    /**
+     * Returns all shops which are generally associated with the account
+     *
+     * @return string[][]
+     */
+    private function getGeneralShops()
+    {
+        $shops = [];
+
+        $shopsResponse = $this->guzzleClient->get(
+            self::BASE_URL . '/shops?userId=' . $this->getUserId(),
+            [
+                RequestOptions::HEADERS => [
+                    'X-Shopware-Token' => $this->getAccessToken(),
+                ],
+            ]
+        );
+
+        if (200 === $shopsResponse->getStatusCode()) {
+            $shops = array_merge($shops, $this->streamTranslator->translateToArray($shopsResponse->getBody()));
+        }
+        return $shops;
+    }
+
+    /**
+     * Filters out the shop by domain and throws an exception if no shop is left afterwards
+     *
+     * @param string[][] $shops
+     * @param string[][] $partnerShops
+     *
+     * @return string[]
+     */
+    private function filterShopsByDomain($shops, $partnerShops)
+    {
+        $shopDomain = getenv('SHOPWARE_SHOP_DOMAIN');
+        if (false === $shopDomain || '' === trim($shopDomain)) {
+            throw new \RuntimeException('Environment variable "SHOPWARE_SHOP_DOMAIN" should be available');
+        }
+
+        $shops = array_merge($shops, $partnerShops);
+
+        $shops = array_filter($shops, function ($shop) use ($shopDomain) {
+            return $shop['domain'] === $shopDomain || ('.' === substr($shop['domain'], 0, 1) && false !== strpos($shop['domain'], $shopDomain));
+        });
+
+        if (0 === count($shops)) {
+            throw new \RuntimeException(sprintf('Shop with given domain "%s" does not exist!', $shopDomain));
+        }
+
+        return array_values($shops)[0];
     }
 }
