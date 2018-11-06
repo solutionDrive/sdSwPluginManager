@@ -62,20 +62,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
         if (200 === $licenseResponse->getStatusCode()) {
             $licenses = $this->streamTranslator->translateToArray($licenseResponse->getBody());
 
-            $plugin = array_filter($licenses, function ($license) use ($pluginId) {
-                // Basic Plugins like SwagCore
-                if (!isset($license['plugin'])) {
-                    return false;
-                }
-
-                return $license['plugin']['name'] === $pluginId || $license['plugin']['code'] === $pluginId;
-            });
-
-            if (empty($plugin)) {
-                throw new \RuntimeException(sprintf('Plugin with name "%s" is not available in your Account. Please buy the plugin first', $pluginId));
-            }
-
-            $plugin = array_values($plugin)[0];
+            $plugin = $this->filterPluginFromLicenses($pluginId, $licenses);
             // Fix plugin name
             $pluginId = $plugin['plugin']['name'];
             $versions = array_column($plugin['plugin']['binaries'], 'version');
@@ -246,5 +233,32 @@ class StoreApiConnector implements StoreApiConnectorInterface
         }
 
         return array_values($shops)[0];
+    }
+
+    /**
+     * Filters out plugin from licenses and throws an exception if no plugin was found
+     *
+     * @param string $pluginId
+     * @param string[][] $licenses
+     *
+     * @return string[]
+     */
+    private function filterPluginFromLicenses($pluginId, $licenses)
+    {
+        $plugin = array_filter($licenses, function ($license) use ($pluginId) {
+            // Basic Plugins like SwagCore
+            if (!isset($license['plugin'])) {
+                return false;
+            }
+
+            return $license['plugin']['name'] === $pluginId || $license['plugin']['code'] === $pluginId;
+        });
+
+        if (empty($plugin)) {
+            throw new \RuntimeException(sprintf('Plugin with name "%s" is not available in your Account. Please buy the plugin first', $pluginId));
+        }
+
+        $plugin = array_values($plugin)[0];
+        return $plugin;
     }
 }
