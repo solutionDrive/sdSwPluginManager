@@ -72,6 +72,11 @@ services:
     class: sd\SwPluginManager\Provider\StoreApiProvider
     tags: ['sd.plugin.provider']
     arguments:
+      - '@sd.service.store_api_connector'
+
+  sd.service.store_api_connector:
+    class: sd\SwPluginManager\Service\StoreApiConnector
+    arguments:
       - '@sd.external.guzzle'
       - '@sd.service.stream_translator'
 
