@@ -154,6 +154,8 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
             return $tmpName;
         }
+
+        return '';
     }
 
     private function getAccessToken()
