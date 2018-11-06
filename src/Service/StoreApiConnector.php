@@ -40,8 +40,6 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
     public function loadPlugin($pluginId, $version)
     {
-        // TODO: Clean up this messy code (Refactor it to own classes etc.)
-
         $shopDomain = getenv('SHOPWARE_SHOP_DOMAIN');
         if (false === $shopDomain || '' === trim($shopDomain)) {
             throw new \RuntimeException('Environment variable "SHOPWARE_SHOP_DOMAIN" should be available');
