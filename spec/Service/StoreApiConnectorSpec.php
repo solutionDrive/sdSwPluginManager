@@ -70,12 +70,52 @@ class StoreApiConnectorSpec extends ObjectBehavior
         putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
 
         // ACCESS TOKEN
+        $this->prepareAccessToken($guzzleClient, $streamTranslator, $accessTokenResponse, $accessCodeStream);
+
+        // CHECK FOR PARTNER ACCOUNT
+        $this->preparePartnerAccountCheck($guzzleClient, $streamTranslator, $partnerResponse, $partnerStream);
+
+        // GET ALL AVAILABLE PARTNER CLIENTSHOPS
+        $this->preparePartnerAccount($guzzleClient, $streamTranslator, $clientshopsResponse, $clientshopsStream);
+
+        // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
+        $this->prepareShops($guzzleClient, $streamTranslator, $shopsResponse, $shopsStream);
+
+        // GET ALL LICENSES
+        $this->prepareLicenseData($guzzleClient, $streamTranslator, $licenseResponse, $licenseStream);
+
+        $guzzleClient->get(
+            self::BASE_URL . '/plugin0.0.2?shopId=5',
+            [
+                RequestOptions::HEADERS => [
+                    'X-Shopware-Token'  => 'ABCDEF',
+                ],
+                RequestOptions::SINK => '/tmp/sw-plugin-awesomePlugin0.0.2',
+            ]
+        )
+            ->shouldBeCalled()
+            ->willReturn($pluginResponse);
+
+        $this->loadPlugin('awesomePlugin', '0.0.2');
+    }
+
+    public function it_cannot_connect_to_store_api_without_credentials()
+    {
+        $this->shouldThrow(\RuntimeException::class)->during('loadPlugin', ['awesomePlugin', '0.0.2']);
+    }
+
+    private function prepareAccessToken(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator,
+        Response $accessTokenResponse,
+        StreamInterface $accessCodeStream)
+    {
         $guzzleClient->post(
             self::BASE_URL . '/accesstokens',
             [
                 RequestOptions::JSON => [
-                    'shopwareId'    => self::SHOPWARE_ACCOUNT_USER,
-                    'password'      => self::SHOPWARE_ACCOUNT_PASSWORD,
+                    'shopwareId' => self::SHOPWARE_ACCOUNT_USER,
+                    'password' => self::SHOPWARE_ACCOUNT_PASSWORD,
                 ],
             ]
         )
@@ -89,19 +129,25 @@ class StoreApiConnectorSpec extends ObjectBehavior
             ->willReturn($accessCodeStream);
 
         $accessCodeData = [
-            'token'     => 'ABCDEF',
-            'userId'    => '12345',
+            'token' => 'ABCDEF',
+            'userId' => '12345',
         ];
 
         $streamTranslator->translateToArray($accessCodeStream)
             ->willReturn($accessCodeData);
+    }
 
-        // CHECK FOR PARTNER ACCOUNT
+    private function preparePartnerAccountCheck(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator,
+        Response $partnerResponse,
+        StreamInterface $partnerStream
+    ) {
         $guzzleClient->get(
             self::BASE_URL . '/partners/12345',
             [
                 RequestOptions::HEADERS => [
-                    'X-Shopware-Token'  => 'ABCDEF',
+                    'X-Shopware-Token' => 'ABCDEF',
                 ],
             ]
         )
@@ -120,13 +166,19 @@ class StoreApiConnectorSpec extends ObjectBehavior
 
         $streamTranslator->translateToArray($partnerStream)
             ->willReturn($partnerData);
+    }
 
-        // GET ALL AVAILABLE PARTNER CLIENTSHOPS
+    private function preparePartnerAccount(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator,
+        Response $clientshopsResponse,
+        StreamInterface $clientshopsStream
+    ) {
         $guzzleClient->get(
             self::BASE_URL . '/partners/12345/clientshops',
             [
                 RequestOptions::HEADERS => [
-                    'X-Shopware-Token'  => 'ABCDEF',
+                    'X-Shopware-Token' => 'ABCDEF',
                 ],
             ]
         )
@@ -148,13 +200,19 @@ class StoreApiConnectorSpec extends ObjectBehavior
 
         $streamTranslator->translateToArray($clientshopsStream)
             ->willReturn($clientshopData);
+    }
 
-        // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
+    private function prepareShops(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator,
+        Response $shopsResponse,
+        StreamInterface $shopsStream
+    ) {
         $guzzleClient->get(
             self::BASE_URL . '/shops?userId=12345',
             [
                 RequestOptions::HEADERS => [
-                    'X-Shopware-Token'  => 'ABCDEF',
+                    'X-Shopware-Token' => 'ABCDEF',
                 ],
             ]
         )
@@ -176,13 +234,19 @@ class StoreApiConnectorSpec extends ObjectBehavior
 
         $streamTranslator->translateToArray($shopsStream)
             ->willReturn($shopsData);
+    }
 
-        // GET ALL LICENSES
+    private function prepareLicenseData(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator,
+        Response $licenseResponse,
+        StreamInterface $licenseStream
+    ) {
         $guzzleClient->get(
             self::BASE_URL . '/licenses?shopId=5&partnerId=12345',
             [
                 RequestOptions::HEADERS => [
-                    'X-Shopware-Token'  => 'ABCDEF',
+                    'X-Shopware-Token' => 'ABCDEF',
                 ],
             ]
         )
@@ -215,24 +279,5 @@ class StoreApiConnectorSpec extends ObjectBehavior
 
         $streamTranslator->translateToArray($licenseStream)
             ->willReturn($licenseData);
-
-        $guzzleClient->get(
-            self::BASE_URL . '/plugin0.0.2?shopId=5',
-            [
-                RequestOptions::HEADERS => [
-                    'X-Shopware-Token'  => 'ABCDEF',
-                ],
-                RequestOptions::SINK => '/tmp/sw-plugin-awesomePlugin0.0.2',
-            ]
-        )
-            ->shouldBeCalled()
-            ->willReturn($pluginResponse);
-
-        $this->loadPlugin('awesomePlugin', '0.0.2');
-    }
-
-    public function it_cannot_connect_to_store_api_without_credentials()
-    {
-        $this->shouldThrow(\RuntimeException::class)->during('loadPlugin', ['awesomePlugin', '0.0.2']);
     }
 }
