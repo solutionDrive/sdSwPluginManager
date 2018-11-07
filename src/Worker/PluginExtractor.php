@@ -66,7 +66,7 @@ class PluginExtractor implements PluginExtractorInterface
         // Get plugins key to return
         // @TODO Verify that this works with lots of plugins (but it should...)
         $stat = $zipArchive->statIndex(0);
-        $folderName = trim($stat['name'], '/');
+        $folderName = explode('/', $stat['name'])[0];
         $extractToPath = $this->getExtractToPath($folderName);
 
         $extractResult = $zipArchive->extractTo($extractToPath);
