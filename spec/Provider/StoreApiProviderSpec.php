@@ -8,15 +8,10 @@
 
 namespace spec\sd\SwPluginManager\Provider;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\RequestOptions;
 use PhpSpec\ObjectBehavior;
-use Psr\Http\Message\StreamInterface;
 use sd\SwPluginManager\Provider\ProviderInterface;
 use sd\SwPluginManager\Provider\StoreApiProvider;
 use sd\SwPluginManager\Service\StoreApiConnectorInterface;
-use sd\SwPluginManager\Service\StreamTranslatorInterface;
 
 class StoreApiProviderSpec extends ObjectBehavior
 {

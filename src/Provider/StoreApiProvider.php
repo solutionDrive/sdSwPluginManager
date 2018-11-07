@@ -8,10 +8,7 @@
 
 namespace sd\SwPluginManager\Provider;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\RequestOptions;
 use sd\SwPluginManager\Service\StoreApiConnectorInterface;
-use sd\SwPluginManager\Service\StreamTranslatorInterface;
 
 /**
  * This provider is heavily inspired by https://github.com/shyim/store-plugin-installer

@@ -23,7 +23,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
     /** @var string|null */
     private $accessToken;
-    
+
     /** @var string|null */
     private $userId;
 
@@ -101,7 +101,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
         return $this->accessToken;
     }
-    
+
     private function getUserId()
     {
         if (null !== $this->userId) {
@@ -180,6 +180,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
                 $shops = array_merge($shops, $this->streamTranslator->translateToArray($clientshopsResponse->getBody()));
             }
         }
+
         return $shops;
     }
 
@@ -204,6 +205,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
         if (200 === $shopsResponse->getStatusCode()) {
             $shops = array_merge($shops, $this->streamTranslator->translateToArray($shopsResponse->getBody()));
         }
+
         return $shops;
     }
 
@@ -238,7 +240,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
     /**
      * Filters out plugin from licenses and throws an exception if no plugin was found
      *
-     * @param string $pluginId
+     * @param string     $pluginId
      * @param string[][] $licenses
      *
      * @return string[]

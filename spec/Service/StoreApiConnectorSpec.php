@@ -178,8 +178,8 @@ class StoreApiConnectorSpec extends ObjectBehavior
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
         Response $accessTokenResponse,
-        StreamInterface $accessCodeStream)
-    {
+        StreamInterface $accessCodeStream
+    ) {
         $guzzleClient->post(
             self::BASE_URL . '/accesstokens',
             [
