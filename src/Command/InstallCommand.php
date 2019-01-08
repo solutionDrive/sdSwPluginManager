@@ -22,12 +22,6 @@ class InstallCommand extends Command
         $this
             ->setName('sd:plugins:install')
             ->setDescription('Installs the given plugin.')
-            ->addOption(
-                'activate',
-                'a',
-                InputOption::VALUE_NONE,
-                ''
-            )
             ->addArgument('pluginId', InputArgument::REQUIRED, 'The plugin\'s identifier')
             ->setHelp(
                 'Installs the given plugin. First it is tried to use the Shopware CLI. ' .
