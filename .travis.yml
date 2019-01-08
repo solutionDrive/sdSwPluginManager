@@ -32,7 +32,7 @@ script:
   - ./etc/scripts/runSpecs.sh
 
 before_deploy:
-  - box build
+  - PATH=${PATH}:${COMPOSER_HOME}/vendor/bin box build
   - echo "Built following version:" && php ./build/sd-sw-plugin-manager.phar sd:plugins:info -v
   - mv ./build/sd-sw-plugin-manager.phar ./build/sd-sw-plugin-manager.php${TRAVIS_PHP_VERSION}.phar
 
