@@ -4,6 +4,8 @@ plugins:
     version: 1.0.0
     activated: false
     installed: true
+    alwaysReinstall: true
+    removeDataOnReinstall: false
     providerParameters:
       src: https://code.solutiondrive.de/sw-modules/sdGoogleTagManager-v1.0.0.zip
   sdAnotherFancyPlugin:
@@ -35,6 +37,8 @@ plugins:
   DevTools:
     provider: s3
     version: 1.1.1
+    alwaysReinstall: true
+    removeDataOnReinstall: true
     providerParameters:
       src: DevTools-master.zip          # Filename inside bucket relative to basePath
       bucket: some-s3-bucket-identifier # The AWS S3 bucket to use (global identifier)
@@ -48,6 +52,7 @@ plugins:
   # By providing 'null' ( ~ character ) as version the version check can be skipped.
   SwagLicense:
     version: ~
+    alwaysReinstall: false
 
   sdInfoSystem:
     provider: http

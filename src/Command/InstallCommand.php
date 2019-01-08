@@ -22,6 +22,18 @@ class InstallCommand extends Command
         $this
             ->setName('sd:plugins:install')
             ->setDescription('Installs the given plugin.')
+            ->addOption(
+                'no-reinstall',
+                null,
+                InputOption::VALUE_NONE,
+                ''
+            )
+            ->addOption(
+                'remove-data-on-reinstall',
+                null,
+                InputOption::VALUE_NONE,
+                ''
+            )
             ->addArgument('pluginId', InputArgument::REQUIRED, 'The plugin\'s identifier')
             ->setHelp(
                 'Installs the given plugin. First it is tried to use the Shopware CLI. ' .
@@ -42,6 +54,7 @@ class InstallCommand extends Command
             $alreadyNeedle = 'is already installed';
             if ($shopwareConsole->hasOutput() && false !== strpos($shopwareConsole->getOutput(), $alreadyNeedle)) {
                 $output->writeln('<info>Plugin `' . $pluginId . '` was already installed.</info>');
+                $this->reinstallIfRequested($input, $output);
                 return 0;
             } else {
                 $output->writeln(
@@ -62,6 +75,47 @@ class InstallCommand extends Command
         }
 
         $output->writeln('<info>Plugin `' . $pluginId . '` installed successfully.</info>');
+        return 0;
+    }
+
+    private function reinstallIfRequested(InputInterface $input, OutputInterface $output)
+    {
+        $pluginId = (string) $input->getArgument('pluginId');
+        $skipReinstall = (bool) $input->getOption('no-reinstall');
+        $removeData = (bool) $input->getOption('remove-data-on-reinstall');
+
+        // Skip reinstall if requested
+        if ($skipReinstall) {
+            return 0;
+        }
+
+        // Try to install using the Shopware CLI. If this works, everything is fine.
+        $shopwareConsole = new ShopwareConsoleCaller();
+
+        $parameters = [$pluginId => null];
+        if ($removeData) {
+            $parameters['--removedata'] = null;
+        }
+
+        $callSuccess = $shopwareConsole->call('sw:plugin:reinstall', $parameters);
+
+        if (false === $callSuccess) {
+            $output->writeln(
+                '<error>Plugin `' . $pluginId . '` could not be reinstalled by Shopware.</error>'
+            );
+
+            if ($shopwareConsole->hasOutput()) {
+                $output->writeln('Output (stdout) from Shopware CLI: ' . PHP_EOL . $shopwareConsole->getOutput());
+            }
+
+            if ($shopwareConsole->hasError()) {
+                $output->writeln('Output (stderr) from Shopware CLI: ' . PHP_EOL . $shopwareConsole->getError());
+            }
+
+            return 1;
+        }
+
+        $output->writeln('<info>Plugin `' . $pluginId . '` reinstalled successfully.</info>');
         return 0;
     }
 }

@@ -141,10 +141,20 @@ class AutomaticDeployCommand extends Command
                 }
 
                 if ($configuredPluginState->isInstalled()) {
-                    $input = new ArrayInput([
+                    $parameters = [
                         'command' => 'sd:plugins:install',
                         'pluginId' => $configuredPluginState->getId(),
-                    ]);
+                    ];
+
+                    if (false === $configuredPluginState->getAlwaysReinstall()) {
+                        $parameters['--no-reinstall'] = null;
+                    }
+
+                    if ($configuredPluginState->getRemoveDataOnReinstall()) {
+                        $parameters['--remove-data-on-reinstall'] = null;
+                    }
+
+                    $input = new ArrayInput($parameters);
                     $app->run($input, $output);
                 } else {
                     // Try to uninstall
