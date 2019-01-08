@@ -31,6 +31,12 @@ class ConfiguredPluginState
     /** @var array */
     private $environments;
 
+    /** @var bool */
+    private $alwaysReinstall;
+
+    /** @var bool */
+    private $removeDataOnReinstall;
+
     public function __construct(
         $id = '',
         $provider = 'none',
@@ -38,7 +44,9 @@ class ConfiguredPluginState
         $providerParameters = [],
         $environments = [],
         $activated = false,
-        $installed = false
+        $installed = false,
+        $alwaysReinstall = true,
+        $removeDataOnReinstall = false
     ) {
         if (true === isset($providerParameters['pluginId'])) {
             throw new \RuntimeException('The parameter "pluginId" is reserved and cannot be used. It will be filled automatically with the pluginId');
@@ -53,6 +61,8 @@ class ConfiguredPluginState
         $this->activated = $activated;
         $this->installed = $installed;
         $this->environments = $environments;
+        $this->alwaysReinstall = $alwaysReinstall;
+        $this->removeDataOnReinstall = $removeDataOnReinstall;
     }
 
     /**
@@ -109,5 +119,21 @@ class ConfiguredPluginState
     public function getEnvironments()
     {
         return $this->environments;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAlwaysReinstall()
+    {
+        return $this->alwaysReinstall;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getRemoveDataOnReinstall()
+    {
+        return $this->removeDataOnReinstall;
     }
 }

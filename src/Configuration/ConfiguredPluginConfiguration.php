@@ -41,6 +41,12 @@ class ConfiguredPluginConfiguration implements ConfigurationInterface
                     ->arrayNode('env')
                         ->scalarPrototype()->end()
                     ->end()
+                    ->booleanNode('alwaysReinstall')
+                        ->defaultTrue()
+                    ->end()
+                    ->booleanNode('removeDataOnReinstall')
+                        ->defaultFalse()
+                    ->end()
                 ->end()
                 ->validate()
                     ->ifTrue(function ($plugin) {

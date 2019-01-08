@@ -40,6 +40,8 @@ class ConfiguredPluginStateFactorySpec extends ObjectBehavior
                 ],
             ],
             'env' => ['unix', 'linux'],
+            'alwaysReinstall' => 'false',
+            'removeDataOnReinstall' => 'true',
         ];
 
         $plugin = $this->createFromConfigurationArray($key, $config);
@@ -57,5 +59,7 @@ class ConfiguredPluginStateFactorySpec extends ObjectBehavior
         $plugin->isActivated()->shouldReturn(false);
         $plugin->isInstalled()->shouldReturn(true);
         $plugin->getEnvironments()->shouldReturn(['unix', 'linux']);
+        $plugin->getAlwaysReinstall()->shouldReturn(false);
+        $plugin->getRemoveDataOnReinstall()->shouldReturn(true);
     }
 }
