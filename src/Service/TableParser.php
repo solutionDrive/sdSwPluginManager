@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace sd\SwPluginManager\Service;
@@ -53,11 +53,11 @@ class TableParser
      */
     public function parse($input)
     {
-        $lines = explode($this->lineSeparator, $input);
+        $lines = \explode($this->lineSeparator, $input);
         $items = [];
         foreach ($lines as $line) {
             $splittedLine = $this->parseLine($line);
-            if (count($splittedLine) >= $this->minCellsPerRow) {
+            if (\count($splittedLine) >= $this->minCellsPerRow) {
                 $items[] = $splittedLine;
             }
         }
@@ -67,18 +67,18 @@ class TableParser
 
     private function parseLine($line)
     {
-        $line = trim($line);
-        $cells = explode($this->cellSeparator, $line);
-        array_walk($cells, function (&$value, $key) {
-            $value = trim($value);
+        $line = \trim($line);
+        $cells = \explode($this->cellSeparator, $line);
+        \array_walk($cells, function (&$value, $key) {
+            $value = \trim($value);
         });
 
         if ($this->stripFirstCell) {
-            array_shift($cells);
+            \array_shift($cells);
         }
 
         if ($this->stripLastCell) {
-            array_pop($cells);
+            \array_pop($cells);
         }
 
         return $cells;

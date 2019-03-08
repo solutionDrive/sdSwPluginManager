@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace sd\SwPluginManager\Worker;
@@ -44,7 +44,7 @@ class PluginExtractor implements PluginExtractorInterface
         ]
     ) {
         if ('.' === $targetShopwareRoot) {
-            $targetShopwareRoot = getcwd();
+            $targetShopwareRoot = \getcwd();
         }
 
         $this->targetShopwareRoot = $targetShopwareRoot;
@@ -66,7 +66,7 @@ class PluginExtractor implements PluginExtractorInterface
         // Get plugins key to return
         // @TODO Verify that this works with lots of plugins (but it should...)
         $stat = $zipArchive->statIndex(0);
-        $folderName = explode('/', $stat['name'])[0];
+        $folderName = \explode('/', $stat['name'])[0];
         $extractToPath = $this->getExtractToPath($folderName);
 
         $extractResult = $zipArchive->extractTo($extractToPath);
@@ -90,12 +90,12 @@ class PluginExtractor implements PluginExtractorInterface
         if (true === $this->isLegacyPlugin($folderName)) {
             $baseShopwarePath = $this->targetShopwareRoot . DIRECTORY_SEPARATOR;
             foreach ($this->legacyPluginFolders as $legacyPluginFolder) {
-                if (is_dir($baseShopwarePath . $legacyPluginFolder)) {
+                if (\is_dir($baseShopwarePath . $legacyPluginFolder)) {
                     return $baseShopwarePath . $legacyPluginFolder;
                 }
             }
 
-            throw new \RuntimeException('Found a plugin with legacy structure, but no directory was available for installation. Checked directories: ' . implode(', ', $this->legacyPluginFolders));
+            throw new \RuntimeException('Found a plugin with legacy structure, but no directory was available for installation. Checked directories: ' . \implode(', ', $this->legacyPluginFolders));
         }
 
         return $this->targetShopwareRoot . DIRECTORY_SEPARATOR . $this->pluginFolder;
@@ -108,6 +108,6 @@ class PluginExtractor implements PluginExtractorInterface
      */
     private function isLegacyPlugin($folderName)
     {
-        return in_array($folderName, $this->legacyPluginRootFolders, false);
+        return \in_array($folderName, $this->legacyPluginRootFolders, false);
     }
 }

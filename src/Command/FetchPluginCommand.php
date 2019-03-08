@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace sd\SwPluginManager\Command;
@@ -58,7 +58,7 @@ class FetchPluginCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $stateFile = $input->getOption('statefile');
-        if (false === is_readable($stateFile)) {
+        if (false === \is_readable($stateFile)) {
             throw new \RuntimeException('Given statefile does not exist or is not readable.');
         }
 

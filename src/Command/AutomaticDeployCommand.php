@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace sd\SwPluginManager\Command;
@@ -86,7 +86,7 @@ class AutomaticDeployCommand extends Command
 
         $environment = $input->getOption('env');
         $yamlStateFilePath = $input->getArgument('statefile');
-        if (false === is_readable($yamlStateFilePath)) {
+        if (false === \is_readable($yamlStateFilePath)) {
             throw new \RuntimeException(
                 "The given statefile  $yamlStateFilePath  was not found or is not readable."
             );
@@ -201,6 +201,6 @@ class AutomaticDeployCommand extends Command
     {
         return
             false === empty($targetEnvironments) &&
-            false === in_array($currentEnvironment, $targetEnvironments);
+            false === \in_array($currentEnvironment, $targetEnvironments);
     }
 }
