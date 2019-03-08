@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace spec\sd\SwPluginManager\Service;
@@ -28,7 +28,7 @@ class StreamTranslatorSpec extends ObjectBehavior
     public function it_can_translate_a_stream_to_array(
         StreamInterface $stream
     ) {
-        $data = json_encode([
+        $data = \json_encode([
             'token'     => 'abc',
             'locale'    => 'de_DE',
         ]);

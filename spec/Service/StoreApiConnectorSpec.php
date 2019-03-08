@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace spec\sd\SwPluginManager\Service;
@@ -45,9 +45,9 @@ class StoreApiConnectorSpec extends ObjectBehavior
         );
 
         // Resets environment variables on every run
-        putenv('SHOPWARE_ACCOUNT_USER=');
-        putenv('SHOPWARE_ACCOUNT_PASSWORD=');
-        putenv('SHOPWARE_SHOP_DOMAIN=');
+        \putenv('SHOPWARE_ACCOUNT_USER=');
+        \putenv('SHOPWARE_ACCOUNT_PASSWORD=');
+        \putenv('SHOPWARE_SHOP_DOMAIN=');
     }
 
     public function it_can_load_a_plugin_with_correct_credentials(
@@ -65,9 +65,9 @@ class StoreApiConnectorSpec extends ObjectBehavior
         StreamInterface $licenseStream,
         Response $pluginResponse
     ) {
-        putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
-        putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
-        putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
+        \putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
+        \putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
+        \putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
 
         // ACCESS TOKEN
         $this->prepareAccessToken($guzzleClient, $streamTranslator, $accessTokenResponse, $accessCodeStream);
@@ -127,9 +127,9 @@ class StoreApiConnectorSpec extends ObjectBehavior
         StreamInterface $licenseStream,
         Response $pluginResponse
     ) {
-        putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
-        putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
-        putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
+        \putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
+        \putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
+        \putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
 
         // ACCESS TOKEN
         $this->prepareAccessToken($guzzleClient, $streamTranslator, $accessTokenResponse, $accessCodeStream);

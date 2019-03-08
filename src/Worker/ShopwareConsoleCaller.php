@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace sd\SwPluginManager\Worker;
@@ -57,21 +57,21 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
         ];
 
         $process = \proc_open($fullCommand, $stdDescriptors, $pipes, $this->workingDirectory, null);
-        if (false === $process || false === is_resource($process)) {
-            $this->error = printf('Could not start command "%s" correctly. No valid process resource was returned', $command);
+        if (false === $process || false === \is_resource($process)) {
+            $this->error = \printf('Could not start command "%s" correctly. No valid process resource was returned', $command);
             return false;
         }
 
-        stream_set_blocking($pipes[0], false);
+        \stream_set_blocking($pipes[0], false);
 
         $this->output = \stream_get_contents($pipes[1]);
-        fclose($pipes[1]);
+        \fclose($pipes[1]);
         $this->error = \stream_get_contents($pipes[2]);
-        fclose($pipes[2]);
+        \fclose($pipes[2]);
 
         $this->waitForExitCode($process);
 
-        proc_close($process);
+        \proc_close($process);
         return 0 === $this->returnCode;
     }
 
@@ -89,7 +89,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
         foreach ($parameters as $key => $value) {
             if (null === $value) {
                 $flat .= $key . ' ';
-            } elseif (is_bool($value)) {
+            } elseif (\is_bool($value)) {
                 $flat .= $key . '=' . ($value ? 'true' : 'false') . ' ';
             } else {
                 $flat .= $key . '=' . $value . ' ';
@@ -172,12 +172,12 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
             if (false === $processStatus['running']) {
                 $this->returnCode = $processStatus['exitcode'];
             } else {
-                usleep(100);
+                \usleep(100);
                 $waitTime += 100;
             }
 
             if ($waitTime >= $maxWaitTime) {
-                $this->error = printf('Process did not exit properly within %d micro seconds', $maxWaitTime);
+                $this->error = \printf('Process did not exit properly within %d micro seconds', $maxWaitTime);
                 $this->returnCode = 1;
             }
         } while (true === $processStatus['running'] && false === $this->hasError());

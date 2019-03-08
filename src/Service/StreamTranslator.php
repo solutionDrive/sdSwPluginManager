@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace sd\SwPluginManager\Service;
@@ -17,6 +17,6 @@ class StreamTranslator implements StreamTranslatorInterface
      */
     public function translateToArray(StreamInterface $stream)
     {
-        return json_decode($stream, true);
+        return \json_decode($stream, true);
     }
 }

@@ -10,6 +10,8 @@ services:
     class: sd\SwPluginManager\Command\DeactivateCommand
   sd.command.install:
     class: sd\SwPluginManager\Command\InstallCommand
+  sd.command.uninstall:
+    class: sd\SwPluginManager\Command\UninstallCommand
   sd.command.info:
     class: sd\SwPluginManager\Command\InfoCommand
   sd.command.list:

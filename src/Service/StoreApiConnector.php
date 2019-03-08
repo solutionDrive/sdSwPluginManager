@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace sd\SwPluginManager\Service;
@@ -65,12 +65,12 @@ class StoreApiConnector implements StoreApiConnectorInterface
             $plugin = $this->filterPluginFromLicenses($pluginId, $licenses);
             // Fix plugin name
             $pluginId = $plugin['plugin']['name'];
-            $versions = array_column($plugin['plugin']['binaries'], 'version');
-            if (!in_array($version, $versions)) {
-                throw new \RuntimeException(sprintf('Plugin with name "%s" doesnt have the version "%s", Available versions are %s', $pluginId, $version, implode(', ', array_reverse($versions))));
+            $versions = \array_column($plugin['plugin']['binaries'], 'version');
+            if (!\in_array($version, $versions)) {
+                throw new \RuntimeException(\sprintf('Plugin with name "%s" doesnt have the version "%s", Available versions are %s', $pluginId, $version, \implode(', ', \array_reverse($versions))));
             }
 
-            $binaryVersion = array_values(array_filter($plugin['plugin']['binaries'], function ($binary) use ($version) {
+            $binaryVersion = \array_values(\array_filter($plugin['plugin']['binaries'], function ($binary) use ($version) {
                 return $binary['version'] === $version;
             }))[0];
 
@@ -115,13 +115,13 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
     private function loadAccessTokens()
     {
-        $user = getenv('SHOPWARE_ACCOUNT_USER');
-        if (false === $user || '' === trim($user)) {
+        $user = \getenv('SHOPWARE_ACCOUNT_USER');
+        if (false === $user || '' === \trim($user)) {
             throw new \RuntimeException('Environment variable "SHOPWARE_ACCOUNT_USER" should be available');
         }
 
-        $password = getenv('SHOPWARE_ACCOUNT_PASSWORD');
-        if (false === $password || '' === trim($password)) {
+        $password = \getenv('SHOPWARE_ACCOUNT_PASSWORD');
+        if (false === $password || '' === \trim($password)) {
             throw new \RuntimeException('Environment variable "SHOPWARE_ACCOUNT_PASSWORD" should be available');
         }
 
@@ -177,7 +177,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
                     ]
                 );
 
-                $shops = array_merge($shops, $this->streamTranslator->translateToArray($clientshopsResponse->getBody()));
+                $shops = \array_merge($shops, $this->streamTranslator->translateToArray($clientshopsResponse->getBody()));
             }
         }
 
@@ -203,7 +203,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
         );
 
         if (200 === $shopsResponse->getStatusCode()) {
-            $shops = array_merge($shops, $this->streamTranslator->translateToArray($shopsResponse->getBody()));
+            $shops = \array_merge($shops, $this->streamTranslator->translateToArray($shopsResponse->getBody()));
         }
 
         return $shops;
@@ -219,22 +219,22 @@ class StoreApiConnector implements StoreApiConnectorInterface
      */
     private function filterShopsByDomain($shops, $partnerShops)
     {
-        $shopDomain = getenv('SHOPWARE_SHOP_DOMAIN');
-        if (false === $shopDomain || '' === trim($shopDomain)) {
+        $shopDomain = \getenv('SHOPWARE_SHOP_DOMAIN');
+        if (false === $shopDomain || '' === \trim($shopDomain)) {
             throw new \RuntimeException('Environment variable "SHOPWARE_SHOP_DOMAIN" should be available');
         }
 
-        $shops = array_merge($shops, $partnerShops);
+        $shops = \array_merge($shops, $partnerShops);
 
-        $shops = array_filter($shops, function ($shop) use ($shopDomain) {
-            return $shop['domain'] === $shopDomain || ('.' === substr($shop['domain'], 0, 1) && false !== strpos($shop['domain'], $shopDomain));
+        $shops = \array_filter($shops, function ($shop) use ($shopDomain) {
+            return $shop['domain'] === $shopDomain || ('.' === \substr($shop['domain'], 0, 1) && false !== \strpos($shop['domain'], $shopDomain));
         });
 
-        if (0 === count($shops)) {
-            throw new \RuntimeException(sprintf('Shop with given domain "%s" does not exist!', $shopDomain));
+        if (0 === \count($shops)) {
+            throw new \RuntimeException(\sprintf('Shop with given domain "%s" does not exist!', $shopDomain));
         }
 
-        return array_values($shops)[0];
+        return \array_values($shops)[0];
     }
 
     /**
@@ -247,7 +247,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
      */
     private function filterPluginFromLicenses($pluginId, $licenses)
     {
-        $plugin = array_filter($licenses, function ($license) use ($pluginId) {
+        $plugin = \array_filter($licenses, function ($license) use ($pluginId) {
             // Basic Plugins like SwagCore
             if (!isset($license['plugin'])) {
                 return false;
@@ -257,10 +257,10 @@ class StoreApiConnector implements StoreApiConnectorInterface
         });
 
         if (empty($plugin)) {
-            throw new \RuntimeException(sprintf('Plugin with name "%s" is not available in your Account. Please buy the plugin first', $pluginId));
+            throw new \RuntimeException(\sprintf('Plugin with name "%s" is not available in your Account. Please buy the plugin first', $pluginId));
         }
 
-        $plugin = array_values($plugin)[0];
+        $plugin = \array_values($plugin)[0];
         return $plugin;
     }
 }

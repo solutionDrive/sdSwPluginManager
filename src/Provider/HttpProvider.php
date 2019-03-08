@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace sd\SwPluginManager\Provider;
@@ -39,7 +39,7 @@ class HttpProvider implements ProviderInterface
             $headers = $parameters['header'];
         }
 
-        $tmpName = tempnam('/tmp', 'sw-plugin-');
+        $tmpName = \tempnam('/tmp', 'sw-plugin-');
         $this->downloadFile($parameters['src'], $tmpName, $auth, $headers);
 
         return $tmpName;

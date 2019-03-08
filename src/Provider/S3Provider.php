@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace sd\SwPluginManager\Provider;
@@ -68,12 +68,12 @@ class S3Provider implements ProviderInterface
         $client = $this->s3ClientFactory->createClient($region, $profile);
         $key = $basePath . '/' . $parameters['src'];
 
-        $tmpName = tempnam('/tmp', 'sw-plugin-');
+        $tmpName = \tempnam('/tmp', 'sw-plugin-');
         $client->getObject([
             'Bucket'                     => $bucket,
             'Key'                        => $key,
             'ResponseCacheControl'       => 'No-cache',
-            'ResponseExpires'            => gmdate(DATE_RFC2822, time()),
+            'ResponseExpires'            => \gmdate(DATE_RFC2822, \time()),
             'SaveAs'                     => $tmpName,
         ]);
 

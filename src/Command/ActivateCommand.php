@@ -3,7 +3,7 @@
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace sd\SwPluginManager\Command;
@@ -40,7 +40,7 @@ class ActivateCommand extends Command
         // @TODO If it did not work, install the plugin by setting the flag in the database and inform the user.
         if (false === $callSuccess) {
             $alreadyNeedle = 'is already activated';
-            if ($shopwareConsole->hasOutput() && false !== strpos($shopwareConsole->getOutput(), $alreadyNeedle)) {
+            if ($shopwareConsole->hasOutput() && false !== \strpos($shopwareConsole->getOutput(), $alreadyNeedle)) {
                 $output->writeln('<info>Plugin `' . $pluginId . '` was already activated.</info>');
                 return 0;
             } else {
