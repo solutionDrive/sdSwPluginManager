@@ -39,6 +39,7 @@ class PluginExtractor implements PluginExtractorInterface
         $targetShopwareRoot = '.',
         $pluginFolder = 'custom/plugins',
         $legacyPluginFolders = [
+            'Plugins/Community',
             'engine/Shopware/Plugins/Community',
             'custom/project',
         ]
