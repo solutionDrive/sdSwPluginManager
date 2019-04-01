@@ -12,6 +12,7 @@ use sd\SwPluginManager\Worker\ShopwareConsoleCaller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 // @TODO change to ContainerAwareCommand and remove constructors here
@@ -23,6 +24,13 @@ class ActivateCommand extends Command
             ->setName('sd:plugins:activate')
             ->setDescription('Activates the given plugin.')
             ->addArgument('pluginId', InputArgument::REQUIRED, 'The plugin\'s identifier')
+            ->addOption(
+                'env',
+                'e',
+                InputOption::VALUE_REQUIRED,
+                'The current environment to use for calling shopware commands',
+                'production'
+            )
             ->setHelp(
                 'Activates the given plugin. First it is tried to use the Shopware CLI. ' .
                 'If this does not work, a more error tolerant approach is taken.'
@@ -31,11 +39,16 @@ class ActivateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $env = (string) $input->getOption('env');
         $pluginId = (string) $input->getArgument('pluginId');
 
         // Try to install using the Shopware CLI. If this works, everything is fine.
         $shopwareConsole = new ShopwareConsoleCaller();
-        $callSuccess = $shopwareConsole->call('sw:plugin:activate', [$pluginId => null]);
+        $parameters = [
+            $pluginId => null,
+            '--env'   => $env,
+        ];
+        $callSuccess = $shopwareConsole->call('sw:plugin:activate', $parameters);
 
         // @TODO If it did not work, install the plugin by setting the flag in the database and inform the user.
         if (false === $callSuccess) {

@@ -34,6 +34,13 @@ class InstallCommand extends Command
                 InputOption::VALUE_NONE,
                 ''
             )
+            ->addOption(
+                'env',
+                'e',
+                InputOption::VALUE_REQUIRED,
+                'The current environment to use for calling shopware commands',
+                'production'
+            )
             ->addArgument('pluginId', InputArgument::REQUIRED, 'The plugin\'s identifier')
             ->setHelp(
                 'Installs the given plugin. First it is tried to use the Shopware CLI. ' .
@@ -43,11 +50,16 @@ class InstallCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $env = (string) $input->getOption('env');
         $pluginId = (string) $input->getArgument('pluginId');
 
         // Try to install using the Shopware CLI. If this works, everything is fine.
         $shopwareConsole = new ShopwareConsoleCaller();
-        $callSuccess = $shopwareConsole->call('sw:plugin:install', [$pluginId => null]);
+        $parameters = [
+            $pluginId => null,
+            '--env'   => $env,
+        ];
+        $callSuccess = $shopwareConsole->call('sw:plugin:install', $parameters);
 
         // @TODO If it did not work, install the plugin by setting the flag in the database and inform the user.
         if (false === $callSuccess) {

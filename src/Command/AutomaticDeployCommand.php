@@ -130,6 +130,7 @@ class AutomaticDeployCommand extends Command
         if (false === $skipInstall) {
             $input = new ArrayInput([
                 'command' => 'sd:plugins:refresh',
+                '--env' => $environment,
             ]);
             $app->run($input, $output);
 
@@ -144,6 +145,7 @@ class AutomaticDeployCommand extends Command
                     $parameters = [
                         'command' => 'sd:plugins:install',
                         'pluginId' => $configuredPluginState->getId(),
+                        '--env' => $environment,
                     ];
 
                     if (false === $configuredPluginState->getAlwaysReinstall()) {
@@ -162,6 +164,7 @@ class AutomaticDeployCommand extends Command
                         'command' => 'sd:plugins:uninstall',
                         '--secure' => true,
                         'pluginId' => $configuredPluginState->getId(),
+                        '--env' => $environment,
                     ]);
                     $app->run($input, $output);
                 }
@@ -170,6 +173,7 @@ class AutomaticDeployCommand extends Command
                     $input = new ArrayInput([
                         'command' => 'sd:plugins:activate',
                         'pluginId' => $configuredPluginState->getId(),
+                        '--env' => $environment,
                     ]);
                     $app->run($input, $output);
                 } else {
@@ -177,6 +181,7 @@ class AutomaticDeployCommand extends Command
                     $input = new ArrayInput([
                         'command' => 'sd:plugins:deactivate',
                         'pluginId' => $configuredPluginState->getId(),
+                        '--env' => $environment,
                     ]);
                     $app->run($input, $output);
                 }
