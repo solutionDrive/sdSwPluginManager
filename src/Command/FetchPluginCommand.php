@@ -49,6 +49,13 @@ class FetchPluginCommand extends Command
                 InputArgument::REQUIRED,
                 'The plugin that should be fetched'
             )
+            ->addOption(
+                'env',
+                'e',
+                InputOption::VALUE_REQUIRED,
+                'The current environment to use for calling shopware commands',
+                'production'
+            )
             ->setDescription('Fetches a plugin from its source.')
             ->setHelp(
                 'Fetches a plugin from its source configured in the given statefile.'

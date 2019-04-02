@@ -10,6 +10,7 @@ namespace sd\SwPluginManager\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InfoCommand extends Command
@@ -19,6 +20,13 @@ class InfoCommand extends Command
         $this
             ->setName('sd:plugins:info')
             ->setDescription('Outputs some information about the plugin manager.')
+            ->addOption(
+                'env',
+                'e',
+                InputOption::VALUE_REQUIRED,
+                'The current environment to use for calling shopware commands',
+                'production'
+            )
             ->setHelp('Outputs some information about the plugin manager.');
     }
 

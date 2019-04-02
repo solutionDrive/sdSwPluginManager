@@ -58,6 +58,13 @@ class DeployZipCommand extends Command
                 InputOption::VALUE_NONE,
                 'Skip the plugin refresh step'
             )
+            ->addOption(
+                'env',
+                'e',
+                InputOption::VALUE_REQUIRED,
+                'The current environment to use for calling shopware commands',
+                'production'
+            )
             ->setDescription('Deploys the given plugin.')
             ->setHelp(
                 'Deploys the given plugin (packed) in a zip file. Optionally installs and activates the plugin.'
@@ -71,6 +78,7 @@ class DeployZipCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $env = (string) $input->getOption('env');
         $sourceFile = $input->getArgument('file');
         $shouldInstall = (bool) $input->getOption('install');
         $shouldActivate = (bool) $input->getOption('activate');
@@ -103,6 +111,7 @@ class DeployZipCommand extends Command
             if (false === $skipRefresh) {
                 $input = new ArrayInput([
                     'command' => 'sd:plugins:refresh',
+                    '--env'   => $env,
                 ]);
                 $app->run($input, $output);
             }
@@ -111,6 +120,7 @@ class DeployZipCommand extends Command
             $input = new ArrayInput([
                 'command' => 'sd:plugins:install',
                 'pluginId' => $pluginId,
+                '--env'    => $env,
             ]);
             $app->run($input, $output);
         }
@@ -123,6 +133,7 @@ class DeployZipCommand extends Command
             $input = new ArrayInput([
                 'command' => 'sd:plugins:activate',
                 'pluginId' => $pluginId,
+                '--env'    => $env,
             ]);
             $app->run($input, $output);
         }
