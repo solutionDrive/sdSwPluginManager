@@ -45,10 +45,12 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
         $shop = $this->filterShopsByDomain($shops, $partnerShops);
 
-        $licenseUrl = self::BASE_URL . '/licenses?shopId=' . $shop['id'];
+        $licenseUrl = self::BASE_URL;
         if (true === $this->isPartnerAccount) {
-            $licenseUrl .= '&partnerId=' . $this->getUserId();
+            $licenseUrl .= '/partners/' . $this->getUserId();
+            $licenseUrl .= '/customers/' . $shop['companyId'];
         }
+        $licenseUrl .=  '/shops/' . $shop['id'] . '/pluginlicenses';
 
         $licenseResponse = $this->guzzleClient->get(
             $licenseUrl,
@@ -63,29 +65,54 @@ class StoreApiConnector implements StoreApiConnectorInterface
             $licenses = $this->streamTranslator->translateToArray($licenseResponse->getBody());
 
             $plugin = $this->filterPluginFromLicenses($pluginId, $licenses);
-            // Fix plugin name
-            $pluginId = $plugin['plugin']['name'];
-            $versions = \array_column($plugin['plugin']['binaries'], 'version');
-            if (!\in_array($version, $versions)) {
-                throw new \RuntimeException(\sprintf('Plugin with name "%s" doesnt have the version "%s", Available versions are %s', $pluginId, $version, \implode(', ', \array_reverse($versions))));
+
+            // Get plugin information
+            $pluginOverallId = $plugin['id'];
+            $pluginName = $plugin['plugin']['name'];
+            $pluginSpecificId = $plugin['plugin']['id'];
+
+            $pluginInfoUrl = self::BASE_URL;
+            if (true === $this->isPartnerAccount) {
+                $pluginInfoUrl .= '/partners/' . $this->getUserId();
+                $pluginInfoUrl .= '/customers/' . $shop['companyId'];
             }
+            $pluginInfoUrl .= '/shops/' . $shop['id'] . '/pluginlicenses/' . $pluginOverallId;
 
-            $binaryVersion = \array_values(\array_filter($plugin['plugin']['binaries'], function ($binary) use ($version) {
-                return $binary['version'] === $version;
-            }))[0];
-
-            $tmpName = '/tmp/sw-plugin-' . $pluginId . $version;
-            $this->guzzleClient->get(
-                self::BASE_URL . $binaryVersion['filePath'] . '?shopId=' . $shop['id'],
+            $pluginInfoResponse = $this->guzzleClient->get(
+                $pluginInfoUrl,
                 [
                     RequestOptions::HEADERS => [
                         'X-Shopware-Token'  => $this->getAccessToken(),
                     ],
-                    RequestOptions::SINK => $tmpName,
                 ]
             );
 
-            return $tmpName;
+            if (200 === $pluginInfoResponse->getStatusCode()) {
+                $pluginInfo = $this->streamTranslator->translateToArray($pluginInfoResponse->getBody());
+
+                $versions = \array_column($pluginInfo['plugin']['binaries'], 'version');
+                if (!\in_array($version, $versions)) {
+                    throw new \RuntimeException(\sprintf('Plugin with name "%s" doesnt have the version "%s", Available versions are %s', $pluginId, $version, \implode(', ', \array_reverse($versions))));
+                }
+
+                $binaryVersion = \array_values(\array_filter($pluginInfo['plugin']['binaries'], function ($binary) use ($version) {
+                    return $binary['version'] === $version;
+                }))[0];
+
+                $tmpName = '/tmp/sw-plugin-' . $pluginName . $version;
+                $downloadUrl = self::BASE_URL . '/plugins/' . $pluginSpecificId . '/binaries/' . $binaryVersion['id'] . '/file?shopId=' . $shop['id'];
+                $this->guzzleClient->get(
+                    $downloadUrl,
+                    [
+                        RequestOptions::HEADERS => [
+                            'X-Shopware-Token' => $this->getAccessToken(),
+                        ],
+                        RequestOptions::SINK => $tmpName,
+                    ]
+                );
+
+                return $tmpName;
+            }
         }
 
         return '';
