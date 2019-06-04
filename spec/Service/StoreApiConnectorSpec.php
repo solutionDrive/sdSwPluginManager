@@ -333,7 +333,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
                 'id' => 17,
                 'plugin' => [
                     'id' => 58,
-                    'name' => 'awesomePlugin'
+                    'name' => 'awesomePlugin',
                 ],
             ],
         ];
