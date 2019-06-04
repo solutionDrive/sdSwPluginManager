@@ -63,6 +63,8 @@ class StoreApiConnectorSpec extends ObjectBehavior
         StreamInterface $shopsStream,
         Response $licenseResponse,
         StreamInterface $licenseStream,
+        Response $pluginInfoResponse,
+        StreamInterface $pluginInfoStream,
         Response $pluginResponse
     ) {
         \putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
@@ -72,33 +74,36 @@ class StoreApiConnectorSpec extends ObjectBehavior
         // ACCESS TOKEN
         $this->prepareAccessToken($guzzleClient, $streamTranslator, $accessTokenResponse, $accessCodeStream);
 
+        // CHECK FOR PARTNER ACCOUNT
         $partnerData = [
             'partnerId' => '9876',
         ];
-
-        // CHECK FOR PARTNER ACCOUNT
         $this->preparePartnerAccountCheck($guzzleClient, $streamTranslator, $partnerResponse, $partnerStream, $partnerData);
 
         // GET ALL AVAILABLE PARTNER CLIENTSHOPS
         $this->preparePartnerAccount($guzzleClient, $streamTranslator, $clientshopsResponse, $clientshopsStream);
 
+        // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
         $shopsData = [
             [
                 'id' => 5,
+                'companyId' => 87,
                 'domain' => 'example.org',
             ],
         ];
-
-        // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
         $this->prepareShops($guzzleClient, $streamTranslator, $shopsResponse, $shopsStream, $shopsData);
 
-        $licenseUrl = '/licenses?shopId=5&partnerId=12345';
-
         // GET ALL LICENSES
+        $licenseUrl = '/partners/12345/customers/87/shops/5/pluginlicenses';
         $this->prepareLicenseData($guzzleClient, $streamTranslator, $licenseResponse, $licenseStream, $licenseUrl);
 
+        // GET ALL INFOS ABOUT PLUGIN
+        $pluginInfoUrl = '/partners/12345/customers/87/shops/5/pluginlicenses/17';
+        $this->preparePluginInfoData($guzzleClient, $streamTranslator, $pluginInfoResponse, $pluginInfoStream, $pluginInfoUrl);
+
+        $downloadUrl = '/plugins/58/binaries/10/file?shopId=5';
         $guzzleClient->get(
-            self::BASE_URL . '/plugin0.0.2?shopId=5',
+            self::BASE_URL . $downloadUrl,
             [
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token'  => 'ABCDEF',
@@ -119,12 +124,12 @@ class StoreApiConnectorSpec extends ObjectBehavior
         StreamInterface $accessCodeStream,
         Response $partnerResponse,
         StreamInterface $partnerStream,
-        Response $clientshopsResponse,
-        StreamInterface $clientshopsStream,
         Response $shopsResponse,
         StreamInterface $shopsStream,
         Response $licenseResponse,
         StreamInterface $licenseStream,
+        Response $pluginInfoResponse,
+        StreamInterface $pluginInfoStream,
         Response $pluginResponse
     ) {
         \putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
@@ -134,28 +139,30 @@ class StoreApiConnectorSpec extends ObjectBehavior
         // ACCESS TOKEN
         $this->prepareAccessToken($guzzleClient, $streamTranslator, $accessTokenResponse, $accessCodeStream);
 
-        $partnerData = [];
-
         // CHECK FOR PARTNER ACCOUNT
+        $partnerData = [];
         $this->preparePartnerAccountCheck($guzzleClient, $streamTranslator, $partnerResponse, $partnerStream, $partnerData);
 
+        // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
         $shopsData = [
             [
                 'id' => 7,
                 'domain' => 'example.org',
             ],
         ];
-
-        // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
         $this->prepareShops($guzzleClient, $streamTranslator, $shopsResponse, $shopsStream, $shopsData);
 
-        $licenseUrl = '/licenses?shopId=7';
-
         // GET ALL LICENSES
+        $licenseUrl = '/shops/7/pluginlicenses';
         $this->prepareLicenseData($guzzleClient, $streamTranslator, $licenseResponse, $licenseStream, $licenseUrl);
 
+        // GET ALL INFOS ABOUT PLUGIN
+        $pluginInfoUrl = '/shops/7/pluginlicenses/17';
+        $this->preparePluginInfoData($guzzleClient, $streamTranslator, $pluginInfoResponse, $pluginInfoStream, $pluginInfoUrl);
+
+        $downloadUrl = '/plugins/58/binaries/10/file?shopId=7';
         $guzzleClient->get(
-            self::BASE_URL . '/plugin0.0.2?shopId=7',
+            self::BASE_URL . $downloadUrl,
             [
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token'  => 'ABCDEF',
@@ -323,23 +330,63 @@ class StoreApiConnectorSpec extends ObjectBehavior
 
         $licenseData = [
             [
+                'id' => 17,
                 'plugin' => [
+                    'id' => 58,
                     'name' => 'awesomePlugin',
-                    'binaries' => [
-                        [
-                            'version' => '0.0.1',
-                            'filePath' => '/plugin0.0.1',
-                        ],
-                        [
-                            'version' => '0.0.2',
-                            'filePath' => '/plugin0.0.2',
-                        ],
-                    ],
                 ],
             ],
         ];
 
         $streamTranslator->translateToArray($licenseStream)
             ->willReturn($licenseData);
+    }
+
+    private function preparePluginInfoData(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator,
+        Response $pluginInfoResponse,
+        StreamInterface $pluginInfoStream,
+        string $url
+    ) {
+        $guzzleClient->get(
+            self::BASE_URL . $url,
+            [
+                RequestOptions::HEADERS => [
+                    'X-Shopware-Token' => 'ABCDEF',
+                ],
+            ]
+        )
+            ->shouldBeCalled()
+            ->willReturn($pluginInfoResponse);
+
+        $pluginInfoResponse->getStatusCode()
+            ->willReturn(200);
+
+        $pluginInfoResponse->getBody()
+            ->willReturn($pluginInfoStream);
+
+        $data = [
+            'id' => 17,
+            'plugin' => [
+                'id' => 58,
+                'name' => 'awesomePlugin',
+                'binaries' => [
+                    [
+                        'id' => 3,
+                        'version' => '0.0.1',
+                        'filePath' => '/plugin0.0.1',
+                    ],
+                    [
+                        'id' => 10,
+                        'version' => '0.0.2',
+                        'filePath' => '/plugin0.0.2',
+                    ],
+                ],
+            ],
+        ];
+
+        $streamTranslator->translateToArray($pluginInfoStream)
+            ->willReturn($data);
     }
 }
