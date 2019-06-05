@@ -50,7 +50,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
         \putenv('SHOPWARE_SHOP_DOMAIN=');
     }
 
-    public function it_can_load_a_plugin_with_correct_credentials(
+    public function it_can_load_a_plugin_if_domain_only_exist_in_partner_account(
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
         Response $accessTokenResponse,
@@ -80,8 +80,15 @@ class StoreApiConnectorSpec extends ObjectBehavior
         ];
         $this->preparePartnerAccountCheck($guzzleClient, $streamTranslator, $partnerResponse, $partnerStream, $partnerData);
 
+        $clientshopData = [
+            [
+                'id' => 1,
+                'companyId' => 27,
+                'domain' => 'example.org',
+            ],
+        ];
         // GET ALL AVAILABLE PARTNER CLIENTSHOPS
-        $this->preparePartnerAccount($guzzleClient, $streamTranslator, $clientshopsResponse, $clientshopsStream);
+        $this->preparePartnerAccount($guzzleClient, $streamTranslator, $clientshopsResponse, $clientshopsStream, $clientshopData);
 
         // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
         $shopsData = [
@@ -94,14 +101,87 @@ class StoreApiConnectorSpec extends ObjectBehavior
         $this->prepareShops($guzzleClient, $streamTranslator, $shopsResponse, $shopsStream, $shopsData);
 
         // GET ALL LICENSES
-        $licenseUrl = '/partners/12345/customers/87/shops/5/pluginlicenses';
+        $licenseUrl = '/partners/12345/customers/27/shops/1/pluginlicenses';
         $this->prepareLicenseData($guzzleClient, $streamTranslator, $licenseResponse, $licenseStream, $licenseUrl);
 
         // GET ALL INFOS ABOUT PLUGIN
-        $pluginInfoUrl = '/partners/12345/customers/87/shops/5/pluginlicenses/17';
+        $pluginInfoUrl = '/partners/12345/customers/27/shops/1/pluginlicenses/17';
         $this->preparePluginInfoData($guzzleClient, $streamTranslator, $pluginInfoResponse, $pluginInfoStream, $pluginInfoUrl);
 
-        $downloadUrl = '/plugins/58/binaries/10/file?shopId=5';
+        $downloadUrl = '/plugins/58/binaries/10/file?shopId=1';
+        $guzzleClient->get(
+            self::BASE_URL . $downloadUrl,
+            [
+                RequestOptions::HEADERS => [
+                    'X-Shopware-Token'  => 'ABCDEF',
+                ],
+                RequestOptions::SINK => '/tmp/sw-plugin-awesomePlugin0.0.2',
+            ]
+        )
+            ->shouldBeCalled()
+            ->willReturn($pluginResponse);
+
+        $this->loadPlugin('awesomePlugin', '0.0.2');
+    }
+
+    public function it_can_load_a_plugin_if_domain_only_exist_in_only_shops(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator,
+        Response $accessTokenResponse,
+        StreamInterface $accessCodeStream,
+        Response $partnerResponse,
+        StreamInterface $partnerStream,
+        Response $clientshopsResponse,
+        StreamInterface $clientshopsStream,
+        Response $shopsResponse,
+        StreamInterface $shopsStream,
+        Response $licenseResponse,
+        StreamInterface $licenseStream,
+        Response $pluginInfoResponse,
+        StreamInterface $pluginInfoStream,
+        Response $pluginResponse
+    ) {
+        \putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
+        \putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
+        \putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
+
+        // ACCESS TOKEN
+        $this->prepareAccessToken($guzzleClient, $streamTranslator, $accessTokenResponse, $accessCodeStream);
+
+        // CHECK FOR PARTNER ACCOUNT
+        $partnerData = [
+            'partnerId' => '9876',
+        ];
+        $this->preparePartnerAccountCheck($guzzleClient, $streamTranslator, $partnerResponse, $partnerStream, $partnerData);
+
+        $clientshopData = [
+            [
+                'id' => 1,
+                'companyId' => 27,
+                'domain' => 'example.com',
+            ],
+        ];
+        // GET ALL AVAILABLE PARTNER CLIENTSHOPS
+        $this->preparePartnerAccount($guzzleClient, $streamTranslator, $clientshopsResponse, $clientshopsStream, $clientshopData);
+
+        // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
+        $shopsData = [
+            [
+                'id' => 7,
+                'domain' => 'example.org',
+            ],
+        ];
+        $this->prepareShops($guzzleClient, $streamTranslator, $shopsResponse, $shopsStream, $shopsData);
+
+        // GET ALL LICENSES
+        $licenseUrl = '/shops/7/pluginlicenses';
+        $this->prepareLicenseData($guzzleClient, $streamTranslator, $licenseResponse, $licenseStream, $licenseUrl);
+
+        // GET ALL INFOS ABOUT PLUGIN
+        $pluginInfoUrl = '/shops/7/pluginlicenses/17';
+        $this->preparePluginInfoData($guzzleClient, $streamTranslator, $pluginInfoResponse, $pluginInfoStream, $pluginInfoUrl);
+
+        $downloadUrl = '/plugins/58/binaries/10/file?shopId=7';
         $guzzleClient->get(
             self::BASE_URL . $downloadUrl,
             [
@@ -246,7 +326,8 @@ class StoreApiConnectorSpec extends ObjectBehavior
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
         Response $clientshopsResponse,
-        StreamInterface $clientshopsStream
+        StreamInterface $clientshopsStream,
+        array $clientshopData
     ) {
         $guzzleClient->get(
             self::BASE_URL . '/partners/12345/clientshops',
@@ -264,13 +345,6 @@ class StoreApiConnectorSpec extends ObjectBehavior
 
         $clientshopsResponse->getBody()
             ->willReturn($clientshopsStream);
-
-        $clientshopData = [
-            [
-                'id' => 1,
-                'domain' => 'example.com',
-            ],
-        ];
 
         $streamTranslator->translateToArray($clientshopsStream)
             ->willReturn($clientshopData);
