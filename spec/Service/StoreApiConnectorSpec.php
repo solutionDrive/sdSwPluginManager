@@ -50,7 +50,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
         \putenv('SHOPWARE_SHOP_DOMAIN=');
     }
 
-    public function it_can_load_a_plugin_if_domain_only_exist_in_partner_account(
+    public function it_can_load_a_plugin_only_if_domain_exists_in_partner_account(
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
         Response $accessTokenResponse,
@@ -124,7 +124,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
         $this->loadPlugin('awesomePlugin', '0.0.2');
     }
 
-    public function it_can_load_a_plugin_if_domain_only_exist_in_only_shops(
+    public function it_can_load_a_plugin_only_if_domain_exists_in_normal_shop(
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
         Response $accessTokenResponse,
