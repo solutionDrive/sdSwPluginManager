@@ -248,7 +248,6 @@ class StoreApiConnector implements StoreApiConnectorInterface
             throw new \RuntimeException('Environment variable "SHOPWARE_SHOP_DOMAIN" should be available');
         }
 
-
         $shop = \array_filter($partnerShops, function ($partnerShops) use ($shopDomain) {
             return $partnerShops['domain'] === $shopDomain || ('.' === \substr($partnerShops['domain'], 0, 1) && false !== \strpos($partnerShops['domain'], $shopDomain));
         });
