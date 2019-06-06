@@ -42,7 +42,6 @@ class StoreApiConnector implements StoreApiConnectorInterface
     {
         $partnerShops = $this->getShopsFromPartnerAccount();
         $shops = $this->getGeneralShops();
-
         $shop = $this->filterShopsByDomain($shops, $partnerShops);
 
         $licenseUrl = self::BASE_URL;
@@ -178,7 +177,6 @@ class StoreApiConnector implements StoreApiConnectorInterface
     private function getShopsFromPartnerAccount()
     {
         $shops = [];
-
         $partnerResponse = $this->guzzleClient->get(
             self::BASE_URL . '/partners/' . $this->getUserId(),
             [
@@ -219,7 +217,6 @@ class StoreApiConnector implements StoreApiConnectorInterface
     private function getGeneralShops()
     {
         $shops = [];
-
         $shopsResponse = $this->guzzleClient->get(
             self::BASE_URL . '/shops?userId=' . $this->getUserId(),
             [
@@ -251,17 +248,22 @@ class StoreApiConnector implements StoreApiConnectorInterface
             throw new \RuntimeException('Environment variable "SHOPWARE_SHOP_DOMAIN" should be available');
         }
 
-        $shops = \array_merge($shops, $partnerShops);
-
-        $shops = \array_filter($shops, function ($shop) use ($shopDomain) {
-            return $shop['domain'] === $shopDomain || ('.' === \substr($shop['domain'], 0, 1) && false !== \strpos($shop['domain'], $shopDomain));
+        $shop = \array_filter($partnerShops, function ($partnerShops) use ($shopDomain) {
+            return $partnerShops['domain'] === $shopDomain || ('.' === \substr($partnerShops['domain'], 0, 1) && false !== \strpos($partnerShops['domain'], $shopDomain));
         });
 
-        if (0 === \count($shops)) {
+        if (empty($shop)) {
+            $shop = \array_filter($shops, function ($shops) use ($shopDomain) {
+                return $shops['domain'] === $shopDomain || ('.' === \substr($shops['domain'], 0, 1) && false !== \strpos($shops['domain'], $shopDomain));
+            });
+            $this->isPartnerAccount = false;
+        }
+
+        if (0 === \count($shop)) {
             throw new \RuntimeException(\sprintf('Shop with given domain "%s" does not exist!', $shopDomain));
         }
 
-        return \array_values($shops)[0];
+        return \array_values($shop)[0];
     }
 
     /**
