@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -21,16 +22,16 @@ class PluginFetcherSpec extends ObjectBehavior
 {
     public function let(
         ProviderRepositoryInterface $providerRepository
-    ) {
+    ): void {
         $this->beConstructedWith($providerRepository);
     }
 
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(PluginFetcher::class);
     }
 
-    public function it_implements_interface()
+    public function it_implements_interface(): void
     {
         $this->shouldImplement(PluginFetcherInterface::class);
     }
@@ -39,7 +40,7 @@ class PluginFetcherSpec extends ObjectBehavior
         ProviderRepositoryInterface $providerRepository,
         ProviderInterface $provider,
         ConfiguredPluginState $configuredPluginState
-    ) {
+    ): void {
         $providerParameters = [];
 
         $configuredPluginState
@@ -65,7 +66,7 @@ class PluginFetcherSpec extends ObjectBehavior
     public function it_can_throw_no_suitable_provider_exception(
         ProviderRepositoryInterface $providerRepository,
         ConfiguredPluginState $configuredPluginState
-    ) {
+    ): void {
         $providerParameters = [];
 
         $configuredPluginState

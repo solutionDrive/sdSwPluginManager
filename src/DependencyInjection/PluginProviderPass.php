@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -14,7 +15,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class PluginProviderPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (false === $container->has('sd.repository.provider')) {
             return;

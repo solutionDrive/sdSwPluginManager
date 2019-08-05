@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -29,12 +30,12 @@ class DeployedPluginState
     private $installed;
 
     public function __construct(
-        $id = '',
-        $name = '',
-        $version = '',
-        $author = '',
-        $activated = false,
-        $installed = false
+        string $id = '',
+        string $name = '',
+        string $version = '',
+        string $author = '',
+        bool $activated = false,
+        bool $installed = false
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -44,50 +45,32 @@ class DeployedPluginState
         $this->installed = $installed;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->version;
     }
 
-    /**
-     * @return string
-     */
-    public function getAuthor()
+    public function getAuthor(): string
     {
         return $this->author;
     }
 
-    /**
-     * @return bool
-     */
-    public function isActivated()
+    public function isActivated(): bool
     {
         return $this->activated;
     }
 
-    /**
-     * @return bool
-     */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         return $this->installed;
     }

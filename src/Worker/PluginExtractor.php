@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -36,9 +37,9 @@ class PluginExtractor implements PluginExtractorInterface
      * @param string[] $legacyPluginFolders paths to legacy plugins inside the shop directory
      */
     public function __construct(
-        $targetShopwareRoot = '.',
-        $pluginFolder = 'custom/plugins',
-        $legacyPluginFolders = [
+        string $targetShopwareRoot = '.',
+        string $pluginFolder = 'custom/plugins',
+        array $legacyPluginFolders = [
             'Plugins/Community',
             'engine/Shopware/Plugins/Community',
             'custom/project',
@@ -56,7 +57,7 @@ class PluginExtractor implements PluginExtractorInterface
     /**
      * {@inheritdoc}
      */
-    public function extract($sourceFile)
+    public function extract(string $sourceFile): string
     {
         $zipArchive = new ZipArchive();
         $openResult = $zipArchive->open($sourceFile);
@@ -82,11 +83,9 @@ class PluginExtractor implements PluginExtractorInterface
     /**
      * @param string $folderName Name of the folder to decide if it should be extracted to a legacy path
      *
-     * @return string
-     *
      * @throws \RuntimeException if there is no legacy path available
      */
-    private function getExtractToPath($folderName)
+    private function getExtractToPath(string $folderName): string
     {
         if (true === $this->isLegacyPlugin($folderName)) {
             $baseShopwarePath = $this->targetShopwareRoot . DIRECTORY_SEPARATOR;
@@ -104,10 +103,8 @@ class PluginExtractor implements PluginExtractorInterface
 
     /**
      * @param string $folderName Name of the folder to decide if it should be extracted to a legacy path
-     *
-     * @return bool
      */
-    private function isLegacyPlugin($folderName)
+    private function isLegacyPlugin(string $folderName): bool
     {
         return \in_array($folderName, $this->legacyPluginRootFolders, false);
     }

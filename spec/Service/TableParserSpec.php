@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -13,12 +14,12 @@ use sd\SwPluginManager\Service\TableParser;
 
 class TableParserSpec extends ObjectBehavior
 {
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(TableParser::class);
     }
 
-    public function it_can_parse_a_very_simple_table()
+    public function it_can_parse_a_very_simple_table(): void
     {
         $this->beConstructedWith(
             ',',
@@ -36,7 +37,7 @@ class TableParserSpec extends ObjectBehavior
         );
     }
 
-    public function it_can_parse_a_symfony_style_table()
+    public function it_can_parse_a_symfony_style_table(): void
     {
         $this->beConstructedWith(
             '|',
@@ -67,7 +68,7 @@ EOT;
         );
     }
 
-    public function it_can_parse_another_table()
+    public function it_can_parse_another_table(): void
     {
         $this->beConstructedWith(
             '/',

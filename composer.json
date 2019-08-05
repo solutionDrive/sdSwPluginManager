@@ -5,6 +5,7 @@
     "license": "proprietary",
     "require": {
         "php": ">=7.1",
+        "ext-json":  "*",
         "aws/aws-sdk-php": "^3.67",
         "guzzlehttp/guzzle": "^6.3",
         "symfony/config": "~3.4",

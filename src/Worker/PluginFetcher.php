@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -23,7 +24,7 @@ class PluginFetcher implements PluginFetcherInterface
         $this->providerRepository = $providerRepository;
     }
 
-    public function fetch(ConfiguredPluginState $configuredPluginState)
+    public function fetch(ConfiguredPluginState $configuredPluginState): string
     {
         $provider = $this->providerRepository->getProviderSupporting($configuredPluginState->getProvider());
         if (null === $provider) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -16,21 +17,15 @@ class ZipFileCouldNotBeOpenedException extends \RuntimeException
     private $zipPath = '';
 
     /**
-     * @param string         $zipPath  path to the zip file that failed
-     * @param string         $message
-     * @param int            $code
-     * @param Throwable|null $previous
+     * @param string $zipPath path to the zip file that failed
      */
-    public function __construct($zipPath, $message = '', $code = 0, Throwable $previous = null)
+    public function __construct(string $zipPath, string $message = '', int $code = 0, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->zipPath = $zipPath;
     }
 
-    /**
-     * @return string
-     */
-    public function getZipPath()
+    public function getZipPath(): string
     {
         return $this->zipPath;
     }

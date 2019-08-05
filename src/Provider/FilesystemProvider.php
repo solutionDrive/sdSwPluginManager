@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -13,7 +14,7 @@ class FilesystemProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadFile($parameters)
+    public function loadFile(array $parameters): ?string
     {
         if (true === empty($parameters['src'])) {
             throw new \RuntimeException('src must not be empty for FilesystemProvider.');
@@ -25,7 +26,7 @@ class FilesystemProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($providerName)
+    public function supports(string $providerName): bool
     {
         return 'filesystem' === $providerName;
     }

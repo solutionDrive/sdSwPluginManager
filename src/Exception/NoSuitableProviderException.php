@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -15,16 +16,17 @@ class NoSuitableProviderException extends \RuntimeException
     /** @var string */
     private $provider = '';
 
-    public function __construct($provider, $message = '', $code = 0, Throwable $previous = null)
-    {
+    public function __construct(
+        string $provider,
+        string $message = '',
+        int $code = 0,
+        Throwable $previous = null
+    ) {
         parent::__construct($message, $code, $previous);
         $this->provider = $provider;
     }
 
-    /**
-     * @return string
-     */
-    public function getProvider()
+    public function getProvider(): string
     {
         return $this->provider;
     }

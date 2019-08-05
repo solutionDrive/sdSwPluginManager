@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -17,7 +18,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeactivateCommand extends Command
 {
-    protected function configure()
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure(): void
     {
         $this
             ->setName('sd:plugins:deactivate')
@@ -36,8 +40,13 @@ class DeactivateCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ) {
         $env = (string) $input->getOption('env');
         $pluginId = (string) $input->getArgument('pluginId');
 

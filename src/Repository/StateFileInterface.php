@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -15,22 +16,17 @@ interface StateFileInterface
     /**
      * @param string $file path to the yaml file to read
      */
-    public function readYamlStateFile($file);
+    public function readYamlStateFile(string $file): void;
 
     /**
-     * @param array $stateAsArray state of the plugins as array
+     * @param array|mixed[] $stateAsArray state of the plugins as array
      */
-    public function readArray($stateAsArray);
+    public function readArray(array $stateAsArray): void;
 
-    /**
-     * @param string $pluginId
-     *
-     * @return ConfiguredPluginState|null
-     */
-    public function getPlugin($pluginId);
+    public function getPlugin(string $pluginId): ?ConfiguredPluginState;
 
     /**
      * @return array|ConfiguredPluginState[]
      */
-    public function getPlugins();
+    public function getPlugins(): array;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -14,17 +15,17 @@ use sd\SwPluginManager\Service\BoolParserInterface;
 
 class BoolParserSpec extends ObjectBehavior
 {
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(BoolParser::class);
     }
 
-    public function it_implements_interface()
+    public function it_implements_interface(): void
     {
         $this->shouldImplement(BoolParserInterface::class);
     }
 
-    public function it_can_detect_some_true()
+    public function it_can_detect_some_true(): void
     {
         $this->parse('true')->shouldReturn(true);
         $this->parse('True')->shouldReturn(true);
@@ -41,7 +42,7 @@ class BoolParserSpec extends ObjectBehavior
         $this->parse('1')->shouldReturn(true);
     }
 
-    public function it_can_detect_some_false()
+    public function it_can_detect_some_false(): void
     {
         $this->parse('false')->shouldReturn(false);
         $this->parse('False')->shouldReturn(false);

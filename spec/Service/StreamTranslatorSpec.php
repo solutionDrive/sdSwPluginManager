@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -15,19 +16,19 @@ use sd\SwPluginManager\Service\StreamTranslatorInterface;
 
 class StreamTranslatorSpec extends ObjectBehavior
 {
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(StreamTranslator::class);
     }
 
-    public function it_implements_ResponseJsonTranslator_interface()
+    public function it_implements_ResponseJsonTranslator_interface(): void
     {
         $this->shouldImplement(StreamTranslatorInterface::class);
     }
 
     public function it_can_translate_a_stream_to_array(
         StreamInterface $stream
-    ) {
+    ): void {
         $data = \json_encode([
             'token'     => 'abc',
             'locale'    => 'de_DE',

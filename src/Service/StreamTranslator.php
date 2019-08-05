@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -17,6 +18,6 @@ class StreamTranslator implements StreamTranslatorInterface
      */
     public function translateToArray(StreamInterface $stream)
     {
-        return \json_decode($stream, true);
+        return \json_decode($stream->__toString(), true);
     }
 }

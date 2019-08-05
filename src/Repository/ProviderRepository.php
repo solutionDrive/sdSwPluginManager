@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -18,7 +19,7 @@ class ProviderRepository implements ProviderRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function addProvider(ProviderInterface $provider)
+    public function addProvider(ProviderInterface $provider): void
     {
         $this->providers[] = $provider;
     }
@@ -26,7 +27,7 @@ class ProviderRepository implements ProviderRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getProviderSupporting($type)
+    public function getProviderSupporting(string $type): ?ProviderInterface
     {
         foreach ($this->providers as $provider) {
             if ($provider->supports($type)) {

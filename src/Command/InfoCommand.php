@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -15,7 +16,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class InfoCommand extends Command
 {
-    protected function configure()
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure(): void
     {
         $this
             ->setName('sd:plugins:info')
@@ -30,8 +34,13 @@ class InfoCommand extends Command
             ->setHelp('Outputs some information about the plugin manager.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ) {
         $output->writeln('solutionDrive\'s plugin manager for Shopware.', OutputInterface::VERBOSITY_VERBOSE);
         $output->writeln('__TAG__');
         $output->writeln('__COMMIT__', OutputInterface::VERBOSITY_VERBOSE);

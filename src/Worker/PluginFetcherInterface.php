@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -12,5 +13,5 @@ use sd\SwPluginManager\Entity\ConfiguredPluginState;
 
 interface PluginFetcherInterface
 {
-    public function fetch(ConfiguredPluginState $configuredPluginState);
+    public function fetch(ConfiguredPluginState $configuredPluginState): string;
 }

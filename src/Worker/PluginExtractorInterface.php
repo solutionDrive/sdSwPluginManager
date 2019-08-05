@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -15,5 +16,5 @@ interface PluginExtractorInterface
      *
      * @param string $sourceFile the zip file that contains the plugin that should be extracted
      */
-    public function extract($sourceFile);
+    public function extract(string $sourceFile): string;
 }

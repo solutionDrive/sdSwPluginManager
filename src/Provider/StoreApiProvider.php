@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -26,7 +27,10 @@ class StoreApiProvider implements ProviderInterface
         $this->storeApiConnector = $storeApiConnector;
     }
 
-    public function loadFile($parameters)
+    /**
+     * {@inheritdoc}
+     */
+    public function loadFile(array $parameters): ?string
     {
         $name = $parameters['pluginId'];
         $version = $parameters['version'];
@@ -34,7 +38,7 @@ class StoreApiProvider implements ProviderInterface
         return $this->storeApiConnector->loadPlugin($name, $version);
     }
 
-    public function supports($providerName)
+    public function supports(string $providerName): bool
     {
         return 'store_api' === $providerName;
     }

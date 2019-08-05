@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -11,16 +12,11 @@ namespace sd\SwPluginManager\Provider;
 interface ProviderInterface
 {
     /**
-     * @param array $parameters Parameters (including source, auth data, etc.)
+     * @param array|string[] $parameters Parameters (including source, auth data, etc.)
      *
-     * @return string Path to the downloaded ZIP file
+     * @return string|null Path to the downloaded ZIP file
      */
-    public function loadFile($parameters);
+    public function loadFile(array $parameters): ?string;
 
-    /**
-     * @param string $providerName
-     *
-     * @return bool
-     */
-    public function supports($providerName);
+    public function supports(string $providerName): bool;
 }

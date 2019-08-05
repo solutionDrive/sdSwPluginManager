@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -19,7 +20,7 @@ class ContainerAwareCommand extends Command implements ContainerAwareCommandInte
     /**
      * {@inheritdoc}
      */
-    public function setContainer(ContainerInterface $container)
+    public function setContainer(ContainerInterface $container): void
     {
         $this->container = $container;
     }
@@ -27,7 +28,7 @@ class ContainerAwareCommand extends Command implements ContainerAwareCommandInte
     /**
      * {@inheritdoc}
      */
-    public function getContainer()
+    public function getContainer(): ContainerInterface
     {
         return $this->container;
     }

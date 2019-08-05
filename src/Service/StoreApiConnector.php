@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -38,7 +39,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
         $this->streamTranslator = $streamTranslator;
     }
 
-    public function loadPlugin($pluginId, $version)
+    public function loadPlugin(string $pluginId, string $version): string
     {
         $partnerShops = $this->getShopsFromPartnerAccount();
         $shops = $this->getGeneralShops();
@@ -117,7 +118,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
         return '';
     }
 
-    private function getAccessToken()
+    private function getAccessToken(): string
     {
         if (null !== $this->accessToken) {
             return $this->accessToken;
@@ -128,7 +129,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
         return $this->accessToken;
     }
 
-    private function getUserId()
+    private function getUserId(): string
     {
         if (null !== $this->userId) {
             return $this->userId;
@@ -139,7 +140,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
         return $this->userId;
     }
 
-    private function loadAccessTokens()
+    private function loadAccessTokens(): void
     {
         $user = \getenv('SHOPWARE_ACCOUNT_USER');
         if (false === $user || '' === \trim($user)) {
@@ -174,7 +175,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
      *
      * @return string[][]
      */
-    private function getShopsFromPartnerAccount()
+    private function getShopsFromPartnerAccount(): array
     {
         $shops = [];
         $partnerResponse = $this->guzzleClient->get(
@@ -214,7 +215,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
      *
      * @return string[][]
      */
-    private function getGeneralShops()
+    private function getGeneralShops(): array
     {
         $shops = [];
         $shopsResponse = $this->guzzleClient->get(
@@ -241,7 +242,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
      *
      * @return string[]
      */
-    private function filterShopsByDomain($shops, $partnerShops)
+    private function filterShopsByDomain(array $shops, array $partnerShops): array
     {
         $shopDomain = \getenv('SHOPWARE_SHOP_DOMAIN');
         if (false === $shopDomain || '' === \trim($shopDomain)) {
@@ -269,12 +270,11 @@ class StoreApiConnector implements StoreApiConnectorInterface
     /**
      * Filters out plugin from licenses and throws an exception if no plugin was found
      *
-     * @param string     $pluginId
      * @param string[][] $licenses
      *
      * @return string[]
      */
-    private function filterPluginFromLicenses($pluginId, $licenses)
+    private function filterPluginFromLicenses(string $pluginId, array $licenses): array
     {
         $plugin = \array_filter($licenses, function ($license) use ($pluginId) {
             // Basic Plugins like SwagCore

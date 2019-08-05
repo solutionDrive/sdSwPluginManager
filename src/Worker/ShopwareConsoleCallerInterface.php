@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -11,26 +12,21 @@ namespace sd\SwPluginManager\Worker;
 interface ShopwareConsoleCallerInterface
 {
     /**
-     * @param string $command
-     * @param array  $parameters For example [ '-v' => null, 'arg1' => 'value1' ]
+     * @param array|string[] $parameters For example [ '-v' => null, 'arg1' => 'value1' ]
      *
      * @return bool True if command was executed successfully
      */
-    public function call($command, $parameters = []);
+    public function call(string $command, array $parameters = []): bool;
 
     /**
      * Returns the output (from `stdout`) of the executed command.
-     *
-     * @return string
      */
-    public function getOutput();
+    public function getOutput(): string;
 
     /**
      * Returns true if the command was executed and output was generated (on `stdout`).
-     *
-     * @return bool
      */
-    public function hasOutput();
+    public function hasOutput(): bool;
 
     /**
      * Clears the saved output and the saved return code.
@@ -41,15 +37,11 @@ interface ShopwareConsoleCallerInterface
 
     /**
      * Returns the error output (from `stderr`) of the executed command.
-     *
-     * @return string
      */
-    public function getError();
+    public function getError(): string;
 
     /**
      * Returns true if the command wrote output to `stderr`.
-     *
-     * @return bool
      */
-    public function hasError();
+    public function hasError(): bool;
 }

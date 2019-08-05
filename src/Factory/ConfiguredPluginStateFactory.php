@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -16,8 +17,10 @@ class ConfiguredPluginStateFactory implements ConfiguredPluginStateFactoryInterf
     /**
      * {@inheritdoc}
      */
-    public function createFromConfigurationArray($pluginKey, $parsedPluginAsArray)
-    {
+    public function createFromConfigurationArray(
+        string $pluginKey,
+        array $parsedPluginAsArray
+    ): ConfiguredPluginState {
         $boolParser = new BoolParser();
         return new ConfiguredPluginState(
             $pluginKey,

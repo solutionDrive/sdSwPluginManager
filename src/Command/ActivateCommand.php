@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -18,7 +19,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 // @TODO change to ContainerAwareCommand and remove constructors here
 class ActivateCommand extends Command
 {
-    protected function configure()
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure(): void
     {
         $this
             ->setName('sd:plugins:activate')
@@ -37,8 +41,13 @@ class ActivateCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ) {
         $env = (string) $input->getOption('env');
         $pluginId = (string) $input->getArgument('pluginId');
 

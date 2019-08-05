@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -28,15 +29,10 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
     /** @var string */
     private $commandPrefix = '';
 
-    /**
-     * @param string $workingDirectory
-     * @param string $shopwareConsoleExecutable
-     * @param string $commandPrefix
-     */
     public function __construct(
-        $workingDirectory = null,
-        $shopwareConsoleExecutable = 'bin/console',
-        $commandPrefix = '/usr/bin/env php '
+        string $workingDirectory = null,
+        string $shopwareConsoleExecutable = 'bin/console',
+        string $commandPrefix = '/usr/bin/env php '
     ) {
         $this->workingDirectory = $workingDirectory;
         $this->shopwareConsoleExecutable = $shopwareConsoleExecutable;
@@ -46,7 +42,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
     /**
      * {@inheritdoc}
      */
-    public function call($command, $parameters = [])
+    public function call(string $command, array $parameters = []): bool
     {
         $fullCommand = $this->buildFullCommand($command, $parameters);
 
@@ -78,11 +74,9 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
     /**
      * @TODO Perhaps this can be outsourced to an external library or at least in an own service.
      *
-     * @param array $parameters
-     *
-     * @return string
+     * @param array|string[] $parameters
      */
-    private function buildParameterString($parameters = [])
+    private function buildParameterString(array $parameters = []): string
     {
         $flat = '';
 
@@ -100,12 +94,9 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
     }
 
     /**
-     * @param string $command
-     * @param array  $parameters
-     *
-     * @return string
+     * @param array|string[] $parameters
      */
-    private function buildFullCommand($command, $parameters = [])
+    private function buildFullCommand(string $command, array $parameters = []): string
     {
         return
             $this->commandPrefix .
@@ -117,7 +108,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
     /**
      * {@inheritdoc}
      */
-    public function getOutput()
+    public function getOutput(): string
     {
         return $this->output;
     }
@@ -125,7 +116,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
     /**
      * {@inheritdoc}
      */
-    public function hasOutput()
+    public function hasOutput(): bool
     {
         return false === empty($this->output);
     }
@@ -133,7 +124,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
     /**
      * {@inheritdoc}
      */
-    public function getError()
+    public function getError(): string
     {
         return $this->error;
     }
@@ -141,7 +132,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
     /**
      * {@inheritdoc}
      */
-    public function hasError()
+    public function hasError(): bool
     {
         return false === empty($this->error);
     }
@@ -160,7 +151,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
      * @param resource $process     process which should be checked for exit code
      * @param int      $maxWaitTime max time to wait for a running process (in microseconds)
      */
-    private function waitForExitCode($process, $maxWaitTime = 30000000)
+    private function waitForExitCode($process, $maxWaitTime = 30000000): void
     {
         $waitTime = 0;
         do {

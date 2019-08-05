@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -22,9 +23,6 @@ class StateFile implements StateFileInterface
     /** @var array|ConfiguredPluginState[] */
     private $plugins = [];
 
-    /**
-     * @param ConfiguredPluginStateFactoryInterface $configuredPluginStateFactory
-     */
     public function __construct(ConfiguredPluginStateFactoryInterface $configuredPluginStateFactory)
     {
         $this->configuredPluginStateFactory = $configuredPluginStateFactory;
@@ -33,7 +31,7 @@ class StateFile implements StateFileInterface
     /**
      * {@inheritdoc}
      */
-    public function readYamlStateFile($file)
+    public function readYamlStateFile(string $file): void
     {
         $stateYaml = Yaml::parse(\file_get_contents($file));
         $this->readArray($stateYaml);
@@ -42,7 +40,7 @@ class StateFile implements StateFileInterface
     /**
      * {@inheritdoc}
      */
-    public function readArray($stateAsArray)
+    public function readArray(array $stateAsArray): void
     {
         $processor = new Processor();
         $configuration = new ConfiguredPluginConfiguration();
@@ -57,7 +55,7 @@ class StateFile implements StateFileInterface
     /**
      * {@inheritdoc}
      */
-    public function getPlugin($pluginId)
+    public function getPlugin(string $pluginId): ?ConfiguredPluginState
     {
         if (false === isset($this->plugins[$pluginId])) {
             return null;
@@ -69,7 +67,7 @@ class StateFile implements StateFileInterface
     /**
      * {@inheritdoc}
      */
-    public function getPlugins()
+    public function getPlugins(): array
     {
         return $this->plugins;
     }

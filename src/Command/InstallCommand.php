@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -17,7 +18,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class InstallCommand extends Command
 {
-    protected function configure()
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure(): void
     {
         $this
             ->setName('sd:plugins:install')
@@ -48,8 +52,13 @@ class InstallCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ) {
         $env = (string) $input->getOption('env');
         $pluginId = (string) $input->getArgument('pluginId');
 
@@ -90,8 +99,10 @@ class InstallCommand extends Command
         return 0;
     }
 
-    private function reinstallIfRequested(InputInterface $input, OutputInterface $output)
-    {
+    private function reinstallIfRequested(
+        InputInterface $input,
+        OutputInterface $output
+    ): int {
         $pluginId = (string) $input->getArgument('pluginId');
         $skipReinstall = (bool) $input->getOption('no-reinstall');
         $removeData = (bool) $input->getOption('remove-data-on-reinstall');

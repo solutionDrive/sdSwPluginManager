@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -17,22 +18,22 @@ use sd\SwPluginManager\Provider\ProviderInterface;
 
 class HttpProviderSpec extends ObjectBehavior
 {
-    public function let(Client $guzzleClient)
+    public function let(Client $guzzleClient): void
     {
         $this->beConstructedWith($guzzleClient);
     }
 
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(HttpProvider::class);
     }
 
-    public function it_is_a_provider()
+    public function it_is_a_provider(): void
     {
         $this->shouldImplement(ProviderInterface::class);
     }
 
-    public function it_can_load_simple(Client $guzzleClient, ResponseInterface $guzzleResponse)
+    public function it_can_load_simple(Client $guzzleClient, ResponseInterface $guzzleResponse): void
     {
         $url = 'https://sd.test/url/to/file.zip';
 
@@ -47,7 +48,7 @@ class HttpProviderSpec extends ObjectBehavior
         $this->loadFile(['src' => $url]);
     }
 
-    public function it_can_load_with_auth(Client $guzzleClient, ResponseInterface $guzzleResponse)
+    public function it_can_load_with_auth(Client $guzzleClient, ResponseInterface $guzzleResponse): void
     {
         $url = 'https://sd.test/url/to/file.zip';
 
@@ -66,13 +67,13 @@ class HttpProviderSpec extends ObjectBehavior
         ]);
     }
 
-    public function it_cannot_load_with_empty_url()
+    public function it_cannot_load_with_empty_url(): void
     {
         $this->shouldThrow(\RuntimeException::class)->during('loadFile', [[]]);
         $this->shouldThrow(\RuntimeException::class)->during('loadFile', [['src' => '']]);
     }
 
-    public function it_supports()
+    public function it_supports(): void
     {
         $this->supports('http')->shouldReturn(true);
         $this->supports('none')->shouldReturn(false);

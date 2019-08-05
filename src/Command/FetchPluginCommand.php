@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -27,14 +28,17 @@ class FetchPluginCommand extends Command
     public function __construct(
         StateFileInterface $stateFile,
         PluginFetcherInterface $pluginFetcher,
-        $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
         $this->pluginFetcher = $pluginFetcher;
         $this->stateFile = $stateFile;
     }
 
-    protected function configure()
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure(): void
     {
         $this
             ->setName('sd:plugins:fetch')
@@ -62,8 +66,13 @@ class FetchPluginCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ) {
         $stateFile = $input->getOption('statefile');
         if (false === \is_readable($stateFile)) {
             throw new \RuntimeException('Given statefile does not exist or is not readable.');
