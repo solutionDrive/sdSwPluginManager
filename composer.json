@@ -29,6 +29,7 @@
         "standalone-build-tools": {
             "phpspec-standalone.php7.1.phar": "http://build-tools.cloud.solutiondrive.de/phar/phpspec-standalone.php7.1.phar",
             "phpspec-standalone.php7.2.phar": "http://build-tools.cloud.solutiondrive.de/phar/phpspec-standalone.php7.2.phar",
+            "phpspec-standalone.php7.3.phar": "http://build-tools.cloud.solutiondrive.de/phar/phpspec-standalone.php7.3.phar",
             "ecs-standalone.phar": "http://build-tools.cloud.solutiondrive.de/phar/coding-standard-standalone.ecs.php7.2.phar",
             "easy-coding-standard-php7.1.yml": "http://build-tools.cloud.solutiondrive.de/phar/easy-coding-standard-php7.1.yml"
         }
