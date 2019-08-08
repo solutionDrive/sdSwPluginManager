@@ -26,7 +26,7 @@ class ConfiguredPluginStateFactory implements ConfiguredPluginStateFactoryInterf
             $pluginKey,
             $parsedPluginAsArray['provider'],
             $parsedPluginAsArray['version'],
-            $parsedPluginAsArray['providerParameters'],
+            $parsedPluginAsArray['providerParameters'] ?? [],
             $parsedPluginAsArray['env'],
             $boolParser->parse($parsedPluginAsArray['activated']),
             $boolParser->parse($parsedPluginAsArray['installed']),
