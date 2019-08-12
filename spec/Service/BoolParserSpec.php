@@ -27,6 +27,7 @@ class BoolParserSpec extends ObjectBehavior
 
     public function it_can_detect_some_true(): void
     {
+        $this->parse(true)->shouldReturn(true);
         $this->parse('true')->shouldReturn(true);
         $this->parse('True')->shouldReturn(true);
         $this->parse('TrUe')->shouldReturn(true);
@@ -40,10 +41,12 @@ class BoolParserSpec extends ObjectBehavior
         $this->parse('oN')->shouldReturn(true);
         $this->parse('ON')->shouldReturn(true);
         $this->parse('1')->shouldReturn(true);
+        $this->parse(1)->shouldReturn(true);
     }
 
     public function it_can_detect_some_false(): void
     {
+        $this->parse(false)->shouldReturn(false);
         $this->parse('false')->shouldReturn(false);
         $this->parse('False')->shouldReturn(false);
         $this->parse('FaLSe')->shouldReturn(false);
