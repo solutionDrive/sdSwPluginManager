@@ -16,10 +16,10 @@ class BoolParser implements BoolParserInterface
      */
     public function parse($value): bool
     {
-        if (is_bool($value)) {
+        if (\is_bool($value)) {
             return $value;
         }
-        if (is_string($value)) {
+        if (\is_string($value)) {
             $value = \trim(\strtolower($value));
         }
         return \in_array($value, ['yes', 'on', 'true', '1', 1]);
