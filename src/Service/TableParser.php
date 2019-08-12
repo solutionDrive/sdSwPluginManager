@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -33,11 +34,11 @@ class TableParser
      * @param bool   $stripLastCell  if set to true, the last cell will be removed from each line
      */
     public function __construct(
-        $cellSeparator = '|',
-        $lineSeparator = "\n",
-        $minCellsPerRow = 6,
-        $stripFirstCell = false,
-        $stripLastCell = false
+        string $cellSeparator = '|',
+        string $lineSeparator = "\n",
+        int $minCellsPerRow = 6,
+        bool $stripFirstCell = false,
+        bool $stripLastCell = false
     ) {
         $this->cellSeparator = $cellSeparator;
         $this->lineSeparator = $lineSeparator;
@@ -47,11 +48,9 @@ class TableParser
     }
 
     /**
-     * @param string $input
-     *
-     * @return array
+     * @return array|mixed[]
      */
-    public function parse($input)
+    public function parse(string $input): array
     {
         $lines = \explode($this->lineSeparator, $input);
         $items = [];
@@ -65,11 +64,14 @@ class TableParser
         return $items;
     }
 
-    private function parseLine($line)
+    /**
+     * @return array|mixed[]
+     */
+    private function parseLine(string $line): array
     {
         $line = \trim($line);
         $cells = \explode($this->cellSeparator, $line);
-        \array_walk($cells, function (&$value, $key) {
+        \array_walk($cells, function (&$value, $key): void {
             $value = \trim($value);
         });
 

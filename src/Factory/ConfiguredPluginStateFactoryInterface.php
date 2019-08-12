@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -13,10 +14,10 @@ use sd\SwPluginManager\Entity\ConfiguredPluginState;
 interface ConfiguredPluginStateFactoryInterface
 {
     /**
-     * @param string $pluginKey
-     * @param array  $parsedPluginAsArray
-     *
-     * @return ConfiguredPluginState
+     * @param array|mixed[] $parsedPluginAsArray
      */
-    public function createFromConfigurationArray($pluginKey, $parsedPluginAsArray);
+    public function createFromConfigurationArray(
+        string $pluginKey,
+        array $parsedPluginAsArray
+    ): ConfiguredPluginState;
 }

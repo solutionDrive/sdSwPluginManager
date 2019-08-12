@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -14,7 +15,7 @@ use Symfony\Component\Console\Command\Command;
 
 class DeactivateCommandSpec extends ObjectBehavior
 {
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(DeactivateCommand::class);
         $this->shouldHaveType(Command::class);

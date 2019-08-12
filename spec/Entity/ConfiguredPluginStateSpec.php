@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -13,12 +14,12 @@ use sd\SwPluginManager\Entity\ConfiguredPluginState;
 
 class ConfiguredPluginStateSpec extends ObjectBehavior
 {
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(ConfiguredPluginState::class);
     }
 
-    public function it_can_be_constructed()
+    public function it_can_be_constructed(): void
     {
         $this->beConstructedWith(
             'pluginId',
@@ -44,7 +45,7 @@ class ConfiguredPluginStateSpec extends ObjectBehavior
         $this->getEnvironments()->shouldReturn(['dev', 'prod', 'crude']);
     }
 
-    public function it_can_be_constructed_with_other_values()
+    public function it_can_be_constructed_with_other_values(): void
     {
         $this->beConstructedWith(
             'pluginId2',
@@ -69,7 +70,7 @@ class ConfiguredPluginStateSpec extends ObjectBehavior
         $this->getEnvironments()->shouldReturn([]);
     }
 
-    public function it_cannot_be_constructed_with_pluginId_as_parameter()
+    public function it_cannot_be_constructed_with_pluginId_as_parameter(): void
     {
         $this->shouldThrow(\RuntimeException::class)
             ->during(

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -21,7 +22,7 @@ class AutomaticDeployCommandSpec extends ObjectBehavior
         StateFileInterface $stateFile,
         PluginFetcherInterface $pluginFetcher,
         PluginExtractorInterface $pluginExtractor
-    ) {
+    ): void {
         $this->beConstructedWith(
             $stateFile,
             $pluginFetcher,
@@ -29,7 +30,7 @@ class AutomaticDeployCommandSpec extends ObjectBehavior
         );
     }
 
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(AutomaticDeployCommand::class);
         $this->shouldHaveType(Command::class);

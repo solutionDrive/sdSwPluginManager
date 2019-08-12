@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -21,19 +22,19 @@ class StoreApiProviderSpec extends ObjectBehavior
     const SHOPWARE_ACCOUNT_PASSWORD = 'SuperSecurePassword';
     const SHOPWARE_SHOP_DOMAIN = 'example.org';
 
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(StoreApiProvider::class);
     }
 
-    public function it_is_a_provider()
+    public function it_is_a_provider(): void
     {
         $this->shouldImplement(ProviderInterface::class);
     }
 
     public function let(
         StoreApiConnectorInterface $storeApiConnector
-    ) {
+    ): void {
         $this->beConstructedWith(
             $storeApiConnector
         );
@@ -41,7 +42,7 @@ class StoreApiProviderSpec extends ObjectBehavior
 
     public function it_can_load_a_plugin_with_correct_credentials(
         StoreApiConnectorInterface $storeApiConnector
-    ) {
+    ): void {
         $storeApiConnector->loadPlugin('awesomePlugin', '0.0.2')
             ->willReturn('/tmp/plugin');
 
@@ -54,7 +55,7 @@ class StoreApiProviderSpec extends ObjectBehavior
         ->shouldReturn('/tmp/plugin');
     }
 
-    public function it_supports()
+    public function it_supports(): void
     {
         $this->supports('http')->shouldReturn(false);
         $this->supports('none')->shouldReturn(false);

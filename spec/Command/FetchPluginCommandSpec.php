@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -19,14 +20,14 @@ class FetchPluginCommandSpec extends ObjectBehavior
     public function let(
         StateFileInterface $stateFile,
         PluginFetcherInterface $pluginFetcher
-    ) {
+    ): void {
         $this->beConstructedWith(
             $stateFile,
             $pluginFetcher
         );
     }
 
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(FetchPluginCommand::class);
         $this->shouldHaveType(Command::class);

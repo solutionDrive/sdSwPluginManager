@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -16,17 +17,17 @@ use sd\SwPluginManager\Repository\ProviderRepositoryInterface;
 
 class ProviderRepositorySpec extends ObjectBehavior
 {
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(ProviderRepository::class);
     }
 
-    public function it_is_a_provider()
+    public function it_is_a_provider(): void
     {
         $this->shouldImplement(ProviderRepositoryInterface::class);
     }
 
-    public function it_can_register_and_return_provider(ProviderInterface $provider1, ProviderInterface $provider2)
+    public function it_can_register_and_return_provider(ProviderInterface $provider1, ProviderInterface $provider2): void
     {
         $provider1->supports(Argument::exact('fancy'))->willReturn(true);
         $provider1->supports(Argument::exact('https'))->willReturn(false);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -17,19 +18,15 @@ interface DeployedPluginRepositoryInterface
      *
      * @return mixed
      */
-    public function readFromCLIOutputArray($stateAsArray);
+    public function readFromCLIOutputArray(array $stateAsArray);
 
     /**
      * Returns the DeployedPluginState if the plugin exists, or null if it is missing in shop.
-     *
-     * @param string $pluginId
-     *
-     * @return DeployedPluginState|null
      */
-    public function getPlugin($pluginId);
+    public function getPlugin(string $pluginId): ?DeployedPluginState;
 
     /**
      * @return array|DeployedPluginState[]
      */
-    public function getPlugins();
+    public function getPlugins(): array;
 }

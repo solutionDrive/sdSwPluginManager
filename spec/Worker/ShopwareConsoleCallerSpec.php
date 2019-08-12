@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -14,17 +15,17 @@ use sd\SwPluginManager\Worker\ShopwareConsoleCallerInterface;
 
 class ShopwareConsoleCallerSpec extends ObjectBehavior
 {
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(ShopwareConsoleCaller::class);
     }
 
-    public function it_implements_interface()
+    public function it_implements_interface(): void
     {
         $this->shouldImplement(ShopwareConsoleCallerInterface::class);
     }
 
-    public function it_has_clean_state()
+    public function it_has_clean_state(): void
     {
         $this->hasOutput()->shouldReturn(false);
         $this->hasError()->shouldReturn(false);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -15,17 +16,17 @@ use sd\SwPluginManager\Factory\ConfiguredPluginStateFactoryInterface;
 
 class ConfiguredPluginStateFactorySpec extends ObjectBehavior
 {
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(ConfiguredPluginStateFactory::class);
     }
 
-    public function it_implements_interface()
+    public function it_implements_interface(): void
     {
         $this->shouldImplement(ConfiguredPluginStateFactoryInterface::class);
     }
 
-    public function it_can_create_a_configured_plugin_state_from_config()
+    public function it_can_create_a_configured_plugin_state_from_config(): void
     {
         $key = 'shopUltimatorPro';
         $config = [

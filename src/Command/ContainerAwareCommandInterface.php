@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -12,13 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 interface ContainerAwareCommandInterface
 {
-    /**
-     * @param ContainerInterface $container
-     */
-    public function setContainer(ContainerInterface $container);
+    public function setContainer(ContainerInterface $container): void;
 
-    /**
-     * @return ContainerInterface
-     */
-    public function getContainer();
+    public function getContainer(): ContainerInterface;
 }

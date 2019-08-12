@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -16,11 +17,8 @@ class S3ClientFactory implements S3ClientFactoryInterface
     /** @var string */
     private $defaultRegion;
 
-    /**
-     * @param string $defaultRegion
-     */
     public function __construct(
-        $defaultRegion = 'eu-central-1'
+        string $defaultRegion = 'eu-central-1'
     ) {
         $this->defaultRegion = $defaultRegion;
     }
@@ -28,7 +26,7 @@ class S3ClientFactory implements S3ClientFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createClient($region = null, $profile = null)
+    public function createClient(?string $region = null, ?string $profile = null): S3Client
     {
         // Use the default credential provider
         $provider = CredentialProvider::defaultProvider();

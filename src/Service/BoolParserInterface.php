@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -12,8 +13,6 @@ interface BoolParserInterface
 {
     /**
      * @param string $stringValue value to parse
-     *
-     * @return bool
      */
-    public function parse($stringValue);
+    public function parse(string $stringValue): bool;
 }

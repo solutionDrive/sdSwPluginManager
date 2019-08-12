@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -16,8 +17,9 @@ class DeployedPluginStateFactory implements DeployedPluginStateFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createFromShopwareCLIInfoOutput($parsedPluginAsArray)
-    {
+    public function createFromShopwareCLIInfoOutput(
+        array $parsedPluginAsArray
+    ): DeployedPluginState {
         $boolParser = new BoolParser();
         return new DeployedPluginState(
             $parsedPluginAsArray[0],

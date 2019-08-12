@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -10,5 +11,5 @@ namespace sd\SwPluginManager\Service;
 
 interface StoreApiConnectorInterface
 {
-    public function loadPlugin($pluginId, $version);
+    public function loadPlugin(string $pluginId, string $version): string;
 }

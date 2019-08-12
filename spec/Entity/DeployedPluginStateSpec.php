@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -13,12 +14,12 @@ use sd\SwPluginManager\Entity\DeployedPluginState;
 
 class DeployedPluginStateSpec extends ObjectBehavior
 {
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(DeployedPluginState::class);
     }
 
-    public function it_can_be_constructed()
+    public function it_can_be_constructed(): void
     {
         $this->beConstructedWith(
             'pluginId',
@@ -37,7 +38,7 @@ class DeployedPluginStateSpec extends ObjectBehavior
         $this->isInstalled()->shouldReturn(true);
     }
 
-    public function it_can_be_constructed_with_other_values()
+    public function it_can_be_constructed_with_other_values(): void
     {
         $this->beConstructedWith(
             'pluginId2',

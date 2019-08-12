@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -23,7 +24,7 @@ class HttpProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadFile($parameters)
+    public function loadFile(array $parameters): ?string
     {
         if (true === empty($parameters['src'])) {
             throw new \RuntimeException('src must not be empty for HttpProvider.');
@@ -48,19 +49,21 @@ class HttpProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($providerName)
+    public function supports(string $providerName): bool
     {
         return 'http' === $providerName;
     }
 
     /**
-     * @param string     $url
-     * @param string     $targetFilename
-     * @param array|null $auth           See http://docs.guzzlephp.org/en/stable/request-options.html#auth .
-     * @param array      $headers        See http://docs.guzzlephp.org/en/stable/request-options.html#headers .
+     * @param array|string[]|null $auth    See http://docs.guzzlephp.org/en/stable/request-options.html#auth .
+     * @param array|string[]      $headers See http://docs.guzzlephp.org/en/stable/request-options.html#headers .
      */
-    private function downloadFile($url, $targetFilename, $auth = null, $headers = [])
-    {
+    private function downloadFile(
+        string $url,
+        string $targetFilename,
+        ?array $auth = null,
+        array $headers = []
+    ): void {
         $response = $this->guzzleClient->get(
             $url,
             [
@@ -71,7 +74,8 @@ class HttpProvider implements ProviderInterface
             ]
         );
 
-        if (300 <= $response->getStatusCode() || 199 >= $response->getStatusCode()) {
+        $statusCode = $response->getStatusCode();
+        if (300 <= $statusCode || 199 >= $statusCode) {
             throw new \RuntimeException('Could not download plugin.');
         }
     }

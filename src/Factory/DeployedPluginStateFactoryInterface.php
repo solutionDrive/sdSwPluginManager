@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -13,9 +14,9 @@ use sd\SwPluginManager\Entity\DeployedPluginState;
 interface DeployedPluginStateFactoryInterface
 {
     /**
-     * @param array $parsedPluginAsArray
-     *
-     * @return DeployedPluginState
+     * @param array|mixed[] $parsedPluginAsArray
      */
-    public function createFromShopwareCLIInfoOutput($parsedPluginAsArray);
+    public function createFromShopwareCLIInfoOutput(
+        array $parsedPluginAsArray
+    ): DeployedPluginState;
 }

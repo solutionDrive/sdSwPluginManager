@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -21,7 +22,7 @@ class StateFileSpec extends ObjectBehavior
         ConfiguredPluginStateFactoryInterface $configuredPluginStateFactory,
         ConfiguredPluginState $state1,
         ConfiguredPluginState $state2
-    ) {
+    ): void {
         $state1
             ->getId()
             ->willReturn('testPlugin1');
@@ -32,12 +33,12 @@ class StateFileSpec extends ObjectBehavior
         $this->beConstructedWith($configuredPluginStateFactory);
     }
 
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(StateFile::class);
     }
 
-    public function it_is_a_provider()
+    public function it_is_a_provider(): void
     {
         $this->shouldImplement(StateFileInterface::class);
     }
@@ -46,7 +47,7 @@ class StateFileSpec extends ObjectBehavior
         ConfiguredPluginStateFactoryInterface $configuredPluginStateFactory,
         ConfiguredPluginState $state1,
         ConfiguredPluginState $state2
-    ) {
+    ): void {
         $source = [
             'plugins' => [
                 'testPlugin1' => [
@@ -104,7 +105,7 @@ class StateFileSpec extends ObjectBehavior
         ConfiguredPluginStateFactoryInterface $configuredPluginStateFactory,
         ConfiguredPluginState $state1,
         ConfiguredPluginState $state2
-    ) {
+    ): void {
         $source = [
             'plugins' => [
                 'testPlugin1' => [

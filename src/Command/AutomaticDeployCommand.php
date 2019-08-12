@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -30,14 +31,11 @@ class AutomaticDeployCommand extends Command
     /** @var PluginExtractorInterface */
     private $pluginExtractor;
 
-    /**
-     * @param null|string $name
-     */
     public function __construct(
         StateFileInterface $stateFile,
         PluginFetcherInterface $pluginFetcher,
         PluginExtractorInterface $pluginExtractor,
-        $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
         $this->stateFile = $stateFile;
@@ -47,7 +45,11 @@ class AutomaticDeployCommand extends Command
 
     // @TODO Add a --force -f flag to force download and deployment of configured plugins
     //       (by now, we are always in force mode as plugins are always loaded and extracted)
-    protected function configure()
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure(): void
     {
         $this
             ->setName('sd:plugins:deploy:auto')
@@ -79,8 +81,13 @@ class AutomaticDeployCommand extends Command
             ->setHelp('Deploys all configured plugins into their given state.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ) {
         $skipDownload = (bool) $input->getOption('skip-download');
         $skipInstall = (bool) $input->getOption('skip-install');
 
@@ -202,8 +209,13 @@ class AutomaticDeployCommand extends Command
         return 0;
     }
 
-    private function skipPluginByEnviroment($currentEnvironment, array $targetEnvironments)
-    {
+    /**
+     * @param string[] $targetEnvironments
+     */
+    private function skipPluginByEnviroment(
+        string $currentEnvironment,
+        array $targetEnvironments
+    ): bool {
         return
             false === empty($targetEnvironments) &&
             false === \in_array($currentEnvironment, $targetEnvironments);

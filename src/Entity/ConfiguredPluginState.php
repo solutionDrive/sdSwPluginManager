@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -28,7 +29,7 @@ class ConfiguredPluginState
     /** @var bool */
     private $installed;
 
-    /** @var array */
+    /** @var array|string[] */
     private $environments;
 
     /** @var bool */
@@ -37,16 +38,20 @@ class ConfiguredPluginState
     /** @var bool */
     private $removeDataOnReinstall;
 
+    /**
+     * @param array|mixed[]  $providerParameters
+     * @param array|string[] $environments
+     */
     public function __construct(
-        $id = '',
-        $provider = 'none',
-        $version = '',
-        $providerParameters = [],
-        $environments = [],
-        $activated = false,
-        $installed = false,
-        $alwaysReinstall = true,
-        $removeDataOnReinstall = false
+        string $id = '',
+        string $provider = 'none',
+        string $version = '',
+        array $providerParameters = [],
+        array $environments = [],
+        bool $activated = false,
+        bool $installed = false,
+        bool $alwaysReinstall = true,
+        bool $removeDataOnReinstall = false
     ) {
         if (true === isset($providerParameters['pluginId'])) {
             throw new \RuntimeException('The parameter "pluginId" is reserved and cannot be used. It will be filled automatically with the pluginId');
@@ -65,26 +70,17 @@ class ConfiguredPluginState
         $this->removeDataOnReinstall = $removeDataOnReinstall;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getProvider()
+    public function getProvider(): string
     {
         return $this->provider;
     }
 
-    /**
-     * @return string
-     */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->version;
     }
@@ -92,47 +88,35 @@ class ConfiguredPluginState
     /**
      * @return array|mixed[]
      */
-    public function getProviderParameters()
+    public function getProviderParameters(): array
     {
         return $this->providerParameters;
     }
 
-    /**
-     * @return bool
-     */
-    public function isActivated()
+    public function isActivated(): bool
     {
         return $this->activated;
     }
 
-    /**
-     * @return bool
-     */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         return $this->installed;
     }
 
     /**
-     * @return array
+     * @return array|string[]
      */
-    public function getEnvironments()
+    public function getEnvironments(): array
     {
         return $this->environments;
     }
 
-    /**
-     * @return bool
-     */
-    public function getAlwaysReinstall()
+    public function getAlwaysReinstall(): bool
     {
         return $this->alwaysReinstall;
     }
 
-    /**
-     * @return bool
-     */
-    public function getRemoveDataOnReinstall()
+    public function getRemoveDataOnReinstall(): bool
     {
         return $this->removeDataOnReinstall;
     }

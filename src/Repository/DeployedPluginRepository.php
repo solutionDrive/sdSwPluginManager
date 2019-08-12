@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -19,9 +20,6 @@ class DeployedPluginRepository implements DeployedPluginRepositoryInterface
     /** @var DeployedPluginStateFactoryInterface */
     private $deployedPluginStateFactory;
 
-    /**
-     * @param DeployedPluginStateFactoryInterface $deployedPluginStateFactory
-     */
     public function __construct(
         DeployedPluginStateFactoryInterface $deployedPluginStateFactory
     ) {
@@ -31,7 +29,7 @@ class DeployedPluginRepository implements DeployedPluginRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function readFromCLIOutputArray($stateAsArray)
+    public function readFromCLIOutputArray(array $stateAsArray)
     {
         foreach ($stateAsArray as $pluginConfig) {
             $state = $this->deployedPluginStateFactory->createFromShopwareCLIInfoOutput($pluginConfig);
@@ -42,7 +40,7 @@ class DeployedPluginRepository implements DeployedPluginRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getPlugin($pluginId)
+    public function getPlugin(string $pluginId): ?DeployedPluginState
     {
         if (false === isset($this->plugins[$pluginId])) {
             return null;
@@ -54,7 +52,7 @@ class DeployedPluginRepository implements DeployedPluginRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getPlugins()
+    public function getPlugins(): array
     {
         return $this->plugins;
     }

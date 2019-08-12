@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -21,7 +22,7 @@ class DeployedPluginRepositorySpec extends ObjectBehavior
         DeployedPluginStateFactoryInterface $deployedPluginStateFactory,
         DeployedPluginState $state1,
         DeployedPluginState $state2
-    ) {
+    ): void {
         $state1
             ->getId()
             ->willReturn('testPlugin1');
@@ -32,12 +33,12 @@ class DeployedPluginRepositorySpec extends ObjectBehavior
         $this->beConstructedWith($deployedPluginStateFactory);
     }
 
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(DeployedPluginRepository::class);
     }
 
-    public function it_is_a_provider()
+    public function it_is_a_provider(): void
     {
         $this->shouldImplement(DeployedPluginRepositoryInterface::class);
     }
@@ -46,7 +47,7 @@ class DeployedPluginRepositorySpec extends ObjectBehavior
         DeployedPluginStateFactoryInterface $deployedPluginStateFactory,
         DeployedPluginState $state1,
         DeployedPluginState $state2
-    ) {
+    ): void {
         $source = [
             'testPlugin1' => [
                 0 => 'AdvancedPerformanceBooster',
@@ -88,7 +89,7 @@ class DeployedPluginRepositorySpec extends ObjectBehavior
         DeployedPluginStateFactoryInterface $deployedPluginStateFactory,
         DeployedPluginState $state1,
         DeployedPluginState $state2
-    ) {
+    ): void {
         $source = [
             'testPlugin1' => [/* not important, mocked! */],
             'testPlugin2' => [/* not important, mocked! */],

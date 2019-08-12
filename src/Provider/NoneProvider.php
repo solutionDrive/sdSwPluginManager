@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -13,7 +14,7 @@ class NoneProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadFile($parameters)
+    public function loadFile(array $parameters): ?string
     {
         return null;
     }
@@ -21,7 +22,7 @@ class NoneProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($providerName)
+    public function supports(string $providerName): bool
     {
         return 'none' === $providerName;
     }

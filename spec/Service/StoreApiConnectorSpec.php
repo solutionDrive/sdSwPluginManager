@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -25,12 +26,12 @@ class StoreApiConnectorSpec extends ObjectBehavior
     const SHOPWARE_ACCOUNT_PASSWORD = 'SuperSecurePassword';
     const SHOPWARE_SHOP_DOMAIN = 'example.org';
 
-    public function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(StoreApiConnector::class);
     }
 
-    public function it_implements_StoreApiConnector_interface()
+    public function it_implements_StoreApiConnector_interface(): void
     {
         $this->shouldImplement(StoreApiConnectorInterface::class);
     }
@@ -38,7 +39,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
     public function let(
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator
-    ) {
+    ): void {
         $this->beConstructedWith(
             $guzzleClient,
             $streamTranslator
@@ -66,7 +67,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
         Response $pluginInfoResponse,
         StreamInterface $pluginInfoStream,
         Response $pluginResponse
-    ) {
+    ): void {
         \putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
         \putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
         \putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
@@ -140,7 +141,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
         Response $pluginInfoResponse,
         StreamInterface $pluginInfoStream,
         Response $pluginResponse
-    ) {
+    ): void {
         \putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
         \putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
         \putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
@@ -211,7 +212,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
         Response $pluginInfoResponse,
         StreamInterface $pluginInfoStream,
         Response $pluginResponse
-    ) {
+    ): void {
         \putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
         \putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
         \putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
@@ -256,7 +257,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
         $this->loadPlugin('awesomePlugin', '0.0.2');
     }
 
-    public function it_cannot_connect_to_store_api_without_credentials()
+    public function it_cannot_connect_to_store_api_without_credentials(): void
     {
         $this->shouldThrow(\RuntimeException::class)->during('loadPlugin', ['awesomePlugin', '0.0.2']);
     }
@@ -266,7 +267,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
         StreamTranslatorInterface $streamTranslator,
         Response $accessTokenResponse,
         StreamInterface $accessCodeStream
-    ) {
+    ): void {
         $guzzleClient->post(
             self::BASE_URL . '/accesstokens',
             [
@@ -294,13 +295,16 @@ class StoreApiConnectorSpec extends ObjectBehavior
             ->willReturn($accessCodeData);
     }
 
+    /**
+     * @param string[] $partnerData
+     */
     private function preparePartnerAccountCheck(
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
         Response $partnerResponse,
         StreamInterface $partnerStream,
         array $partnerData
-    ) {
+    ): void {
         $guzzleClient->get(
             self::BASE_URL . '/partners/12345',
             [
@@ -322,13 +326,16 @@ class StoreApiConnectorSpec extends ObjectBehavior
             ->willReturn($partnerData);
     }
 
+    /**
+     * @param string[] $clientshopData
+     */
     private function preparePartnerAccount(
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
         Response $clientshopsResponse,
         StreamInterface $clientshopsStream,
         array $clientshopData
-    ) {
+    ): void {
         $guzzleClient->get(
             self::BASE_URL . '/partners/12345/clientshops',
             [
@@ -350,13 +357,16 @@ class StoreApiConnectorSpec extends ObjectBehavior
             ->willReturn($clientshopData);
     }
 
+    /**
+     * @param string[] $shopsData
+     */
     private function prepareShops(
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
         Response $shopsResponse,
         StreamInterface $shopsStream,
         array $shopsData
-    ) {
+    ): void {
         $guzzleClient->get(
             self::BASE_URL . '/shops?userId=12345',
             [
@@ -384,7 +394,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
         Response $licenseResponse,
         StreamInterface $licenseStream,
         string $url
-    ) {
+    ): void {
         $guzzleClient->get(
             self::BASE_URL . $url,
             [
@@ -422,7 +432,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
         Response $pluginInfoResponse,
         StreamInterface $pluginInfoStream,
         string $url
-    ) {
+    ): void {
         $guzzleClient->get(
             self::BASE_URL . $url,
             [

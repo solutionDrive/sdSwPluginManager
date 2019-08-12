@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -12,15 +13,7 @@ use sd\SwPluginManager\Provider\ProviderInterface;
 
 interface ProviderRepositoryInterface
 {
-    /**
-     * @param ProviderInterface $provider
-     */
-    public function addProvider(ProviderInterface $provider);
+    public function addProvider(ProviderInterface $provider): void;
 
-    /**
-     * @param string $type
-     *
-     * @return null|ProviderInterface
-     */
-    public function getProviderSupporting($type);
+    public function getProviderSupporting(string $type): ?ProviderInterface;
 }

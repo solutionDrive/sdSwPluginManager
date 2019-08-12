@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * Created by solutionDrive GmbH
@@ -21,15 +22,10 @@ class S3Provider implements ProviderInterface
     /** @var string */
     private $defaultReleasesBucketBasePath;
 
-    /**
-     * @param S3ClientFactoryInterface $s3ClientFactory
-     * @param string                   $defaultReleasesBucket
-     * @param string                   $defaultReleasesBucketBasePath
-     */
     public function __construct(
         S3ClientFactoryInterface $s3ClientFactory,
-        $defaultReleasesBucket,
-        $defaultReleasesBucketBasePath
+        string $defaultReleasesBucket,
+        string $defaultReleasesBucketBasePath
     ) {
         $this->s3ClientFactory = $s3ClientFactory;
         $this->defaultReleasesBucket = $defaultReleasesBucket;
@@ -39,7 +35,7 @@ class S3Provider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadFile($parameters)
+    public function loadFile(array $parameters): ?string
     {
         if (true === empty($parameters['src'])) {
             throw new \RuntimeException('src must not be empty for S3Provider.');
@@ -83,7 +79,7 @@ class S3Provider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($providerName)
+    public function supports(string $providerName): bool
     {
         return 's3' === $providerName;
     }
