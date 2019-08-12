@@ -12,7 +12,7 @@ namespace sd\SwPluginManager\Service;
 interface BoolParserInterface
 {
     /**
-     * @param string $stringValue value to parse
+     * @param mixed $value value to parse
      */
-    public function parse(string $stringValue): bool;
+    public function parse($value): bool;
 }
