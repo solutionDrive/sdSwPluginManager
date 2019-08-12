@@ -163,8 +163,8 @@ class StoreApiConnector implements StoreApiConnectorInterface
         );
         if (200 === $accessTokenResponse->getStatusCode()) {
             $accessTokenData = $this->streamTranslator->translateToArray($accessTokenResponse->getBody());
-            $this->accessToken = $accessTokenData['token'];
-            $this->userId = $accessTokenData['userId'];
+            $this->accessToken = (string) $accessTokenData['token'];
+            $this->userId = (string) $accessTokenData['userId'];
         }
     }
 

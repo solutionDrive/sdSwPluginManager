@@ -13,5 +13,5 @@ use sd\SwPluginManager\Entity\ConfiguredPluginState;
 
 interface PluginFetcherInterface
 {
-    public function fetch(ConfiguredPluginState $configuredPluginState): string;
+    public function fetch(ConfiguredPluginState $configuredPluginState): ?string;
 }

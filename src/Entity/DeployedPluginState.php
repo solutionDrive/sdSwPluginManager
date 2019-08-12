@@ -17,7 +17,7 @@ class DeployedPluginState
     /** @var string */
     private $name;
 
-    /** @var string */
+    /** @var string|null */
     private $version;
 
     /** @var string */
@@ -32,7 +32,7 @@ class DeployedPluginState
     public function __construct(
         string $id = '',
         string $name = '',
-        string $version = '',
+        ?string $version = '',
         string $author = '',
         bool $activated = false,
         bool $installed = false
