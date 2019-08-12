@@ -17,7 +17,7 @@ class ConfiguredPluginState
     /** @var string */
     private $provider;
 
-    /** @var string */
+    /** @var string|null */
     private $version;
 
     /** @var array|mixed[] */
@@ -45,7 +45,7 @@ class ConfiguredPluginState
     public function __construct(
         string $id = '',
         string $provider = 'none',
-        string $version = '',
+        ?string $version = '',
         array $providerParameters = [],
         array $environments = [],
         bool $activated = false,
