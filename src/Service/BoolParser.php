@@ -14,9 +14,9 @@ class BoolParser implements BoolParserInterface
     /**
      * {@inheritdoc}
      */
-    public function parse(string $stringValue): bool
+    public function parse($value): bool
     {
-        $normalizedValue = \trim(\strtolower($stringValue));
+        $normalizedValue = \trim(\strtolower($value));
         return \in_array($normalizedValue, ['yes', 'on', 'true', '1']);
     }
 }
