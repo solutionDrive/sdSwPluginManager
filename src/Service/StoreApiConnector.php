@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace sd\SwPluginManager\Service;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\RequestOptions;
+use Psr\Http\Message\ResponseInterface;
 
 class StoreApiConnector implements StoreApiConnectorInterface
 {
@@ -52,7 +54,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
         }
         $licenseUrl .=  '/shops/' . $shop['id'] . '/pluginlicenses';
 
-        $licenseResponse = $this->guzzleClient->get(
+        list($statusCode, $body) = $this->doRequest(
             $licenseUrl,
             [
                 RequestOptions::HEADERS => [
@@ -61,8 +63,8 @@ class StoreApiConnector implements StoreApiConnectorInterface
             ]
         );
 
-        if (200 === $licenseResponse->getStatusCode()) {
-            $licenses = $this->streamTranslator->translateToArray($licenseResponse->getBody());
+        if (200 === $statusCode) {
+            $licenses = $this->streamTranslator->translateToArray($body);
 
             $plugin = $this->filterPluginFromLicenses($pluginId, $licenses);
 
@@ -78,7 +80,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
             }
             $pluginInfoUrl .= '/shops/' . $shop['id'] . '/pluginlicenses/' . $pluginOverallId;
 
-            $pluginInfoResponse = $this->guzzleClient->get(
+            list($statusCode, $body) = $this->doRequest(
                 $pluginInfoUrl,
                 [
                     RequestOptions::HEADERS => [
@@ -87,8 +89,8 @@ class StoreApiConnector implements StoreApiConnectorInterface
                 ]
             );
 
-            if (200 === $pluginInfoResponse->getStatusCode()) {
-                $pluginInfo = $this->streamTranslator->translateToArray($pluginInfoResponse->getBody());
+            if (200 === $statusCode) {
+                $pluginInfo = $this->streamTranslator->translateToArray($body);
 
                 $versions = \array_column($pluginInfo['plugin']['binaries'], 'version');
                 if (!\in_array($version, $versions)) {
@@ -101,7 +103,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
                 $tmpName = '/tmp/sw-plugin-' . $pluginName . $version;
                 $downloadUrl = self::BASE_URL . '/plugins/' . $pluginSpecificId . '/binaries/' . $binaryVersion['id'] . '/file?shopId=' . $shop['id'];
-                $this->guzzleClient->get(
+                $this->doRequest(
                     $downloadUrl,
                     [
                         RequestOptions::HEADERS => [
@@ -152,17 +154,19 @@ class StoreApiConnector implements StoreApiConnectorInterface
             throw new \RuntimeException('Environment variable "SHOPWARE_ACCOUNT_PASSWORD" should be available');
         }
 
-        $accessTokenResponse = $this->guzzleClient->post(
+        list($statusCode, $body) = $this->doRequest(
             self::BASE_URL . '/accesstokens',
             [
                 RequestOptions::JSON => [
                     'shopwareId' => $user,
                     'password' => $password,
                 ],
-            ]
+            ],
+            'post'
         );
-        if (200 === $accessTokenResponse->getStatusCode()) {
-            $accessTokenData = $this->streamTranslator->translateToArray($accessTokenResponse->getBody());
+
+        if (200 === $statusCode) {
+            $accessTokenData = $this->streamTranslator->translateToArray($body);
             $this->accessToken = (string) $accessTokenData['token'];
             $this->userId = (string) $accessTokenData['userId'];
         }
@@ -178,7 +182,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
     private function getShopsFromPartnerAccount(): array
     {
         $shops = [];
-        $partnerResponse = $this->guzzleClient->get(
+        list($statusCode, $body) = $this->doRequest(
             self::BASE_URL . '/partners/' . $this->getUserId(),
             [
                 RequestOptions::HEADERS => [
@@ -187,14 +191,14 @@ class StoreApiConnector implements StoreApiConnectorInterface
             ]
         );
 
-        if (200 === $partnerResponse->getStatusCode()) {
-            $partnerData = $this->streamTranslator->translateToArray($partnerResponse->getBody());
+        if (200 === $statusCode) {
+            $partnerData = $this->streamTranslator->translateToArray($body);
             if (false === empty($partnerData['partnerId'])) {
                 $this->isPartnerAccount = true;
             }
 
             if (true === $this->isPartnerAccount) {
-                $clientshopsResponse = $this->guzzleClient->get(
+                list($statusCode, $body) = $this->doRequest(
                     self::BASE_URL . '/partners/' . $this->getUserId() . '/clientshops',
                     [
                         RequestOptions::HEADERS => [
@@ -203,7 +207,9 @@ class StoreApiConnector implements StoreApiConnectorInterface
                     ]
                 );
 
-                $shops = \array_merge($shops, $this->streamTranslator->translateToArray($clientshopsResponse->getBody()));
+                if (200 === $statusCode) {
+                    $shops = \array_merge($shops, $this->streamTranslator->translateToArray($body));
+                }
             }
         }
 
@@ -218,7 +224,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
     private function getGeneralShops(): array
     {
         $shops = [];
-        $shopsResponse = $this->guzzleClient->get(
+        list($statusCode, $body) = $this->doRequest(
             self::BASE_URL . '/shops?userId=' . $this->getUserId(),
             [
                 RequestOptions::HEADERS => [
@@ -227,8 +233,8 @@ class StoreApiConnector implements StoreApiConnectorInterface
             ]
         );
 
-        if (200 === $shopsResponse->getStatusCode()) {
-            $shops = \array_merge($shops, $this->streamTranslator->translateToArray($shopsResponse->getBody()));
+        if (200 === $statusCode) {
+            $shops = \array_merge($shops, $this->streamTranslator->translateToArray($body));
         }
 
         return $shops;
@@ -291,5 +297,32 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
         $plugin = \array_values($plugin)[0];
         return $plugin;
+    }
+
+    /**
+     * @param array|mixed[] $options
+     *
+     * @return array|mixed[]
+     */
+    private function doRequest(
+        string $uri,
+        array $options,
+        string $type = 'get'
+    ): array {
+        try {
+            /** @var ResponseInterface $response */
+            $response = $this->guzzleClient->$type(
+                $uri,
+                $options
+            );
+            $statusCode = $response->getStatusCode();
+            $body = $response->getBody();
+        } catch (BadResponseException $exception) {
+            $response = $exception->getResponse();
+            $statusCode = $response->getStatusCode();
+            $body = $response->getBody();
+        }
+
+        return [$statusCode, $body];
     }
 }
