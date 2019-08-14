@@ -11,7 +11,6 @@ namespace sd\SwPluginManager\Service;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 
@@ -300,6 +299,11 @@ class StoreApiConnector implements StoreApiConnectorInterface
         return $plugin;
     }
 
+    /**
+     * @param array|mixed[] $options
+     *
+     * @return array|mixed[]
+     */
     private function doRequest(
         string $uri,
         array $options,
