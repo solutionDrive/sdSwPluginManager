@@ -72,27 +72,27 @@ class InstallCommand extends Command
 
         // @TODO If it did not work, install the plugin by setting the flag in the database and inform the user.
         if (false === $callSuccess) {
-            $alreadyNeedle = 'is already installed';
-            if ($shopwareConsole->hasOutput() && false !== \strpos($shopwareConsole->getOutput(), $alreadyNeedle)) {
-                $output->writeln('<info>Plugin `' . $pluginId . '` was already installed.</info>');
-                $this->reinstallIfRequested($input, $output);
-                return 0;
-            } else {
-                $output->writeln(
-                    '<error>Plugin `' . $pluginId . '` could not be installed by Shopware. ' .
-                    'Fallback not yet implemented.</error>'
-                );
+            $output->writeln(
+                '<error>Plugin `' . $pluginId . '` could not be installed by Shopware. ' .
+                'Fallback not yet implemented.</error>'
+            );
 
-                if ($shopwareConsole->hasOutput()) {
-                    $output->writeln('Output (stdout) from Shopware CLI: ' . PHP_EOL . $shopwareConsole->getOutput());
-                }
-
-                if ($shopwareConsole->hasError()) {
-                    $output->writeln('Output (stderr) from Shopware CLI: ' . PHP_EOL . $shopwareConsole->getError());
-                }
-
-                return 1;
+            if ($shopwareConsole->hasOutput()) {
+                $output->writeln('Output (stdout) from Shopware CLI: ' . PHP_EOL . $shopwareConsole->getOutput());
             }
+
+            if ($shopwareConsole->hasError()) {
+                $output->writeln('Output (stderr) from Shopware CLI: ' . PHP_EOL . $shopwareConsole->getError());
+            }
+
+            return 1;
+        }
+
+        $alreadyNeedle = 'is already installed';
+        if ($shopwareConsole->hasOutput() && false !== \strpos($shopwareConsole->getOutput(), $alreadyNeedle)) {
+            $output->writeln('<info>Plugin `' . $pluginId . '` was already installed.</info>');
+            $this->reinstallIfRequested($input, $output);
+            return 0;
         }
 
         $output->writeln('<info>Plugin `' . $pluginId . '` installed successfully.</info>');
