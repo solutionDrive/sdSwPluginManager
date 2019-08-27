@@ -298,6 +298,68 @@ class StoreApiConnectorSpec extends ObjectBehavior
             ->shouldReturn($this->cacheRootDir->url() . '/sw-plugin-awesomePlugin1.2.5');
     }
 
+    public function it_does_download_plugin_if_it_is_forced_even_if_plugin_is_available_in_cache(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator,
+        Response $accessTokenResponse,
+        StreamInterface $accessCodeStream,
+        Response $partnerResponse,
+        StreamInterface $partnerStream,
+        Response $shopsResponse,
+        StreamInterface $shopsStream,
+        Response $licenseResponse,
+        StreamInterface $licenseStream,
+        Response $pluginInfoResponse,
+        StreamInterface $pluginInfoStream,
+        Response $pluginResponse
+    ): void {
+        \putenv('SHOPWARE_ACCOUNT_USER=' . self::SHOPWARE_ACCOUNT_USER);
+        \putenv('SHOPWARE_ACCOUNT_PASSWORD=' . self::SHOPWARE_ACCOUNT_PASSWORD);
+        \putenv('SHOPWARE_SHOP_DOMAIN=' . self::SHOPWARE_SHOP_DOMAIN);
+
+        vfsStream::newFile('sw-plugin-awesomePlugin0.0.2')->at($this->cacheRootDir);
+        vfsStream::newFile('sw-plugin-awesomePlugin1.2.5')->at($this->cacheRootDir);
+
+        // ACCESS TOKEN
+        $this->prepareAccessToken($guzzleClient, $streamTranslator, $accessTokenResponse, $accessCodeStream);
+
+        // CHECK FOR PARTNER ACCOUNT
+        $partnerData = [];
+        $this->preparePartnerAccountCheck($guzzleClient, $streamTranslator, $partnerResponse, $partnerStream, $partnerData);
+
+        // GET ALL SHOPS DIRECTLY CONNECTED TO ACCOUNT
+        $shopsData = [
+            [
+                'id' => 7,
+                'domain' => 'example.org',
+            ],
+        ];
+        $this->prepareShops($guzzleClient, $streamTranslator, $shopsResponse, $shopsStream, $shopsData);
+
+        // GET ALL LICENSES
+        $licenseUrl = '/shops/7/pluginlicenses';
+        $this->prepareLicenseData($guzzleClient, $streamTranslator, $licenseResponse, $licenseStream, $licenseUrl);
+
+        // GET ALL INFOS ABOUT PLUGIN
+        $pluginInfoUrl = '/shops/7/pluginlicenses/17';
+        $this->preparePluginInfoData($guzzleClient, $streamTranslator, $pluginInfoResponse, $pluginInfoStream, $pluginInfoUrl);
+
+        $downloadUrl = '/plugins/58/binaries/10/file?shopId=7';
+        $guzzleClient->get(
+            self::BASE_URL . $downloadUrl,
+            [
+                RequestOptions::HEADERS => [
+                    'X-Shopware-Token'  => 'ABCDEF',
+                ],
+                RequestOptions::SINK => $this->cacheRootDir->url() . '/sw-plugin-awesomePlugin0.0.2',
+            ]
+        )
+            ->shouldBeCalled()
+            ->willReturn($pluginResponse);
+
+        $this->loadPlugin('awesomePlugin', '0.0.2', true);
+    }
+
     private function prepareAccessToken(
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,

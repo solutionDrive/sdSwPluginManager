@@ -46,10 +46,10 @@ class StoreApiConnector implements StoreApiConnectorInterface
         $this->cacheDir = $cacheDir;
     }
 
-    public function loadPlugin(string $pluginId, string $version): string
+    public function loadPlugin(string $pluginId, string $version, bool $force = false): string
     {
         $tmpName = $this->cacheDir . DIRECTORY_SEPARATOR . 'sw-plugin-' . $pluginId . $version;
-        if (\file_exists($tmpName)) {
+        if (false === $force && \file_exists($tmpName)) {
             return $tmpName;
         }
 

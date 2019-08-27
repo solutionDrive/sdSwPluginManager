@@ -11,5 +11,5 @@ namespace sd\SwPluginManager\Service;
 
 interface StoreApiConnectorInterface
 {
-    public function loadPlugin(string $pluginId, string $version): string;
+    public function loadPlugin(string $pluginId, string $version, bool $force = false): string;
 }
