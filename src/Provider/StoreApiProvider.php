@@ -35,7 +35,7 @@ class StoreApiProvider implements ProviderInterface
         $name = $parameters['pluginId'];
         $version = $parameters['version'];
 
-        return $this->storeApiConnector->loadPlugin($name, $version);
+        return $this->storeApiConnector->loadPlugin($name, $version, $force);
     }
 
     public function supports(string $providerName): bool

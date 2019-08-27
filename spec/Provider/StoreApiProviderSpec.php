@@ -43,7 +43,7 @@ class StoreApiProviderSpec extends ObjectBehavior
     public function it_can_load_a_plugin_with_correct_credentials(
         StoreApiConnectorInterface $storeApiConnector
     ): void {
-        $storeApiConnector->loadPlugin('awesomePlugin', '0.0.2')
+        $storeApiConnector->loadPlugin('awesomePlugin', '0.0.2', false)
             ->willReturn('/tmp/plugin');
 
         $this->loadFile(
@@ -58,7 +58,7 @@ class StoreApiProviderSpec extends ObjectBehavior
     public function it_can_force_load_a_plugin_with_correct_credentials(
         StoreApiConnectorInterface $storeApiConnector
     ): void {
-        $storeApiConnector->loadPlugin('awesomePlugin', '0.0.2')
+        $storeApiConnector->loadPlugin('awesomePlugin', '0.0.2', true)
             ->willReturn('/tmp/plugin');
 
         $this->loadFile(
