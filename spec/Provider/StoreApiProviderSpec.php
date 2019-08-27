@@ -55,6 +55,22 @@ class StoreApiProviderSpec extends ObjectBehavior
         ->shouldReturn('/tmp/plugin');
     }
 
+    public function it_can_force_load_a_plugin_with_correct_credentials(
+        StoreApiConnectorInterface $storeApiConnector
+    ): void {
+        $storeApiConnector->loadPlugin('awesomePlugin', '0.0.2')
+            ->willReturn('/tmp/plugin');
+
+        $this->loadFile(
+            [
+                'pluginId' => 'awesomePlugin',
+                'version'  => '0.0.2',
+            ],
+            true
+        )
+            ->shouldReturn('/tmp/plugin');
+    }
+
     public function it_supports(): void
     {
         $this->supports('http')->shouldReturn(false);

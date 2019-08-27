@@ -14,7 +14,7 @@ class FilesystemProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadFile(array $parameters): ?string
+    public function loadFile(array $parameters, bool $force = false): ?string
     {
         if (true === empty($parameters['src'])) {
             throw new \RuntimeException('src must not be empty for FilesystemProvider.');

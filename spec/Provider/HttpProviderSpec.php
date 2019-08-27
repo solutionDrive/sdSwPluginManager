@@ -48,6 +48,21 @@ class HttpProviderSpec extends ObjectBehavior
         $this->loadFile(['src' => $url]);
     }
 
+    public function it_can_force_load_simple(Client $guzzleClient, ResponseInterface $guzzleResponse): void
+    {
+        $url = 'https://sd.test/url/to/file.zip';
+
+        $guzzleResponse->getStatusCode()->willReturn(200);
+        $guzzleClient->get(
+            Argument::exact($url),
+            Argument::withKey('sink')
+        )
+            ->willReturn($guzzleResponse)
+            ->shouldBeCalled();
+
+        $this->loadFile(['src' => $url], true);
+    }
+
     public function it_can_load_with_auth(Client $guzzleClient, ResponseInterface $guzzleResponse): void
     {
         $url = 'https://sd.test/url/to/file.zip';

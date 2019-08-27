@@ -59,6 +59,28 @@ class S3ProviderSpec extends ObjectBehavior
         ]);
     }
 
+    public function it_can_force_load_simple(
+        S3ClientFactoryInterface $s3ClientFactory,
+        S3Client $client
+    ): void {
+        $src = 'file.zip';
+
+        $s3ClientFactory->createClient(Argument::any(), Argument::any())
+            ->shouldBeCalled()
+            ->willReturn($client);
+
+        $client->getObject(
+            Argument::allOf(
+                Argument::withEntry('Bucket', self::BUCKET),
+                Argument::withEntry('Key', self::BASEPATH . '/' . $src)
+            )
+        );
+
+        $this->loadFile([
+            'src' => $src,
+        ], true);
+    }
+
     public function it_can_load_from_custom_region_and_profile(
         S3ClientFactoryInterface $s3ClientFactory,
         S3Client $client

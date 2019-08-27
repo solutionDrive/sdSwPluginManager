@@ -14,7 +14,7 @@ class NoneProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadFile(array $parameters): ?string
+    public function loadFile(array $parameters, bool $force = false): ?string
     {
         return null;
     }
