@@ -60,6 +60,12 @@ class FetchPluginCommand extends Command
                 'The current environment to use for calling shopware commands',
                 'production'
             )
+            ->addOption(
+                'force',
+                '',
+                InputOption::VALUE_NONE,
+                'If set, no cache will be used to get the plugin'
+            )
             ->setDescription('Fetches a plugin from its source.')
             ->setHelp(
                 'Fetches a plugin from its source configured in the given statefile.'
@@ -85,7 +91,9 @@ class FetchPluginCommand extends Command
             throw new \RuntimeException('The given plugin was not found in the statefile.');
         }
 
-        $file = $this->pluginFetcher->fetch($configuredPluginState);
+        $force = (bool) $input->getOption('force');
+
+        $file = $this->pluginFetcher->fetch($configuredPluginState, $force);
 
         $output->writeln("Downloaded plugin '$pluginId' to: ", OutputInterface::VERBOSITY_VERBOSE);
         $output->writeln($file);

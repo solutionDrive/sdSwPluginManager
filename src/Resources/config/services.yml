@@ -81,6 +81,7 @@ services:
     arguments:
       - '@sd.external.guzzle'
       - '@sd.service.stream_translator'
+      - '/tmp'
 
   sd.service.stream_translator:
     class: sd\SwPluginManager\Service\StreamTranslator

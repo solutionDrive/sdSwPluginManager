@@ -16,7 +16,7 @@ interface ProviderInterface
      *
      * @return string|null Path to the downloaded ZIP file
      */
-    public function loadFile(array $parameters): ?string;
+    public function loadFile(array $parameters, bool $force = false): ?string;
 
     public function supports(string $providerName): bool;
 }

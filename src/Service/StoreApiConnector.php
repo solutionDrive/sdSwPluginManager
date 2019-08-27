@@ -24,6 +24,9 @@ class StoreApiConnector implements StoreApiConnectorInterface
     /** @var StreamTranslatorInterface */
     private $streamTranslator;
 
+    /** @var string */
+    private $cacheDir;
+
     /** @var string|null */
     private $accessToken;
 
@@ -35,14 +38,21 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
     public function __construct(
         Client $guzzleClient,
-        StreamTranslatorInterface $streamTranslator
+        StreamTranslatorInterface $streamTranslator,
+        string $cacheDir
     ) {
         $this->guzzleClient = $guzzleClient;
         $this->streamTranslator = $streamTranslator;
+        $this->cacheDir = $cacheDir;
     }
 
-    public function loadPlugin(string $pluginId, string $version): string
+    public function loadPlugin(string $pluginId, string $version, bool $force = false): string
     {
+        $tmpName = $this->cacheDir . DIRECTORY_SEPARATOR . 'sw-plugin-' . $pluginId . $version;
+        if (false === $force && \file_exists($tmpName)) {
+            return $tmpName;
+        }
+
         $partnerShops = $this->getShopsFromPartnerAccount();
         $shops = $this->getGeneralShops();
         $shop = $this->filterShopsByDomain($shops, $partnerShops);
@@ -70,7 +80,6 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
             // Get plugin information
             $pluginOverallId = $plugin['id'];
-            $pluginName = $plugin['plugin']['name'];
             $pluginSpecificId = $plugin['plugin']['id'];
 
             $pluginInfoUrl = self::BASE_URL;
@@ -101,7 +110,6 @@ class StoreApiConnector implements StoreApiConnectorInterface
                     return $binary['version'] === $version;
                 }))[0];
 
-                $tmpName = '/tmp/sw-plugin-' . $pluginName . $version;
                 $downloadUrl = self::BASE_URL . '/plugins/' . $pluginSpecificId . '/binaries/' . $binaryVersion['id'] . '/file?shopId=' . $shop['id'];
                 $this->doRequest(
                     $downloadUrl,

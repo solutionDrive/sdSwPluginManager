@@ -30,6 +30,11 @@ class NoneProviderSpec extends ObjectBehavior
         $this->loadFile([])->shouldReturn(null);
     }
 
+    public function it_can_force_load_file(): void
+    {
+        $this->loadFile([], true)->shouldReturn(null);
+    }
+
     public function it_supports(): void
     {
         $this->supports('none')->shouldReturn(true);

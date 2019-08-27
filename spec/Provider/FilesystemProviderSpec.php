@@ -30,6 +30,11 @@ class FilesystemProviderSpec extends ObjectBehavior
         $this->loadFile(['src' => './test/file/path.zip'])->shouldReturn('./test/file/path.zip');
     }
 
+    public function it_can_force_load_file(): void
+    {
+        $this->loadFile(['src' => './test/file/path.zip'], true)->shouldReturn('./test/file/path.zip');
+    }
+
     public function it_cannot_load_with_empty_filename(): void
     {
         $this->shouldThrow(\RuntimeException::class)->during('loadFile', [[]]);

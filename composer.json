@@ -22,6 +22,7 @@
         "bin/sd-plugin-manager"
     ],
     "require-dev": {
+        "mikey179/vfsstream": "^1.6",
         "solutiondrive/standalone-build-tools": "^1.0"
     },
     "config": {

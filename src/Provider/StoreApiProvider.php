@@ -30,12 +30,12 @@ class StoreApiProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadFile(array $parameters): ?string
+    public function loadFile(array $parameters, bool $force = false): ?string
     {
         $name = $parameters['pluginId'];
         $version = $parameters['version'];
 
-        return $this->storeApiConnector->loadPlugin($name, $version);
+        return $this->storeApiConnector->loadPlugin($name, $version, $force);
     }
 
     public function supports(string $providerName): bool

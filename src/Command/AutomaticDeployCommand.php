@@ -67,6 +67,12 @@ class AutomaticDeployCommand extends Command
                 'If set, skip download and extraction'
             )
             ->addOption(
+                'force-download',
+                '',
+                InputOption::VALUE_NONE,
+                'If set, a download will be forced (not using any cache)! Be careful: If skip-download is set, this parameter does not do anything!'
+            )
+            ->addOption(
                 'skip-install',
                 '',
                 InputOption::VALUE_NONE,
@@ -89,6 +95,7 @@ class AutomaticDeployCommand extends Command
         OutputInterface $output
     ) {
         $skipDownload = (bool) $input->getOption('skip-download');
+        $forceDownload = (bool) $input->getOption('force-download');
         $skipInstall = (bool) $input->getOption('skip-install');
 
         $environment = $input->getOption('env');
@@ -114,7 +121,7 @@ class AutomaticDeployCommand extends Command
 
                 // Download the plugin and get the path
                 $output->write('Downloading plugin `' . $configuredPluginState->getId() . '`...');
-                $downloadPath = $this->pluginFetcher->fetch($configuredPluginState);
+                $downloadPath = $this->pluginFetcher->fetch($configuredPluginState, $forceDownload);
                 $output->writeln(' <info>done.</info>');
 
                 // If no path was returned, it is assumed that the plugin is already in its destination path
