@@ -15,6 +15,7 @@ use GuzzleHttp\RequestOptions;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 use Psr\Http\Message\StreamInterface;
 use sd\SwPluginManager\Service\StoreApiConnector;
 use sd\SwPluginManager\Service\StoreApiConnectorInterface;
@@ -268,6 +269,33 @@ class StoreApiConnectorSpec extends ObjectBehavior
     public function it_cannot_connect_to_store_api_without_credentials(): void
     {
         $this->shouldThrow(\RuntimeException::class)->during('loadPlugin', ['awesomePlugin', '0.0.2']);
+    }
+
+    public function it_does_not_download_plugin_if_it_is_available_in_cache(
+        Client $guzzleClient,
+        StreamTranslatorInterface $streamTranslator
+    ): void {
+        vfsStream::newFile('sw-plugin-awesomePlugin0.0.2')->at($this->cacheRootDir);
+        vfsStream::newFile('sw-plugin-awesomePlugin1.2.5')->at($this->cacheRootDir);
+
+        $guzzleClient->get(Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+        $guzzleClient->post(Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+        $guzzleClient->put(Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+        $guzzleClient->delete(Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+        $guzzleClient->patch(Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+
+        $streamTranslator->translateToArray(Argument::any())
+            ->shouldNotBeCalled();
+
+        $this->loadPlugin('awesomePlugin', '0.0.2')
+            ->shouldReturn($this->cacheRootDir->url() . '/sw-plugin-awesomePlugin0.0.2');
+        $this->loadPlugin('awesomePlugin', '1.2.5')
+            ->shouldReturn($this->cacheRootDir->url() . '/sw-plugin-awesomePlugin1.2.5');
     }
 
     private function prepareAccessToken(

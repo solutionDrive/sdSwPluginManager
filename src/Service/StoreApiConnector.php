@@ -48,6 +48,11 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
     public function loadPlugin(string $pluginId, string $version): string
     {
+        $tmpName = $this->cacheDir . DIRECTORY_SEPARATOR . 'sw-plugin-' . $pluginId . $version;
+        if (\file_exists($tmpName)) {
+            return $tmpName;
+        }
+
         $partnerShops = $this->getShopsFromPartnerAccount();
         $shops = $this->getGeneralShops();
         $shop = $this->filterShopsByDomain($shops, $partnerShops);
@@ -75,7 +80,6 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
             // Get plugin information
             $pluginOverallId = $plugin['id'];
-            $pluginName = $plugin['plugin']['name'];
             $pluginSpecificId = $plugin['plugin']['id'];
 
             $pluginInfoUrl = self::BASE_URL;
@@ -106,7 +110,6 @@ class StoreApiConnector implements StoreApiConnectorInterface
                     return $binary['version'] === $version;
                 }))[0];
 
-                $tmpName = $this->cacheDir . DIRECTORY_SEPARATOR . 'sw-plugin-' . $pluginName . $version;
                 $downloadUrl = self::BASE_URL . '/plugins/' . $pluginSpecificId . '/binaries/' . $binaryVersion['id'] . '/file?shopId=' . $shop['id'];
                 $this->doRequest(
                     $downloadUrl,
