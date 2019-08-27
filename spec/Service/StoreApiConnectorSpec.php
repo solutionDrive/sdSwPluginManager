@@ -12,6 +12,8 @@ namespace spec\sd\SwPluginManager\Service;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 use PhpSpec\ObjectBehavior;
 use Psr\Http\Message\StreamInterface;
 use sd\SwPluginManager\Service\StoreApiConnector;
@@ -25,6 +27,9 @@ class StoreApiConnectorSpec extends ObjectBehavior
     const SHOPWARE_ACCOUNT_USER = 'NotExistingShopwareAccount';
     const SHOPWARE_ACCOUNT_PASSWORD = 'SuperSecurePassword';
     const SHOPWARE_SHOP_DOMAIN = 'example.org';
+
+    /** @var vfsStreamDirectory */
+    private $cacheRootDir;
 
     public function it_is_initializable(): void
     {
@@ -40,9 +45,12 @@ class StoreApiConnectorSpec extends ObjectBehavior
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator
     ): void {
+        $this->cacheRootDir = vfsStream::setup('/tmp/');
+
         $this->beConstructedWith(
             $guzzleClient,
-            $streamTranslator
+            $streamTranslator,
+            $this->cacheRootDir->url()
         );
 
         // Resets environment variables on every run
@@ -116,7 +124,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token'  => 'ABCDEF',
                 ],
-                RequestOptions::SINK => '/tmp/sw-plugin-awesomePlugin0.0.2',
+                RequestOptions::SINK => $this->cacheRootDir->url() . '/sw-plugin-awesomePlugin0.0.2',
             ]
         )
             ->shouldBeCalled()
@@ -189,7 +197,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token'  => 'ABCDEF',
                 ],
-                RequestOptions::SINK => '/tmp/sw-plugin-awesomePlugin0.0.2',
+                RequestOptions::SINK => $this->cacheRootDir->url() . '/sw-plugin-awesomePlugin0.0.2',
             ]
         )
             ->shouldBeCalled()
@@ -248,7 +256,7 @@ class StoreApiConnectorSpec extends ObjectBehavior
                 RequestOptions::HEADERS => [
                     'X-Shopware-Token'  => 'ABCDEF',
                 ],
-                RequestOptions::SINK => '/tmp/sw-plugin-awesomePlugin0.0.2',
+                RequestOptions::SINK => $this->cacheRootDir->url() . '/sw-plugin-awesomePlugin0.0.2',
             ]
         )
             ->shouldBeCalled()

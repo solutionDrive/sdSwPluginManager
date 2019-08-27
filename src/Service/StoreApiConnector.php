@@ -24,6 +24,9 @@ class StoreApiConnector implements StoreApiConnectorInterface
     /** @var StreamTranslatorInterface */
     private $streamTranslator;
 
+    /** @var string */
+    private $cacheDir;
+
     /** @var string|null */
     private $accessToken;
 
@@ -35,10 +38,12 @@ class StoreApiConnector implements StoreApiConnectorInterface
 
     public function __construct(
         Client $guzzleClient,
-        StreamTranslatorInterface $streamTranslator
+        StreamTranslatorInterface $streamTranslator,
+        string $cacheDir
     ) {
         $this->guzzleClient = $guzzleClient;
         $this->streamTranslator = $streamTranslator;
+        $this->cacheDir = $cacheDir;
     }
 
     public function loadPlugin(string $pluginId, string $version): string
@@ -101,7 +106,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
                     return $binary['version'] === $version;
                 }))[0];
 
-                $tmpName = '/tmp/sw-plugin-' . $pluginName . $version;
+                $tmpName = $this->cacheDir . DIRECTORY_SEPARATOR . 'sw-plugin-' . $pluginName . $version;
                 $downloadUrl = self::BASE_URL . '/plugins/' . $pluginSpecificId . '/binaries/' . $binaryVersion['id'] . '/file?shopId=' . $shop['id'];
                 $this->doRequest(
                     $downloadUrl,
