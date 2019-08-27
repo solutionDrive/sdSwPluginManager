@@ -57,10 +57,37 @@ class PluginFetcherSpec extends ObjectBehavior
             ->willReturn($provider);
 
         $provider
-            ->loadFile($providerParameters)
+            ->loadFile($providerParameters, false)
             ->shouldBeCalled();
 
         $this->fetch($configuredPluginState);
+    }
+
+    public function it_can_force_fetch(
+        ProviderRepositoryInterface $providerRepository,
+        ProviderInterface $provider,
+        ConfiguredPluginState $configuredPluginState
+    ): void {
+        $providerParameters = [];
+
+        $configuredPluginState
+            ->getProviderParameters()
+            ->willReturn($providerParameters);
+
+        $configuredPluginState
+            ->getProvider()
+            ->willReturn('testType');
+
+        $providerRepository
+            ->getProviderSupporting(Argument::exact('testType'))
+            ->shouldBeCalled()
+            ->willReturn($provider);
+
+        $provider
+            ->loadFile($providerParameters, true)
+            ->shouldBeCalled();
+
+        $this->fetch($configuredPluginState, true);
     }
 
     public function it_can_throw_no_suitable_provider_exception(

@@ -24,13 +24,13 @@ class PluginFetcher implements PluginFetcherInterface
         $this->providerRepository = $providerRepository;
     }
 
-    public function fetch(ConfiguredPluginState $configuredPluginState): ?string
+    public function fetch(ConfiguredPluginState $configuredPluginState, bool $force = false): ?string
     {
         $provider = $this->providerRepository->getProviderSupporting($configuredPluginState->getProvider());
         if (null === $provider) {
             throw new NoSuitableProviderException($configuredPluginState->getProvider());
         }
 
-        return $provider->loadFile($configuredPluginState->getProviderParameters());
+        return $provider->loadFile($configuredPluginState->getProviderParameters(), $force);
     }
 }
