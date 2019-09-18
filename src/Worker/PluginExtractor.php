@@ -71,6 +71,7 @@ class PluginExtractor implements PluginExtractorInterface
         $folderName = \explode('/', $stat['name'])[0];
         $extractToPath = $this->getExtractToPath($folderName);
 
+        $this->clearPath($extractToPath); // Clear the path to ensure old versions does not create conflicts
         $extractResult = $zipArchive->extractTo($extractToPath);
         if (false === $extractResult) {
             throw new ZipFileCouldNotBeExtractedException($sourceFile);
@@ -107,5 +108,22 @@ class PluginExtractor implements PluginExtractorInterface
     private function isLegacyPlugin(string $folderName): bool
     {
         return \in_array($folderName, $this->legacyPluginRootFolders, false);
+    }
+
+    /**
+     * Cleans the path recursively to ensure the path is an empty directory
+     */
+    private function clearPath(string $path): void
+    {
+        if (empty($path)) {
+            // If path is empty, there is nothing to do
+            return;
+        }
+
+        $files = array_diff(scandir($path), array('.','..'));
+        foreach ($files as $file) {
+            (is_dir("$path/$file")) ? $this->clearPath("$path/$file") : unlink("$path/$file");
+        }
+        rmdir($path);
     }
 }
