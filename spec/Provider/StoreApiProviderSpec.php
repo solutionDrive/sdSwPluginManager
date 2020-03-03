@@ -82,4 +82,52 @@ class StoreApiProviderSpec extends ObjectBehavior
 
         $this->supports('store_api')->shouldReturn(true);
     }
+
+    public function it_can_parse_decimal_versions(
+        StoreApiConnectorInterface $storeApiConnector
+    ): void {
+        $storeApiConnector->loadPlugin('awesomePlugin', '0.2', true)
+            ->willReturn('/tmp/plugin');
+
+        $this->loadFile(
+            [
+                'pluginId' => 'awesomePlugin',
+                'version'  => 0.2,
+            ],
+            true
+        )
+            ->shouldReturn('/tmp/plugin');
+    }
+
+    public function it_can_parse_integer_versions(
+        StoreApiConnectorInterface $storeApiConnector
+    ): void {
+        $storeApiConnector->loadPlugin('awesomePlugin', '2', true)
+            ->willReturn('/tmp/plugin');
+
+        $this->loadFile(
+            [
+                'pluginId' => 'awesomePlugin',
+                'version'  => 2,
+            ],
+            true
+        )
+            ->shouldReturn('/tmp/plugin');
+    }
+
+    public function it_can_parse_string_versions(
+        StoreApiConnectorInterface $storeApiConnector
+    ): void {
+        $storeApiConnector->loadPlugin('awesomePlugin', 'HYPER MASTER ULTRA VERSION MK.3', true)
+            ->willReturn('/tmp/plugin');
+
+        $this->loadFile(
+            [
+                'pluginId' => 'awesomePlugin',
+                'version'  => 'HYPER MASTER ULTRA VERSION MK.3',
+            ],
+            true
+        )
+            ->shouldReturn('/tmp/plugin');
+    }
 }

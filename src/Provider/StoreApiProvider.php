@@ -33,7 +33,7 @@ class StoreApiProvider implements ProviderInterface
     public function loadFile(array $parameters, bool $force = false): ?string
     {
         $name = $parameters['pluginId'];
-        $version = $parameters['version'];
+        $version = (string) $parameters['version'];
 
         return $this->storeApiConnector->loadPlugin($name, $version, $force);
     }
