@@ -1,0 +1,3 @@
+version:
+    tag: "${TRAVIS_BRANCH}"
+    commit: "${TRAVIS_COMMIT}"

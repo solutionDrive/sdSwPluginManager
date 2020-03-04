@@ -13,6 +13,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class InfoCommand extends Command
 {
@@ -41,9 +42,10 @@ class InfoCommand extends Command
         InputInterface $input,
         OutputInterface $output
     ) {
+        $versionData = Yaml::parseFile(__DIR__ . '/../../.version.yml');
         $output->writeln('solutionDrive\'s plugin manager for Shopware.', OutputInterface::VERBOSITY_VERBOSE);
-        $output->writeln('__TAG__');
-        $output->writeln('__COMMIT__', OutputInterface::VERBOSITY_VERBOSE);
+        $output->writeln($versionData['tag']);
+        $output->writeln($versionData['commit'], OutputInterface::VERBOSITY_VERBOSE);
         return 0;
     }
 }
