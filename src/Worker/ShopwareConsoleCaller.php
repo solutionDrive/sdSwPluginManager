@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 /*
- * Created by solutionDrive GmbH
+ * Created by netlogix GmbH & Co. KG
  *
- * @copyright solutionDrive GmbH
+ * @copyright netlogix GmbH & Co. KG
  */
 
 namespace sd\SwPluginManager\Worker;
@@ -151,7 +151,7 @@ class ShopwareConsoleCaller implements ShopwareConsoleCallerInterface
      * @param resource $process     process which should be checked for exit code
      * @param int      $maxWaitTime max time to wait for a running process (in microseconds)
      */
-    private function waitForExitCode($process, $maxWaitTime = 30000000): void
+    private function waitForExitCode($process, int $maxWaitTime = 30000000): void
     {
         $waitTime = 0;
         do {

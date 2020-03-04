@@ -1,5 +1,5 @@
 language: php
-dist: trusty
+dist: bionic
 sudo: false
 
 php:
@@ -21,8 +21,8 @@ install:
   - composer install --optimize-autoloader -n
 
 before_script:
-  - printf '%s\n' ",s/__TAG__/${TRAVIS_BRANCH}/g" w q | ed -s "./src/Command/InfoCommand.php"
-  - printf '%s\n' ",s/__COMMIT__/${TRAVIS_COMMIT}/g" w q | ed -s "./src/Command/InfoCommand.php"
+  - versionYaml="$(cat .version.yml.dist | envsubst)"
+  - echo "$versionYaml" > .version.yml
 
 script:
   - ./etc/scripts/lintFiles.sh
