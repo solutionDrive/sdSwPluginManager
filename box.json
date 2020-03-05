@@ -2,7 +2,8 @@
   "chmod": "0755",
   "directories": [],
   "files": [
-    "LICENSE"
+    "LICENSE",
+    ".version.yml"
   ],
   "finder": [
     {

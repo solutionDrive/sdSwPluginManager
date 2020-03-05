@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 /*
- * Created by solutionDrive GmbH
+ * Created by netlogix GmbH & Co. KG
  *
- * @copyright solutionDrive GmbH
+ * @copyright netlogix GmbH & Co. KG
  */
 
 namespace sd\SwPluginManager\Repository;
@@ -14,7 +14,7 @@ use sd\SwPluginManager\Entity\DeployedPluginState;
 interface DeployedPluginRepositoryInterface
 {
     /**
-     * @param array|array[] $stateAsArray
+     * @param array|string[] $stateAsArray
      *
      * @return mixed
      */
