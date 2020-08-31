@@ -48,6 +48,9 @@ class ConfiguredPluginConfiguration implements ConfigurationInterface
                     ->booleanNode('removeDataOnReinstall')
                         ->defaultFalse()
                     ->end()
+                    ->booleanNode('alwaysClearCache')
+                        ->defaultFalse()
+                    ->end()
                 ->end()
                 ->validate()
                     ->ifTrue(function ($plugin) {

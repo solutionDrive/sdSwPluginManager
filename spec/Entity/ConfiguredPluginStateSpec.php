@@ -70,6 +70,43 @@ class ConfiguredPluginStateSpec extends ObjectBehavior
         $this->getEnvironments()->shouldReturn([]);
     }
 
+    public function it_has_default_parameters(): void
+    {
+        $this->beConstructedWith(
+            'pluginId2',
+            'dummy2',
+            '4',
+            [],
+            [],
+            false,
+            false
+        );
+
+        $this->getAlwaysReinstall()->shouldReturn(true);
+        $this->getRemoveDataOnReinstall()->shouldReturn(false);
+        $this->getAlwaysClearCache()->shouldReturn(false);
+    }
+
+    public function it_has_configurable_default_parameters(): void
+    {
+        $this->beConstructedWith(
+            'pluginId2',
+            'dummy2',
+            '4',
+            [],
+            [],
+            false,
+            false,
+            false,
+            true,
+            true
+        );
+
+        $this->getAlwaysReinstall()->shouldReturn(false);
+        $this->getRemoveDataOnReinstall()->shouldReturn(true);
+        $this->getAlwaysClearCache()->shouldReturn(true);
+    }
+
     public function it_cannot_be_constructed_with_pluginId_as_parameter(): void
     {
         $this->shouldThrow(\RuntimeException::class)

@@ -170,33 +170,55 @@ class AutomaticDeployCommand extends Command
                         $parameters['--remove-data-on-reinstall'] = null;
                     }
 
+                    if ($configuredPluginState->getAlwaysClearCache()) {
+                        $parameters['--clear-cache'] = null;
+                    }
+
                     $input = new ArrayInput($parameters);
                     $app->run($input, $output);
                 } else {
-                    // Try to uninstall
-                    $input = new ArrayInput([
+                    $parameters = [
                         'command' => 'sd:plugins:uninstall',
                         '--secure' => true,
                         'pluginId' => $configuredPluginState->getId(),
                         '--env' => $environment,
-                    ]);
+                    ];
+
+                    if ($configuredPluginState->getAlwaysClearCache()) {
+                        $parameters['--clear-cache'] = null;
+                    }
+
+                    // Try to uninstall
+                    $input = new ArrayInput($parameters);
                     $app->run($input, $output);
                 }
 
                 if ($configuredPluginState->isActivated()) {
-                    $input = new ArrayInput([
+                    $parameters = [
                         'command' => 'sd:plugins:activate',
                         'pluginId' => $configuredPluginState->getId(),
                         '--env' => $environment,
-                    ]);
+                    ];
+
+                    if ($configuredPluginState->getAlwaysClearCache()) {
+                        $parameters['--clear-cache'] = null;
+                    }
+
+                    $input = new ArrayInput($parameters);
                     $app->run($input, $output);
                 } else {
-                    // Try to unactivate
-                    $input = new ArrayInput([
+                    $parameters = [
                         'command' => 'sd:plugins:deactivate',
                         'pluginId' => $configuredPluginState->getId(),
                         '--env' => $environment,
-                    ]);
+                    ];
+
+                    if ($configuredPluginState->getAlwaysClearCache()) {
+                        $parameters['--clear-cache'] = null;
+                    }
+
+                    // Try to unactivate
+                    $input = new ArrayInput($parameters);
                     $app->run($input, $output);
                 }
             }

@@ -33,6 +33,12 @@ class UninstallCommand extends Command
                 ''
             )
             ->addOption(
+                'clear-cache',
+                null,
+                InputOption::VALUE_NONE,
+                ''
+            )
+            ->addOption(
                 'env',
                 'e',
                 InputOption::VALUE_REQUIRED,
@@ -62,6 +68,11 @@ class UninstallCommand extends Command
             $pluginId => null,
             '--env'   => $env,
         ];
+
+        if ($input->getOption('clear-cache')) {
+            $parameters['--clear-cache'] = null;
+        }
+
         $callSuccess = $shopwareConsole->call('sw:plugin:uninstall', $parameters);
 
         // @TODO If it did not work, install the plugin by setting the flag in the database and inform the user.
