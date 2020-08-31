@@ -35,6 +35,12 @@ class ActivateCommand extends Command
                 'The current environment to use for calling shopware commands',
                 'production'
             )
+            ->addOption(
+                'clear-cache',
+                null,
+                InputOption::VALUE_NONE,
+                ''
+            )
             ->setHelp(
                 'Activates the given plugin. First it is tried to use the Shopware CLI. ' .
                 'If this does not work, a more error tolerant approach is taken.'
@@ -57,6 +63,11 @@ class ActivateCommand extends Command
             $pluginId => null,
             '--env'   => $env,
         ];
+
+        if ($input->getOption('clear-cache')) {
+            $parameters['--clear-cache'] = null;
+        }
+
         $callSuccess = $shopwareConsole->call('sw:plugin:activate', $parameters);
 
         // @TODO If it did not work, install the plugin by setting the flag in the database and inform the user.

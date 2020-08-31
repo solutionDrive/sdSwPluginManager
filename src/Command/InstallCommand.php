@@ -33,6 +33,12 @@ class InstallCommand extends Command
                 ''
             )
             ->addOption(
+                'clear-cache',
+                null,
+                InputOption::VALUE_NONE,
+                ''
+            )
+            ->addOption(
                 'remove-data-on-reinstall',
                 null,
                 InputOption::VALUE_NONE,
@@ -68,6 +74,11 @@ class InstallCommand extends Command
             $pluginId => null,
             '--env'   => $env,
         ];
+
+        if ($input->getOption('clear-cache')) {
+            $parameters['--clear-cache'] = null;
+        }
+
         $callSuccess = $shopwareConsole->call('sw:plugin:install', $parameters);
 
         // @TODO If it did not work, install the plugin by setting the flag in the database and inform the user.
@@ -118,6 +129,10 @@ class InstallCommand extends Command
         $parameters = [$pluginId => null];
         if ($removeData) {
             $parameters['--removedata'] = null;
+        }
+
+        if ($input->getOption('clear-cache')) {
+            $parameters['--clear-cache'] = null;
         }
 
         $callSuccess = $shopwareConsole->call('sw:plugin:reinstall', $parameters);

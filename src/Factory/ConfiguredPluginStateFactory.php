@@ -31,7 +31,8 @@ class ConfiguredPluginStateFactory implements ConfiguredPluginStateFactoryInterf
             $boolParser->parse($parsedPluginAsArray['activated']),
             $boolParser->parse($parsedPluginAsArray['installed']),
             $boolParser->parse($parsedPluginAsArray['alwaysReinstall']),
-            $boolParser->parse($parsedPluginAsArray['removeDataOnReinstall'])
+            $boolParser->parse($parsedPluginAsArray['removeDataOnReinstall']),
+            $boolParser->parse($parsedPluginAsArray['alwaysClearCache'])
         );
     }
 }

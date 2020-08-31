@@ -59,6 +59,7 @@ class StateFileSpec extends ObjectBehavior
                     'version' => '1',
                     'alwaysReinstall' => false,
                     'removeDataOnReinstall' => true,
+                    'alwaysClearCache' => true,
                 ],
             ],
         ];
@@ -74,6 +75,7 @@ class StateFileSpec extends ObjectBehavior
                     'env' => [],
                     'alwaysReinstall' => true,
                     'removeDataOnReinstall' => false,
+                    'alwaysClearCache' => false,
                 ])
             )
             ->shouldBeCalled()
@@ -90,6 +92,7 @@ class StateFileSpec extends ObjectBehavior
                     'env' => [],
                     'alwaysReinstall' => false,
                     'removeDataOnReinstall' => true,
+                    'alwaysClearCache' => true,
                 ])
             )
             ->shouldBeCalled()

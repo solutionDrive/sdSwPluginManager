@@ -38,6 +38,9 @@ class ConfiguredPluginState
     /** @var bool */
     private $removeDataOnReinstall;
 
+    /** @var bool */
+    private $alwaysClearCache;
+
     /**
      * @param array|mixed[]  $providerParameters
      * @param array|string[] $environments
@@ -51,7 +54,8 @@ class ConfiguredPluginState
         bool $activated = false,
         bool $installed = false,
         bool $alwaysReinstall = true,
-        bool $removeDataOnReinstall = false
+        bool $removeDataOnReinstall = false,
+        bool $alwaysClearCache = false
     ) {
         if (true === isset($providerParameters['pluginId'])) {
             throw new \RuntimeException('The parameter "pluginId" is reserved and cannot be used. It will be filled automatically with the pluginId');
@@ -68,6 +72,7 @@ class ConfiguredPluginState
         $this->environments = $environments;
         $this->alwaysReinstall = $alwaysReinstall;
         $this->removeDataOnReinstall = $removeDataOnReinstall;
+        $this->alwaysClearCache = $alwaysClearCache;
     }
 
     public function getId(): string
@@ -119,5 +124,10 @@ class ConfiguredPluginState
     public function getRemoveDataOnReinstall(): bool
     {
         return $this->removeDataOnReinstall;
+    }
+
+    public function getAlwaysClearCache(): bool
+    {
+        return $this->alwaysClearCache;
     }
 }

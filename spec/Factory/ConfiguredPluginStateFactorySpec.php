@@ -43,6 +43,7 @@ class ConfiguredPluginStateFactorySpec extends ObjectBehavior
             'env' => ['unix', 'linux'],
             'alwaysReinstall' => 'false',
             'removeDataOnReinstall' => 'true',
+            'alwaysClearCache' => 'true',
         ];
 
         $plugin = $this->createFromConfigurationArray($key, $config);
@@ -62,5 +63,6 @@ class ConfiguredPluginStateFactorySpec extends ObjectBehavior
         $plugin->getEnvironments()->shouldReturn(['unix', 'linux']);
         $plugin->getAlwaysReinstall()->shouldReturn(false);
         $plugin->getRemoveDataOnReinstall()->shouldReturn(true);
+        $plugin->getAlwaysClearCache()->shouldReturn(true);
     }
 }
