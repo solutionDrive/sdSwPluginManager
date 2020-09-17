@@ -87,7 +87,7 @@ class TableParser
         });
 
         if ($this->stripFirstCell) {
-            $test = \array_shift($cells);
+            \array_shift($cells);
         }
 
         if ($this->stripLastCell) {
