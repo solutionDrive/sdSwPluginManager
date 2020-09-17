@@ -9,12 +9,13 @@ declare(strict_types=1);
 
 namespace sd\SwPluginManager\Service;
 
+use BadMethodCallException;
 use sd\SwPluginManager\Entity\ConfiguredPluginState;
 
 class PluginVersionService implements PluginVersionServiceInterface
 {
     /** @var string[] */
-    private $pluginVersions = [];
+    private $pluginVersions = null;
 
     /** @var TableParser */
     private $tableParser;
@@ -26,6 +27,12 @@ class PluginVersionService implements PluginVersionServiceInterface
 
     public function pluginNeedsUpdate(ConfiguredPluginState $plugin): bool
     {
+        if (null === $this->pluginVersions) {
+            throw new BadMethodCallException(
+                'Initialize the plugin version list by calling the parsePluginVersionsFromPluginList first'
+            );
+        }
+
         $installedVersion = $this->getPluginVersion($plugin->getId());
         $configuredVersion = $plugin->getVersion() ?? $plugin->getProviderParameters()['version'] ?? null;
 
@@ -39,6 +46,8 @@ class PluginVersionService implements PluginVersionServiceInterface
     public function parsePluginVersionsFromPluginList(string $pluginList): void
     {
         $pluginInfo = $this->tableParser->parse($pluginList);
+
+        $this->pluginVersions = [];
         foreach ($pluginInfo as $pluginLine) {
             $name = $pluginLine[0];
             $version = $pluginLine[2];

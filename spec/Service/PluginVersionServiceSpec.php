@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace spec\sd\SwPluginManager\Service;
 
+use BadMethodCallException;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use sd\SwPluginManager\Entity\ConfiguredPluginState;
@@ -31,6 +32,13 @@ class PluginVersionServiceSpec extends ObjectBehavior
     public function it_implements_the_correct_interface(): void
     {
         $this->shouldImplement(PluginVersionServiceInterface::class);
+    }
+
+    public function it_should_throw_an_exception_if_the_plugin_list_was_not_initialized(
+        ConfiguredPluginState $plugin
+    ): void {
+        $this->shouldThrow(BadMethodCallException::class)
+            ->during('pluginNeedsUpdate', [$plugin]);
     }
 
     public function it_correctly_determines_if_a_plugin_needs_to_be_updated(
@@ -105,8 +113,11 @@ class PluginVersionServiceSpec extends ObjectBehavior
     }
 
     public function it_should_not_lookup_version_if_the_plugin_has_neither_version_nor_provider_parameter_version_set(
+        TableParser $tableParser,
         ConfiguredPluginState $plugin
     ): void {
+        $this->initializePluginVersions($tableParser);
+
         $plugin->getId()
             ->willReturn('asdfPlugin');
 
