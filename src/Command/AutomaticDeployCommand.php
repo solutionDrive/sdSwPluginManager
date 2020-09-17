@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace sd\SwPluginManager\Command;
 
 use sd\SwPluginManager\Repository\StateFileInterface;
+use sd\SwPluginManager\Service\PluginVersionServiceInterface;
 use sd\SwPluginManager\Worker\PluginExtractorInterface;
 use sd\SwPluginManager\Worker\PluginFetcherInterface;
 use Symfony\Component\Console\Application;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AutomaticDeployCommand extends Command
@@ -31,16 +33,21 @@ class AutomaticDeployCommand extends Command
     /** @var PluginExtractorInterface */
     private $pluginExtractor;
 
+    /** @var PluginVersionServiceInterface */
+    private $pluginVersionService;
+
     public function __construct(
         StateFileInterface $stateFile,
         PluginFetcherInterface $pluginFetcher,
         PluginExtractorInterface $pluginExtractor,
+        PluginVersionServiceInterface $pluginVersionService,
         ?string $name = null
     ) {
         parent::__construct($name);
         $this->stateFile = $stateFile;
         $this->pluginFetcher = $pluginFetcher;
         $this->pluginExtractor = $pluginExtractor;
+        $this->pluginVersionService = $pluginVersionService;
     }
 
     // @TODO Add a --force -f flag to force download and deployment of configured plugins
@@ -142,11 +149,21 @@ class AutomaticDeployCommand extends Command
         $app->setAutoExit(false);
 
         if (false === $skipInstall) {
-            $input = new ArrayInput([
+            $refreshPluginCommand = new ArrayInput([
                 'command' => 'sd:plugins:refresh',
                 '--env' => $environment,
             ]);
-            $app->run($input, $output);
+            $app->run($refreshPluginCommand, $output);
+
+            $pluginListCommand = new ArrayInput([
+                'command' => 'sd:plugin:list',
+                '--env' => $environment,
+            ]);
+
+            $bufferedOutput = new BufferedOutput($output->getVerbosity(), $output->isDecorated());
+            if (0 === $app->run($pluginListCommand, $bufferedOutput)) {
+                $this->pluginVersionService->parsePluginVersionsFromPluginList($bufferedOutput->fetch());
+            }
 
             // And now install and activate all plugins (if configured)
             foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
@@ -176,6 +193,14 @@ class AutomaticDeployCommand extends Command
 
                     $input = new ArrayInput($parameters);
                     $app->run($input, $output);
+
+                    if ($this->pluginVersionService->pluginNeedsUpdate($configuredPluginState)) {
+                        $updatePluginCommand = new ArrayInput([
+                            'command' => 'sd:plugin:update',
+                            'plugin' => $configuredPluginState->getId(),
+                        ]);
+                        $app->run($updatePluginCommand, $output);
+                    }
                 } else {
                     $parameters = [
                         'command' => 'sd:plugins:uninstall',

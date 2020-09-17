@@ -24,7 +24,10 @@ class TableParserSpec extends ObjectBehavior
         $this->beConstructedWith(
             ',',
             "\n",
-            3
+            3,
+            false,
+            false,
+            false
         );
 
         $inputTable = 'firstColumn,secondColumn,third';
@@ -44,7 +47,8 @@ class TableParserSpec extends ObjectBehavior
             "\n",
             3,
             true,
-            true
+            true,
+            false
         );
 
         $inputTable = <<<EOT
@@ -75,6 +79,7 @@ EOT;
             "\n",
             2,
             false,
+            false,
             false
         );
 
@@ -90,6 +95,37 @@ EOT;
         $parsedTable->shouldEqual(
             [
                 ['firstColumn', 'secondColumn', 'third'],
+                ['line1 col1', 'line1 col2', '1.3'],
+                ['line2 col1', 'line2 col2', '2.3'],
+                ['line3 col1', 'line3 col2', '3.3'],
+            ]
+        );
+    }
+
+    public function it_can_strip_the_first_line(): void
+    {
+        $this->beConstructedWith(
+            '|',
+            "\n",
+            3,
+            true,
+            true,
+            true
+        );
+
+        $inputTable = <<<EOT
++-------------------+-------------------------+---------+
+| firstColumn       | secondColumn            | third   |
++-------------------+-------------------------+---------+
+| line1 col1        | line1 col2              | 1.3     |
+| line2 col1        | line2 col2              | 2.3     |
+| line3 col1        | line3 col2              | 3.3     |
++-------------------+-------------------------+---------+
+EOT;
+
+        $parsedTable = $this->parse($inputTable);
+        $parsedTable->shouldEqual(
+            [
                 ['line1 col1', 'line1 col2', '1.3'],
                 ['line2 col1', 'line2 col2', '2.3'],
                 ['line3 col1', 'line3 col2', '3.3'],

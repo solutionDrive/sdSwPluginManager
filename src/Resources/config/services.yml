@@ -16,6 +16,8 @@ services:
     class: sd\SwPluginManager\Command\InfoCommand
   sd.command.list:
     class: sd\SwPluginManager\Command\ListCommand
+    arguments:
+      - '@sd.worker.shopware_console_caller'
   sd.command.refresh:
     class: sd\SwPluginManager\Command\RefreshCommand
   sd.command.deploy_zip:
@@ -26,11 +28,16 @@ services:
       - '@sd.repository.statefile'
       - '@sd.worker.pluginfetcher'
       - '@sd.worker.pluginextractor'
+      - '@sd.service.plugin_update'
   sd.command.fetch_plugin:
     class: sd\SwPluginManager\Command\FetchPluginCommand
     arguments:
       - '@sd.repository.statefile'
       - '@sd.worker.pluginfetcher'
+  sd.command.update:
+    class: sd\SwPluginManager\Command\UpdateCommand
+    arguments:
+      - '@sd.worker.shopware_console_caller'
 
   sd.factory.configuredpluginstate:
     class: sd\SwPluginManager\Factory\ConfiguredPluginStateFactory
@@ -86,6 +93,21 @@ services:
   sd.service.stream_translator:
     class: sd\SwPluginManager\Service\StreamTranslator
 
+  sd.service.plugin_update:
+    class: sd\SwPluginManager\Service\PluginVersionService
+    arguments:
+      - '@sd.parser.plugin_list'
+
+  sd.parser.plugin_list:
+    class: sd\SwPluginManager\Service\TableParser
+    arguments:
+      - '|'
+      - "\n"
+      - 6
+      - true
+      - true
+      - true
+
   sd.worker.pluginfetcher:
     class: sd\SwPluginManager\Worker\PluginFetcher
     arguments:
@@ -93,6 +115,9 @@ services:
 
   sd.worker.pluginextractor:
     class: sd\SwPluginManager\Worker\PluginExtractor
+
+  sd.worker.shopware_console_caller:
+    class: sd\SwPluginManager\Worker\ShopwareConsoleCaller
 
   sd.external.guzzle:
     class: GuzzleHttp\Client

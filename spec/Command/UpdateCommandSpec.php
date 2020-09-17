@@ -11,13 +11,13 @@ namespace spec\sd\SwPluginManager\Command;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use sd\SwPluginManager\Command\ListCommand;
+use sd\SwPluginManager\Command\UpdateCommand;
 use sd\SwPluginManager\Worker\ShopwareConsoleCaller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ListCommandSpec extends ObjectBehavior
+class UpdateCommandSpec extends ObjectBehavior
 {
     public function let(ShopwareConsoleCaller $consoleCaller): void
     {
@@ -26,24 +26,23 @@ class ListCommandSpec extends ObjectBehavior
 
     public function it_is_initializable(): void
     {
-        $this->shouldHaveType(ListCommand::class);
+        $this->shouldHaveType(UpdateCommand::class);
         $this->shouldHaveType(Command::class);
     }
 
-    public function it_should_call_the_shopware_plugin_list_command(
+    public function it_should_call_the_shopware_plugin_update_command(
         InputInterface $input,
         OutputInterface $output,
         ShopwareConsoleCaller $consoleCaller
     ): void {
         $this->prepareMocks($input);
 
-        $consoleCaller->call('sw:plugin:list', ['--env' => 'dev'])
-            ->willReturn(true);
+        $consoleCaller->call('sw:plugin:update', [
+            'nlxTest' => null,
+            '--env' => 'dev',
+        ])->willReturn(true);
 
-        $consoleCaller->getOutput()
-            ->willReturn('plugin list');
-
-        $output->write('plugin list')
+        $output->writeln('<info>Plugin `nlxTest` was successfully updated.</info>')
             ->shouldBeCalled();
 
         $this->run($input, $output)
@@ -55,34 +54,34 @@ class ListCommandSpec extends ObjectBehavior
         OutputInterface $output,
         ShopwareConsoleCaller $consoleCaller
     ): void {
-        $this->prepareMocks($input, 'active', 'frontend,backend');
+        $this->prepareMocks($input, true);
 
-        $consoleCaller->call('sw:plugin:list', [
+        $consoleCaller->call('sw:plugin:update', [
+            'nlxTest' => null,
             '--env' => 'dev',
-            '--filter' => 'active',
-            '--namespace' => 'frontend,backend',
+            '--clear-cache' => null,
         ])->willReturn(true);
 
-        $consoleCaller->getOutput()
-            ->willReturn('plugin list');
-
-        $output->writeln('plugin list');
+        $output->writeln('<info>Plugin `nlxTest` was successfully updated.</info>')
+            ->shouldBeCalled();
 
         $this->run($input, $output)
             ->shouldReturn(0);
     }
 
-    public function it_should_print_the_shopware_cli_output_if_the_command_fails(
+    public function it_should_print_the_shopware_cli_output_of_the_command_fails(
         InputInterface $input,
         OutputInterface $output,
         ShopwareConsoleCaller $consoleCaller
     ): void {
         $this->prepareMocks($input);
 
-        $consoleCaller->call('sw:plugin:list', ['--env' => 'dev'])
-            ->willReturn(false);
+        $consoleCaller->call('sw:plugin:update', [
+            'nlxTest' => null,
+            '--env' => 'dev',
+        ])->willReturn(false);
 
-        $output->writeln('<error>Error getting the plugin list from Shopware</error>')
+        $output->writeln('<info>Plugin `nlxTest` could not be updated.</info>')
             ->shouldBeCalled();
 
         $consoleCaller->hasOutput()
@@ -107,11 +106,8 @@ class ListCommandSpec extends ObjectBehavior
             ->shouldReturn(1);
     }
 
-    private function prepareMocks(
-        InputInterface $input,
-        string $filterOption = null,
-        string $namespaceOption = null
-    ): void {
+    private function prepareMocks(InputInterface $input, bool $hasClearCacheOption = null): void
+    {
         $input->bind(Argument::any())
             ->shouldBeCalled();
 
@@ -124,13 +120,13 @@ class ListCommandSpec extends ObjectBehavior
         $input->validate()
             ->shouldBeCalled();
 
-        $input->getOption('filter')
-            ->willReturn($filterOption);
+        $input->getArgument('plugin')
+            ->willReturn('nlxTest');
 
         $input->getOption('env')
             ->willReturn('dev');
 
-        $input->getOption('namespace')
-            ->willReturn($namespaceOption);
+        $input->getOption('clear-cache')
+            ->willReturn($hasClearCacheOption);
     }
 }

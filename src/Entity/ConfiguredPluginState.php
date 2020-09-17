@@ -85,7 +85,7 @@ class ConfiguredPluginState
         return $this->provider;
     }
 
-    public function getVersion(): string
+    public function getVersion(): ?string
     {
         return $this->version;
     }
