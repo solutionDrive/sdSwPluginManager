@@ -15,10 +15,13 @@ use sd\SwPluginManager\Entity\ConfiguredPluginState;
 class PluginVersionService implements PluginVersionServiceInterface
 {
     /** @var string[] */
-    private $pluginVersions = null;
+    private $pluginVersions = [];
 
     /** @var TableParser */
     private $tableParser;
+
+    /** @var bool */
+    private $initialized = false;
 
     public function __construct(TableParser $tableParser)
     {
@@ -27,7 +30,7 @@ class PluginVersionService implements PluginVersionServiceInterface
 
     public function pluginNeedsUpdate(ConfiguredPluginState $plugin): bool
     {
-        if (null === $this->pluginVersions) {
+        if (false === $this->initialized) {
             throw new BadMethodCallException(
                 'Initialize the plugin version list by calling the parsePluginVersionsFromPluginList first'
             );
@@ -46,22 +49,18 @@ class PluginVersionService implements PluginVersionServiceInterface
     public function parsePluginVersionsFromPluginList(string $pluginList): void
     {
         $pluginInfo = $this->tableParser->parse($pluginList);
-
-        $this->pluginVersions = [];
         foreach ($pluginInfo as $pluginLine) {
             $name = $pluginLine[0];
             $version = $pluginLine[2];
 
             $this->pluginVersions[$name] = $version;
         }
+
+        $this->initialized = true;
     }
 
     public function getPluginVersion(string $pluginName): ?string
     {
-        if (isset($this->pluginVersions[$pluginName])) {
-            return $this->pluginVersions[$pluginName];
-        }
-
-        return null;
+        return $this->pluginVersions[$pluginName] ?? null;
     }
 }
