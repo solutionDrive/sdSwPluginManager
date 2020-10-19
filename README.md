@@ -27,6 +27,7 @@ This package manager can be used as a (not feature complete) drop-in replacement
     bin/sd-plugin-manager sd:plugins:activate
     bin/sd-plugin-manager sd:plugins:deactivate
     bin/sd-plugin-manager sd:plugins:uninstall
+    bin/sd-plugin-manager sd:plugins:update
 
 
 Usage as an automatic package manager
@@ -35,6 +36,7 @@ Usage as an automatic package manager
 But the more important feature is the automatic package management.
 You can provide a configuration file containing the plugins to be installed in the current shop.
 Then this package manager will ensure that the shop contains **exactly** the specified plugins in the specified version.
+To update plugins, that are managed by composer, you have to define a plugin version in your configuration file.
 
 You can see an example for such a configuration in ```etc/examples/example_config.yml```.
 
