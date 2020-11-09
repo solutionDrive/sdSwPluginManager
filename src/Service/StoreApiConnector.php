@@ -36,6 +36,9 @@ class StoreApiConnector implements StoreApiConnectorInterface
     /** @var bool */
     private $isPartnerAccount = false;
 
+    /** @var string */
+    private $partnerId = '';
+
     public function __construct(
         Client $guzzleClient,
         StreamTranslatorInterface $streamTranslator,
@@ -58,8 +61,8 @@ class StoreApiConnector implements StoreApiConnectorInterface
         $shop = $this->filterShopsByDomain($shops, $partnerShops);
 
         $licenseUrl = self::BASE_URL;
-        if (true === $this->isPartnerAccount) {
-            $licenseUrl .= '/partners/' . $this->getUserId();
+        if (true === $this->isPartnerAccount && '' !== $this->partnerId) {
+            $licenseUrl .= '/partners/' . $this->partnerId;
             $licenseUrl .= '/customers/' . $shop['companyId'];
         }
         $licenseUrl .=  '/shops/' . $shop['id'] . '/pluginlicenses';
@@ -83,8 +86,8 @@ class StoreApiConnector implements StoreApiConnectorInterface
             $pluginSpecificId = $plugin['plugin']['id'];
 
             $pluginInfoUrl = self::BASE_URL;
-            if (true === $this->isPartnerAccount) {
-                $pluginInfoUrl .= '/partners/' . $this->getUserId();
+            if (true === $this->isPartnerAccount && '' !== $this->partnerId) {
+                $pluginInfoUrl .= '/partners/' . $this->partnerId;
                 $pluginInfoUrl .= '/customers/' . $shop['companyId'];
             }
             $pluginInfoUrl .= '/shops/' . $shop['id'] . '/pluginlicenses/' . $pluginOverallId;
@@ -203,6 +206,7 @@ class StoreApiConnector implements StoreApiConnectorInterface
             $partnerData = $this->streamTranslator->translateToArray($body);
             if (false === empty($partnerData['partnerId'])) {
                 $this->isPartnerAccount = true;
+                $this->partnerId = (string) $partnerData['partnerId'];
             }
 
             if (true === $this->isPartnerAccount) {

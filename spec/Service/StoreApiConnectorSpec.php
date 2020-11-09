@@ -111,11 +111,11 @@ class StoreApiConnectorSpec extends ObjectBehavior
         $this->prepareShops($guzzleClient, $streamTranslator, $shopsResponse, $shopsStream, $shopsData);
 
         // GET ALL LICENSES
-        $licenseUrl = '/partners/12345/customers/27/shops/1/pluginlicenses';
+        $licenseUrl = '/partners/9876/customers/27/shops/1/pluginlicenses';
         $this->prepareLicenseData($guzzleClient, $streamTranslator, $licenseResponse, $licenseStream, $licenseUrl);
 
         // GET ALL INFOS ABOUT PLUGIN
-        $pluginInfoUrl = '/partners/12345/customers/27/shops/1/pluginlicenses/17';
+        $pluginInfoUrl = '/partners/9876/customers/27/shops/1/pluginlicenses/17';
         $this->preparePluginInfoData($guzzleClient, $streamTranslator, $pluginInfoResponse, $pluginInfoStream, $pluginInfoUrl);
 
         $downloadUrl = '/plugins/58/binaries/10/file?shopId=1';
