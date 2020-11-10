@@ -16,6 +16,7 @@ env:
 before_install:
   - phpenv config-add .php.travis.ini
   - export PATH=$PATH:$HOME/.composer/vendor/bin
+  - travis_retry composer self-update --1;
 
 install:
   - composer install --optimize-autoloader -n
