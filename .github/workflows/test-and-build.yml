@@ -44,7 +44,7 @@ jobs:
         run: ${HOME}/.composer/vendor/bin/box build
 
       - name: info output
-        run: echo "Built following version:" && php ./build/sd-sw-plugin-manager.phar sd:plugins:info -v
+        run: cat .version.yml && echo "Built following version:" && php ./build/sd-sw-plugin-manager.phar sd:plugins:info -v
 
       - name: prepare deployment
         run: mv ./build/sd-sw-plugin-manager.phar ./build/sd-sw-plugin-manager.php${{matrix.php-version}}.phar
