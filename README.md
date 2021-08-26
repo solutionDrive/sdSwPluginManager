@@ -1,6 +1,8 @@
 Shopware plugin manager
 =======================
 
+[![Test and build](https://github.com/solutionDrive/sdSwPluginManager/actions/workflows/test-and-build.yml/badge.svg)](https://github.com/solutionDrive/sdSwPluginManager/actions/workflows/test-and-build.yml)
+
 This is a CLI based plugin manager that can simply install, uninstall, enable or disable plugins in a shopware shop.
 The shopware instance needs not to be fully working for this plugin manager
 to work as it is designed to be independent from the Shopware core itself.
