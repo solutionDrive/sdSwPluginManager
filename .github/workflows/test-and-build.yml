@@ -1,0 +1,46 @@
+name: Test and build
+on: [push, pull_request]
+jobs:
+  test-and-build:
+    name: '[PHP ${{ matrix.php-version }}] test and build'
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: [ 7.1, 7.2, 7.3, 7.4 ]
+
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v1
+
+      - uses: actions/checkout@v2
+
+      - name: composer install
+        run: composer install --optimize-autoloader -n
+
+      - name: run lint script
+        run: ./etc/scripts/lintFiles.sh
+        shell: bash
+
+      - name: run codingstandard script
+        run: ./etc/scripts/checkCodingStandards.sh
+        shell: bash
+
+      - name: run specs script
+        run: ./etc/scripts/runSpecs.sh
+        shell: bash
+
+      - name: install kherge/box globally
+        run: composer global require kherge/box
+
+      - name: box build
+        run: ${HOME}/.composer/vendor/bin/box build
+
+      - name: info output
+        run: echo "Built following version:" && php ./build/sd-sw-plugin-manager.phar sd:plugins:info -v
+
+      - name: prepare deployment
+        run: mv ./build/sd-sw-plugin-manager.phar ./build/sd-sw-plugin-manager.php${TRAVIS_PHP_VERSION}.phar
