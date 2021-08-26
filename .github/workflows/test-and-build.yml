@@ -1,0 +1,68 @@
+name: Test and build
+on: [push, pull_request]
+jobs:
+  test-and-build:
+    name: '[PHP ${{ matrix.php-version }}] test and build'
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: [ 7.1, 7.2, 7.3, 7.4 ]
+
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          ini-values: phar.readonly=off
+          tools: composer:v1
+
+      - uses: actions/checkout@v2
+
+      - name: composer install
+        run: composer install --optimize-autoloader -n
+
+      - name: create version file
+        run: versionYaml="$(cat .version.yml.dist | envsubst)" && echo "$versionYaml" > .version.yml
+
+      - name: run lint script
+        run: ./etc/scripts/lintFiles.sh
+        shell: bash
+
+      - name: run codingstandard script
+        run: ./etc/scripts/checkCodingStandards.sh
+        shell: bash
+
+      - name: run specs script
+        run: ./etc/scripts/runSpecs.sh
+        shell: bash
+
+      - name: install kherge/box globally
+        run: composer global require kherge/box
+
+      - name: box build
+        run: ${HOME}/.composer/vendor/bin/box build
+
+      - name: info output
+        run: cat .version.yml && echo "Built following version:" && php ./build/sd-sw-plugin-manager.phar sd:plugins:info -v
+
+      - name: prepare deployment
+        run: mv ./build/sd-sw-plugin-manager.phar ./build/sd-sw-plugin-manager.php${{matrix.php-version}}.phar
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test-and-build]
+    if:
+      contains('
+        refs/heads/master
+      ', github.ref)
+    steps:
+      - name: deploy
+        uses: shallwefootball/s3-upload-action@master
+        id: S3
+        with:
+          aws_key_id: ${{ secrets.S3_BUILD_ACCESS_KEY }}
+          aws_secret_access_key: ${{ secrets.S3_BUILD_SECRET_KEY }}
+          aws_bucket: ${{ secrets.S3_BUILD_BUCKET }}
+          source_dir: 'build'
+          destination_dir: 'phar'
