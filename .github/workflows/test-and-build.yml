@@ -22,6 +22,9 @@ jobs:
       - name: composer install
         run: composer install --optimize-autoloader -n
 
+      - name: create version file
+        run: versionYaml="$(cat .version.yml.dist | envsubst)" && echo "$versionYaml" > .version.yml
+
       - name: run lint script
         run: ./etc/scripts/lintFiles.sh
         shell: bash
