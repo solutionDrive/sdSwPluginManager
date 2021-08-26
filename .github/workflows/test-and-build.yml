@@ -47,7 +47,7 @@ jobs:
         run: echo "Built following version:" && php ./build/sd-sw-plugin-manager.phar sd:plugins:info -v
 
       - name: prepare deployment
-        run: mv ./build/sd-sw-plugin-manager.phar ./build/sd-sw-plugin-manager.php${matrix.php-version}.phar
+        run: mv ./build/sd-sw-plugin-manager.phar ./build/sd-sw-plugin-manager.php${{matrix.php-version}}.phar
 
   deploy:
     runs-on: ubuntu-latest
