@@ -53,7 +53,7 @@ class ConfiguredPluginState
         array $environments = [],
         bool $activated = false,
         bool $installed = false,
-        bool $alwaysReinstall = true,
+        bool $alwaysReinstall = false,
         bool $removeDataOnReinstall = false,
         bool $alwaysClearCache = false
     ) {
