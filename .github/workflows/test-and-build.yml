@@ -48,3 +48,13 @@ jobs:
 
       - name: prepare deployment
         run: mv ./build/sd-sw-plugin-manager.phar ./build/sd-sw-plugin-manager.php${TRAVIS_PHP_VERSION}.phar
+
+      - name: deploy
+        uses: shallwefootball/s3-upload-action@master
+        id: S3
+        with:
+          aws_key_id: ${{ secrets.S3_BUILD_ACCESS_KEY }}
+          aws_secret_access_key: ${{ secrets.S3_BUILD_SECRET_KEY }}
+          aws_bucket: ${{ secrets.S3_BUILD_BUCKET }}
+          source_dir: 'build'
+          destination_dir: 'phar'
