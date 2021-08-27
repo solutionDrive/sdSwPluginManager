@@ -43,7 +43,7 @@ class ConfiguredPluginConfiguration implements ConfigurationInterface
                         ->scalarPrototype()->end()
                     ->end()
                     ->booleanNode('alwaysReinstall')
-                        ->defaultTrue()
+                        ->defaultFalse()
                     ->end()
                     ->booleanNode('removeDataOnReinstall')
                         ->defaultFalse()
