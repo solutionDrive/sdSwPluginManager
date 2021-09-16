@@ -82,7 +82,7 @@ class ConfiguredPluginStateSpec extends ObjectBehavior
             false
         );
 
-        $this->getAlwaysReinstall()->shouldReturn(true);
+        $this->getAlwaysReinstall()->shouldReturn(false);
         $this->getRemoveDataOnReinstall()->shouldReturn(false);
         $this->getAlwaysClearCache()->shouldReturn(false);
     }

@@ -57,7 +57,7 @@ class StateFileSpec extends ObjectBehavior
                 'testPlugin2' => [
                     'provider' => 'http',
                     'version' => '1',
-                    'alwaysReinstall' => false,
+                    'alwaysReinstall' => true,
                     'removeDataOnReinstall' => true,
                     'alwaysClearCache' => true,
                 ],
@@ -73,7 +73,7 @@ class StateFileSpec extends ObjectBehavior
                     'installed' => true,
                     'activated' => true,
                     'env' => [],
-                    'alwaysReinstall' => true,
+                    'alwaysReinstall' => false,
                     'removeDataOnReinstall' => false,
                     'alwaysClearCache' => false,
                 ])
@@ -90,7 +90,7 @@ class StateFileSpec extends ObjectBehavior
                     'installed' => true,
                     'activated' => true,
                     'env' => [],
-                    'alwaysReinstall' => false,
+                    'alwaysReinstall' => true,
                     'removeDataOnReinstall' => true,
                     'alwaysClearCache' => true,
                 ])
