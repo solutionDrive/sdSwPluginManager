@@ -49,15 +49,11 @@ jobs:
       - name: prepare deployment
         run: mv ./build/sd-sw-plugin-manager.phar ./build/sd-sw-plugin-manager.php${{matrix.php-version}}.phar
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [test-and-build]
-    if:
-      contains('
-        refs/heads/master
-      ', github.ref)
-    steps:
       - name: deploy
+        if:
+          contains('
+          refs/heads/master
+          ', github.ref)
         uses: shallwefootball/s3-upload-action@master
         id: S3
         with:
