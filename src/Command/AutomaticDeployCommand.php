@@ -63,9 +63,9 @@ class AutomaticDeployCommand extends Command
             ->addOption(
                 'env',
                 'e',
-                InputOption::VALUE_REQUIRED,
-                'The current environment to use for plugin filtering',
-                'production'
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'The current environment(s) to use for plugin filtering, when using multiple only the first one is used for shopware commands.',
+                ['production']
             )
             ->addOption(
                 'skip-download',
@@ -105,7 +105,8 @@ class AutomaticDeployCommand extends Command
         $forceDownload = (bool) $input->getOption('force-download');
         $skipInstall = (bool) $input->getOption('skip-install');
 
-        $environment = $input->getOption('env');
+        $environments = $input->getOption('env');
+
         $yamlStateFilePath = $input->getArgument('statefile');
         if (false === \is_readable($yamlStateFilePath)) {
             throw new \RuntimeException(
@@ -122,7 +123,7 @@ class AutomaticDeployCommand extends Command
         if (false === $skipDownload) {
             foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
                 // Skip if plugin should not be installed in the current environment
-                if ($this->skipPluginByEnviroment($environment, $configuredPluginState->getEnvironments())) {
+                if ($this->skipPluginByEnviroments($environments, $configuredPluginState->getEnvironments())) {
                     continue;
                 }
 
@@ -151,13 +152,13 @@ class AutomaticDeployCommand extends Command
         if (false === $skipInstall) {
             $refreshPluginCommand = new ArrayInput([
                 'command' => 'sd:plugins:refresh',
-                '--env' => $environment,
+                '--env' => $environments[0],
             ]);
             $app->run($refreshPluginCommand, $output);
 
             $pluginListCommand = new ArrayInput([
                 'command' => 'sd:plugin:list',
-                '--env' => $environment,
+                '--env' => $environments[0],
             ]);
 
             $bufferedOutput = new BufferedOutput($output->getVerbosity(), $output->isDecorated());
@@ -168,7 +169,7 @@ class AutomaticDeployCommand extends Command
             // And now install and activate all plugins (if configured)
             foreach ($this->stateFile->getPlugins() as $configuredPluginState) {
                 // Skip if plugin should not be installed in the current environment
-                if ($this->skipPluginByEnviroment($environment, $configuredPluginState->getEnvironments())) {
+                if ($this->skipPluginByEnviroments($environments, $configuredPluginState->getEnvironments())) {
                     continue;
                 }
 
@@ -176,7 +177,7 @@ class AutomaticDeployCommand extends Command
                     $parameters = [
                         'command' => 'sd:plugins:install',
                         'pluginId' => $configuredPluginState->getId(),
-                        '--env' => $environment,
+                        '--env' => $environments[0],
                     ];
 
                     if (false === $configuredPluginState->getAlwaysReinstall()) {
@@ -206,7 +207,7 @@ class AutomaticDeployCommand extends Command
                         'command' => 'sd:plugins:uninstall',
                         '--secure' => true,
                         'pluginId' => $configuredPluginState->getId(),
-                        '--env' => $environment,
+                        '--env' => $environments[0],
                     ];
 
                     if ($configuredPluginState->getAlwaysClearCache()) {
@@ -222,7 +223,7 @@ class AutomaticDeployCommand extends Command
                     $parameters = [
                         'command' => 'sd:plugins:activate',
                         'pluginId' => $configuredPluginState->getId(),
-                        '--env' => $environment,
+                        '--env' => $environments[0],
                     ];
 
                     if ($configuredPluginState->getAlwaysClearCache()) {
@@ -235,7 +236,7 @@ class AutomaticDeployCommand extends Command
                     $parameters = [
                         'command' => 'sd:plugins:deactivate',
                         'pluginId' => $configuredPluginState->getId(),
-                        '--env' => $environment,
+                        '--env' => $environments[0],
                     ];
 
                     if ($configuredPluginState->getAlwaysClearCache()) {
@@ -264,14 +265,23 @@ class AutomaticDeployCommand extends Command
     }
 
     /**
+     * @param string[] $currentEnvironments
      * @param string[] $targetEnvironments
      */
-    private function skipPluginByEnviroment(
-        string $currentEnvironment,
+    private function skipPluginByEnviroments(
+        array $currentEnvironments,
         array $targetEnvironments
     ): bool {
-        return
-            false === empty($targetEnvironments) &&
-            false === \in_array($currentEnvironment, $targetEnvironments);
+        if (empty($targetEnvironments)) {
+            return false;
+        }
+
+        foreach ($currentEnvironments as $environment) {
+            if (\in_array($environment, $targetEnvironments)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
