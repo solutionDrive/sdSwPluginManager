@@ -196,10 +196,17 @@ class AutomaticDeployCommand extends Command
                     $app->run($input, $output);
 
                     if ($this->pluginVersionService->pluginNeedsUpdate($configuredPluginState)) {
-                        $updatePluginCommand = new ArrayInput([
+                        $parameters = [
                             'command' => 'sd:plugin:update',
                             'plugin' => $configuredPluginState->getId(),
-                        ]);
+                            '--env' => $environments[0],
+                        ];
+
+                        if ($configuredPluginState->getAlwaysClearCache()) {
+                            $parameters['--clear-cache'] = null;
+                        }
+
+                        $updatePluginCommand = new ArrayInput($parameters);
                         $app->run($updatePluginCommand, $output);
                     }
                 } else {
